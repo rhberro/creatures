@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "nursery": "error",
+    "pedantic": "error",
+    "restriction": "error",
+    // "style": "error",
+    "suspicious": "error"
+  },
+  "globals": {
+    "document": "readonly"
+  },
+  "ignorePatterns": ["*.d.ts"],
+  "jsPlugins": ["./tools/oxplugins"],
+  "overrides": [
+    {
+      "files": ["**/*.{ts,tsx,jsx}"],
+      "rules": {
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-filename-extension": "off",
+        "react/jsx-no-literals": "off"
+      }
+    },
+    {
+      "files": ["**/*.{ts,tsx,js,jsx}"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    }
+  ],
+  "rules": {
+    "eslint/curly": ["error", "all"],
+    "eslint/sort-keys": "error",
+    "eslint/sort-vars": "error",
+    "oxplugins/no-destructuring-in-params": "error",
+    "oxplugins/no-inline-functions-objects-arrays": "error",
+    "oxplugins/no-jsx-inline-computation": "error"
+  },
+  "plugins": ["eslint", "import", "oxc", "react", "react-perf", "typescript", "unicorn"]
+}
