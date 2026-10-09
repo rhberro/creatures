@@ -22,9 +22,7 @@ function updatePlayer(props: UpdatePlayerProps) {
 not:
 
 ```ts
-function updatePlayer(
-  { id, name }: UpdatePlayerProps
-) {
+function updatePlayer({ id, name }: UpdatePlayerProps) {
   // ...
 }
 ```

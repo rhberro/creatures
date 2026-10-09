@@ -4,6 +4,7 @@
   "workspaces": [
     "apps/*"
   ],
+  "type": "module",
   "scripts": {
     "dev": "concurrently -k -n server,client -c blue,magenta \"bun run dev:server\" \"bun run dev:client\"",
     "dev:server": "bun --filter @creatures/server dev",

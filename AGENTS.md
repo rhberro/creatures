@@ -59,6 +59,8 @@ O que eu utilizei durante a execução:
 
 - Documentações
   - <caminho do documento interno>
+    - <caminho do sub-documento interno>
+    - <caminho do sub-documento interno>
 - MCPs
   - <nome do MCP>
 - Skills
