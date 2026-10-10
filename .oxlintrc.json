@@ -12,7 +12,7 @@
     "document": "readonly"
   },
   "ignorePatterns": ["*.d.ts"],
-  "jsPlugins": ["./tools/oxlint-plugins"],
+  "jsPlugins": ["./tools/oxc/plugins"],
   "overrides": [
     {
       "files": ["**/*.{ts,tsx,jsx}"],

@@ -10,7 +10,15 @@ O jogo é em pixel art e visto de cima (top down), inspirado em Pokémon do GBA 
 
 > Toda a simulação do jogo acontece no serviço. O cliente envia comandos, o serviço valida e processa, e devolve o resultado para o cliente renderizar. A tela do jogo nunca decide nada por conta própria.
 
-O acesso a essa tela é feito pela [tela de lista de treinadores](autenticacao.md#tela-de-lista-de-treinadores), ao entrar com um treinador, e é uma tela protegida, conforme o [controle de acesso](autenticacao.md#controle-de-acesso).
+A tela fica na rota `/game` e o acesso é feito pela [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), ao entrar com um treinador. É uma tela protegida, conforme o [controle de acesso](AUTHENTICATION.md#controle-de-acesso).
+
+## Escopo das Fases Alfa e Beta
+
+Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem ser revistos conforme o jogo evolui:
+
+- Os botões dos menus da toolbar, com exceção de Áreas de Caça e Configurações, são placeholders para funcionalidades ainda não definidas.
+- Os detalhes de como a tela se adapta a telas pequenas ainda serão definidos junto com o design da interface.
+- A quantidade de tentativas automáticas de reconexão ainda não foi definida.
 
 ## Estrutura da Tela
 
@@ -26,21 +34,21 @@ Nenhum elemento HTML da tela, incluindo os modais abertos a partir dela, pausa o
 
 ## Toolbar
 
-Barra no topo da tela, dividida em três áreas: treinador à esquerda, menu central e menu da direita, mais ou menos assim: ```| Treinador ---------- Menu Central ---------- Menu Direita |```.
+Barra no topo da tela, dividida em três áreas: treinador à esquerda, menu central e menu da direita, mais ou menos assim: `| Treinador ---------- Menu Central ---------- Menu Direita |`.
 
 ### Treinador
 
-No canto esquerdo vamos exibir o avatar do treinador, e ao lado dele o nome, com o nível logo abaixo.
+No canto esquerdo ficam o avatar do treinador e, ao lado dele, o nome, com o nível logo abaixo.
 
 ### Menu Central
 
-Uma área centralizada com botões de acesso às funcionalidades do jogo. Por enquanto, o primeiro botão é o de **Hunting Areas**, que abre um modal para o jogador escolher os locais de caça. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
+Uma área centralizada com botões de acesso às funcionalidades do jogo. Por enquanto, o primeiro botão é o de **Áreas de Caça**, que abre o modal de [seleção de área de caça](HUNT_AREA_SELECT.md). Os demais botões são placeholders para funcionalidades que ainda serão definidas.
 
 ### Menu da Direita
 
-Uma área alinhada à direita, também com botões de acesso. O último botão, na extrema direita, é o de **Settings**, o menu principal do jogo, com as configurações e outras opções. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
+Uma área alinhada à direita, também com botões de acesso. O último botão, na extrema direita, é o de **Configurações**, o menu principal do jogo, com as configurações do jogo e outras opções. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
 
-> Dentro do menu Settings vamos exibir a opção "Trocar treinador", que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](autenticacao.md#tela-de-lista-de-treinadores), e a opção "Sair", que encerra a sessão conforme descrito na [sessão](autenticacao.md#sessão). Veja o comportamento da desconexão em [conexão e atividade idle](#conexão-e-atividade-idle).
+> Dentro do menu Configurações ficam a opção "Trocar treinador", que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), e a opção "Sair", que encerra a sessão conforme descrito na [sessão](AUTHENTICATION.md#sessão), e é a mesma ação da opção "Sair" da tela de lista de treinadores. O comportamento da desconexão está em [conexão e atividade idle](#conexão-e-atividade-idle).
 
 ## Linguetas do Time
 
@@ -65,11 +73,11 @@ O jogo precisa rodar bem em celulares e desktops, em qualquer tamanho de tela, e
 
 ### Orientação
 
-Em celulares, o jogo funciona somente na horizontal (modo paisagem). Quando a tela estiver na vertical (modo retrato), exibimos um overlay totalmente preto, sobre toda a tela, com o título "Vire o celular" e a descrição "Para jogar, coloque o celular na horizontal.". O overlay não possui botão e desaparece sozinho assim que a tela voltar para a horizontal.
+Em celulares, o jogo funciona somente na horizontal (modo paisagem). Quando a tela está na vertical (modo retrato), é exibido um overlay totalmente preto, sobre toda a tela, com o título "Vire o celular" e a descrição "Para jogar, coloque o celular na horizontal.". O overlay não possui botão e desaparece sozinho assim que a tela volta para a horizontal.
 
 ## Estados da Tela
 
-Quando o jogador não consegue ver o jogo, exibimos uma tela cheia com fundo preto, um título centralizado, uma descrição logo abaixo e, quando necessário, um botão. Todos os estados abaixo seguem esse mesmo modelo.
+Quando o jogador não consegue ver o jogo, é exibida uma tela cheia com fundo preto, um título centralizado, uma descrição logo abaixo e, quando necessário, um botão. Todos os estados abaixo seguem esse mesmo modelo.
 
 | Estado | Título | Descrição | Botão |
 | --- | --- | --- | --- |
@@ -78,16 +86,16 @@ Quando o jogador não consegue ver o jogo, exibimos uma tela cheia com fundo pre
 | Conexão perdida | Conexão perdida | Você perdeu a conexão com o servidor. Clique no botão abaixo para tentar se reconectar. | Reconectar |
 | Sessão expirada | Sessão expirada | Sua sessão expirou. Faça login novamente para continuar jogando. | Fazer login |
 
-> A tela de **carregando** é exibida ao entrar no jogo, até que o estado do treinador seja recebido do serviço e esteja pronto para ser renderizado. Se não for possível carregar, exibimos a tela de conexão perdida.
+> A tela de **carregando** é exibida ao entrar no jogo, até que o estado do treinador seja recebido do serviço e esteja pronto para ser renderizado. Se não for possível carregar, é exibida a tela de conexão perdida.
 
-> Ao perder a conexão, o cliente tenta reconectar sozinho algumas vezes, exibindo a tela de **tentando reconectar**. Se não conseguir, exibimos a tela de **conexão perdida**, e ao clicar em "Reconectar" o cliente volta para a tela de tentando reconectar. Se a conexão for restabelecida em qualquer momento, o jogador volta direto para o jogo, já com o estado atualizado.
+> Ao perder a conexão, o cliente tenta reconectar sozinho algumas vezes, exibindo a tela de **tentando reconectar**. Se não conseguir, é exibida a tela de **conexão perdida**, e ao clicar em "Reconectar" o cliente volta para a tela de tentando reconectar. Se a conexão é restabelecida em qualquer momento, o jogador volta direto para o jogo, já com o estado atualizado.
 
-> Ao clicar em "Fazer login" na tela de **sessão expirada**, o jogador é redirecionado para a [tela de login](autenticacao.md#tela-de-login).
+> Se a sessão expira enquanto o jogador está no jogo, é exibida a tela de **sessão expirada**, e ao clicar em "Fazer login" o jogador é redirecionado para a [tela de login](AUTHENTICATION.md#tela-de-login). Se a sessão já estiver expirada ao acessar a tela do jogo, o usuário é redirecionado direto para a tela de login, conforme o [controle de acesso](AUTHENTICATION.md#controle-de-acesso).
 
 ## Conexão e Atividade Idle
 
-Cada conta só pode estar conectada com um treinador por vez. Se o jogador entrar com um segundo treinador, ou com o mesmo treinador em outra aba ou dispositivo, a conexão anterior é derrubada e exibe a tela de [conexão perdida](#estados-da-tela).
+Cada conta só pode estar conectada com um treinador por vez. Se o jogador entra com um segundo treinador, ou com o mesmo treinador em outra aba ou dispositivo, a conexão anterior é derrubada e exibe a tela de [conexão perdida](#estados-da-tela).
 
 > Fechar a aba ou o navegador não envia nenhum aviso ao serviço, que percebe a queda da conexão por conta própria. Se o treinador estiver em uma atividade que pode continuar sem o jogador, como uma caçada, o serviço verifica se isso é possível e, caso seja, o treinador segue jogando sozinho (idle). Ao reabrir o jogo, o jogador encontra tudo atualizado.
 
-> Ao usar "Trocar treinador" no menu Settings, o cliente avisa o serviço de que está se desconectando. Nesse caso o treinador para qualquer atividade e não continua jogando sozinho.
+> Ao usar "Trocar treinador" no menu Configurações, o cliente avisa o serviço de que está se desconectando. Nesse caso o treinador para qualquer atividade e não continua jogando sozinho.

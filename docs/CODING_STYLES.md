@@ -1,16 +1,16 @@
-# Coding Styles
+# Estilos de Código
 
 ## Logging
 
-Use the structured logger (pino) in `services/` and any server-side code in `apps/`. Don't use `console.log`/`console.error` outside of quick local debugging that gets removed before committing.
+Use o logger estruturado (pino) em `services/` e em qualquer código de servidor em `apps/`. Não use `console.log`/`console.error` fora de depuração local rápida, que é removida antes do commit.
 
-## Comments
+## Comentários
 
-No comments unless they explain a non-obvious _why_ — a hidden constraint, a workaround, a subtle invariant. Never explain _what_ the code does; well-named functions and variables already do that.
+Sem comentários, a menos que expliquem um _porquê_ não óbvio — uma restrição oculta, uma gambiarra, um detalhe sutil. Nunca expliquem o _o quê_ o código faz: funções e variáveis bem nomeadas já fazem isso.
 
-## Parameters & destructuring
+## Parâmetros e destructuring
 
-Destructure inside the function body, not in the signature:
+Faça destructuring dentro do corpo da função, e não na assinatura:
 
 ```ts
 function updatePlayer(props: UpdatePlayerProps) {
@@ -19,7 +19,7 @@ function updatePlayer(props: UpdatePlayerProps) {
 }
 ```
 
-not:
+e não:
 
 ```ts
 function updatePlayer({ id, name }: UpdatePlayerProps) {
@@ -27,9 +27,9 @@ function updatePlayer({ id, name }: UpdatePlayerProps) {
 }
 ```
 
-## React components
+## Componentes React
 
-Function declarations, matching the no-arrow-functions rule:
+Declarações de função, seguindo a regra de não usar arrow functions:
 
 ```tsx
 function PlayerCard(props: PlayerCardProps) {
@@ -38,7 +38,7 @@ function PlayerCard(props: PlayerCardProps) {
 }
 ```
 
-not:
+e não:
 
 ```tsx
 const PlayerCard = (props: PlayerCardProps) => { ... }
