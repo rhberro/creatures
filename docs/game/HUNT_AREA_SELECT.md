@@ -6,7 +6,7 @@ Este documento cobre o modal que o jogador abre para escolher em que área vai c
 
 ## Visão Geral
 
-A seleção de área de caça é um modal aberto pelo botão **Áreas de Caça**, no menu central da [tela do jogo](PLAY_SCREEN.md).
+A seleção de área de caça é um modal aberto pelo botão **Áreas de Caça**, no menu central da [tela do jogo](PLAY_SCREEN.md), ou pelo [botão de play](PLAY_SCREEN.md#botão-de-play), que aparece apenas nas safe zones.
 
 O modal lista as áreas onde o treinador pode caçar, com os dados necessários para o jogador escolher. Selecionar uma área abre os [detalhes da área](HUNT_AREA_DETAILS.md), de onde a caçada é iniciada.
 
@@ -38,9 +38,9 @@ O jogador pode fechar o modal sem escolher nada, e o jogo segue como estava.
 
 O corpo do modal exibe uma lista de cards, um para cada área de caça.
 
-A ordem das áreas é definida pelo servidor, do **menor nível para o maior**.
+A ordem das áreas é definida pelo servidor, do **menor nível recomendado para o maior**.
 
-> A ordem vem do servidor porque o cliente não decide nada sobre o jogo, como vale para o conteúdo da lista. Ordenar do menor para o maior coloca as áreas acessíveis para o jogador atual no começo da lista.
+> A ordem vem do servidor porque o cliente não decide nada sobre o jogo, como vale para o conteúdo da lista. Ordenar do menor para o maior acompanha a progressão natural do jogador: as áreas sugeridas para quem está começando vêm primeiro.
 
 ### Card de Área
 
@@ -49,7 +49,7 @@ Cada card representa uma área de caça e é dividido em quatro partes, de cima 
 1. **Título da área**, no topo do card.
 2. **Criatura principal da área**, exibida em tamanho grande.
 3. **Criaturas da área**, exibidas em uma sequência de círculos sobrepostos uns aos outros.
-4. **Nível recomendado e nível mínimo**, no rodapé do card, na mesma linha.
+4. **Nível recomendado**, no rodapé do card.
 
 #### Criaturas da Área
 
@@ -67,29 +67,13 @@ A sequência de círculos mostra até **7 criaturas**. Quando a área tem mais q
 
 > O card mostra o começo da lista e nunca a inteira. É o drawer que mostra tudo o que tem no local, sem exceção.
 
-#### Nível Recomendado e Nível Mínimo
+#### Nível Recomendado
 
-O rodapé do card mostra o nível recomendado e o nível mínimo da área, na mesma linha.
+O rodapé do card mostra o nível recomendado da área.
 
-O **nível recomendado** é uma sugestão e não impede o jogador de caçar na área.
+O nível recomendado é uma sugestão e não impede o jogador de caçar na área.
 
-O **nível mínimo** é obrigatório: um treinador abaixo dele não pode caçar naquela área.
-
-> A distinção é deliberada. O nível recomendado é um conselho para o jogador ter uma caçada satisfatória, e ignorá-lo é permitido. O nível mínimo é uma regra do servidor, e um treinador abaixo dele é impedido de entrar na área.
-
-> Os dois níveis são independentes e não precisam se encontrar. Uma área pode recomendar um nível abaixo do seu mínimo, se o design quiser um desafio mais exigente do que o recomendado.
-
-#### Área Bloqueada
-
-Quando o treinador está abaixo do nível mínimo da área, o card é exibido com **menor opacidade**, indicando que a área está bloqueada.
-
-O card bloqueado continua sendo clicável.
-
-> O card não some e não fica sem ação. Ele continua acessível para o jogador ver o que a área tem, e é no drawer que o bloqueio é aplicado de fato, com o botão de iniciar caçada desabilitado. Bloquear no card esconderia informação que o jogador talvez queira usar para planejar o futuro.
-
-O bloqueio é aplicado pelo servidor, e não pelo cliente.
-
-> Cabe ao servidor decidir se uma caçada é permitida. O cliente exibe a condição que o servidor informou, mas não pode permitir uma caçada que o servidor vai recusar.
+> O nível recomendado é um conselho para o jogador ter uma caçada satisfatória, e ignorá-lo é permitido. Nenhuma área é bloqueada por nível: a escolha de onde caçar é sempre do jogador.
 
 ### Busca
 
@@ -124,14 +108,6 @@ Fechar o drawer devolve o jogador ao modal de seleção, no ponto em que ele est
 > O drawer abre por cima do modal em vez de substituí-lo, para que o jogador possa fechar o drawer e escolher outra área sem ter que abrir o modal de novo. A seleção de uma área nunca obriga a recomeçar.
 
 A seleção não inicia a caçada diretamente. Ela abre os detalhes, para que o jogador veja o que está escolhendo antes de entrar.
-
-### Área Bloqueada
-
-No drawer de uma área bloqueada, o botão de iniciar caçada fica desabilitado e mostra o motivo: **Nível mínimo não alcançado**.
-
-> O bloqueio acontece no drawer, e não no card, porque é no drawer que a caçada é iniciada. O card bloqueado é clicável justamente para que o jogador chegue aqui e veja o motivo.
-
-> O botão mostra o motivo em vez de simplesmente estar apagado, para que o jogador entenda que a área não foi descartada por estar indisponível, e sim porque o treinador ainda não tem o nível necessário.
 
 ### Iniciar Caçada
 

@@ -24,7 +24,7 @@ O drawer não pausa o jogo. A simulação continua rodando com ele aberto.
 
 O drawer é dividido em três partes:
 
-1. **Cabeçalho**, com a imagem da área, o nome e os níveis.
+1. **Cabeçalho**, com a imagem da área, o nome e o nível recomendado.
 2. **Body**, com as criaturas e os itens da área.
 3. **Rodapé**, com o botão de iniciar caçada.
 
@@ -38,11 +38,11 @@ O **body é a única parte que rola**. Se a quantidade de criaturas e de itens f
 
 O cabeçalho exibe uma imagem ilustrativa da área. Para as fases alfa e beta, a imagem é um placeholder de cor sólida.
 
-Sobre a imagem são exibidos o **nome da área**, o **nível recomendado** e o **nível mínimo**, na mesma linha.
+Sobre a imagem são exibidos o **nome da área** e o **nível recomendado**, na mesma linha.
 
 > A imagem é ilustrativa e não mostra o mapa nem a posição das criaturas. Ela existe para o jogador reconhecer a área de imediato, e o placeholder de cor sólida é suficiente enquanto os assets não existem.
 
-Os níveis funcionam como no [card do modal](HUNT_AREA_SELECT.md#nível-recomendado-e-nível-mínimo).
+O nível recomendado funciona como no [card do modal](HUNT_AREA_SELECT.md#nível-recomendado).
 
 ## Body
 
@@ -78,13 +78,13 @@ O rodapé tem o botão **Iniciar caçada**, com a largura de 100% do drawer.
 
 > O botão ocupa toda a largura porque é a única ação do drawer. Ele é o que o jogador veio fazer aqui, e não deveria ter competes com nada.
 
-### Área Bloqueada
+### Stamina Insuficiente
 
-Quando o treinador está abaixo do nível mínimo da área, o botão fica desabilitado e mostra o motivo: **Nível mínimo não alcançado**.
+Quando o treinador tem menos de 30 minutos de stamina, o botão fica desabilitado e mostra o motivo: **Stamina insuficiente**.
 
-> O bloqueio acontece no drawer, e não no card, porque é no drawer que a caçada é iniciada. O card bloqueado é clicável justamente para que o jogador chegue aqui e veja o motivo.
+> O mínimo para iniciar uma caçada é 30 minutos de stamina, conforme [Mínimo para Caçar](TRAINER.md#mínimo-para-caçar). Um treinador pode estar caçando com menos do que isso, então a regra impede o início da caçada, e não a continuidade. Ela vale para qualquer início, incluindo trocar de área e reiniciar na mesma.
 
-> O botão mostra o motivo em vez de simplesmente estar apagado, para que o jogador entenda que a área não foi descartada por estar indisponível, e sim porque o treinador ainda não tem o nível necessário.
+> O botão mostra o motivo em vez de simplesmente estar apagado, para que o jogador entenda que a área não está indisponível, e sim que a stamina dele não é suficiente.
 
 ## Iniciar Caçada
 
