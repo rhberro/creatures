@@ -82,7 +82,7 @@ O rodapé tem o botão **Iniciar caçada**, com a largura de 100% do drawer.
 
 Quando o treinador tem menos de 30 minutos de stamina, o botão fica desabilitado e mostra o motivo: **Stamina insuficiente**.
 
-> O mínimo para iniciar uma caçada é 30 minutos de stamina, conforme [Mínimo para Caçar](TRAINER.md#mínimo-para-caçar). Um treinador pode estar caçando com menos do que isso, então a regra impede o início da caçada, e não a continuidade. Ela vale para qualquer início, incluindo trocar de área e reiniciar na mesma.
+> O mínimo para iniciar uma caçada é 30 minutos de stamina, conforme [Mínimo para Caçar](TRAINER.md#mínimo-para-caçar). Um treinador pode estar caçando com menos do que isso, então a regra impede o início da caçada, e não a continuidade. Ela vale para qualquer início, seja em uma área nova ou em uma já conhecida.
 
 > O botão mostra o motivo em vez de simplesmente estar apagado, para que o jogador entenda que a área não está indisponível, e sim que a stamina dele não é suficiente.
 
@@ -90,15 +90,15 @@ Quando o treinador tem menos de 30 minutos de stamina, o botão fica desabilitad
 
 Ao clicar em **Iniciar caçada**, começa uma contagem de **5 segundos**, exibida no próprio rótulo do botão, que fica bloqueado durante a espera.
 
-A contagem vai de **Iniciando caçada em 5** até **Iniciando caçada em 1**.
+A contagem vai de **Entrando na caçada em 5** até **Entrando na caçada em 1**.
 
 > A contagem acontece na mesma tela, com o drawer e o modal abertos. O jogador permanece vendo as duas camadas enquanto espera, em vez de ser levado a outra tela antes de entrar na área.
 
-> A espera vale para qualquer início de caçada, sem exceção: tanto quando o jogador está em uma cidade ou em outra área segura, quanto quando está no meio de outra caçada. Ela não é uma troca de área, é o tempo de entrada em um local de caça.
+> A espera vale para qualquer início de caçada, sem exceção: entrar em uma área nova e entrar de novo em uma área já conhecida passam pela mesma espera. Ela não é uma troca de área, é o tempo de entrada em um local de caça.
 
 > A demora existe para que a entrada não seja imediata. Um jogador que entra e sai de uma área em segundos consegue escapar de uma situação de forma imprevisível, como uma criatura desmaiando.
 
-Quando a contagem chega a zero, o drawer é fechado, o [modal de seleção](HUNT_AREA_SELECT.md) é fechado se ainda estiver aberto, e a caçada é iniciada.
+Quando a contagem chega a zero, o drawer é fechado, o [modal de seleção](HUNT_AREA_SELECT.md) é fechado se ainda estiver aberto, e a [tela de carregamento](PLAY_SCREEN.md#estados-da-tela) é exibida até a caçada estar pronta para ser renderizada.
 
 > Os dois fechamentos são para que o jogador entre na caçada sem nenhuma camada de interface por cima. O modal permanece aberto atrás do drawer desde a seleção da área, e sem fechá-lo a tela do jogo ficaria com as duas camadas visíveis depois da entrada.
 
@@ -106,11 +106,11 @@ Quando a contagem chega a zero, o drawer é fechado, o [modal de seleção](HUNT
 
 A regra da espera de 5 segundos está descrita em [Iniciar Caçada](HUNT_AREA_SELECT.md#iniciar-caçada).
 
-### Área Atual
+### Mesma Área
 
-Iniciar uma caçada na área em que o treinador já está é permitido: a caçada é reiniciada nela, com a mesma espera de 5 segundos, e sem qualquer bloqueio ou aviso.
+Iniciar uma caçada em uma área em que o treinador já caçou é permitido: a caçada é reiniciada nela, com a mesma espera de 5 segundos, e sem qualquer bloqueio ou aviso.
 
-> Não existe tratamento especial para este caso. Reiniciar na mesma área segue exatamente o mesmo fluxo de iniciar em outra, porque para o jogador é a mesma ação: sair de onde está e entrar em um local de caça.
+> Não existe tratamento especial para este caso. Voltar a uma área já conhecida segue exatamente o mesmo fluxo de entrar em uma nova, porque para o jogador é a mesma ação: escolher um local de caça e entrar nele.
 
 ## Responsividade
 
@@ -122,7 +122,7 @@ O drawer se adapta a telas menores escalando os elementos ao tamanho da tela, co
 
 Se a conexão com o servidor cai com o drawer aberto, o drawer é fechado junto com a tela.
 
-> Isso acontece por consequência da regra de [conexão da tela do jogo](PLAY_SCREEN.md#estados-da-tela): ao perder a conexão, o cliente sai da tela do jogo e exibe um dos estados de conexão. Ao restabelecer, os componentes da tela são montados de novo, e o modal e o drawer abrem fechados. Não é preciso nenhum tratamento específico para esse caso.
+> Isso acontece por consequência da regra de [conexão da tela do jogo](PLAY_SCREEN.md#estados-da-tela): ao perder a conexão, o cliente sai da tela do jogo e exibe a tela de conexão perdida. Ao restabelecer, os componentes da tela são montados de novo, e o modal e o drawer abrem fechados. Não é preciso nenhum tratamento específico para esse caso.
 
 ## Escopo das Fases Alfa e Beta
 
@@ -131,9 +131,3 @@ Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem 
 - A imagem da área é um placeholder de cor sólida.
 - O tooltip das criaturas mostra apenas o nome.
 - O tooltip dos itens mostra apenas o nome.
-
-## Pendências
-
-Os pontos abaixo ainda não foram decididos:
-
-- Os valores de tamanho mínimo e máximo da escala da interface.

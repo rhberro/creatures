@@ -6,11 +6,11 @@ Este documento cobre o modal que o jogador abre para escolher em que área vai c
 
 ## Visão Geral
 
-A seleção de área de caça é um modal aberto pelo botão **Áreas de Caça**, no menu central da [tela do jogo](PLAY_SCREEN.md), ou pelo [botão de play](PLAY_SCREEN.md#botão-de-play), que aparece apenas nas safe zones.
+A seleção de área de caça é um modal aberto pelo [botão de play](PLAY_SCREEN.md#botão-de-play) da [tela do jogo](PLAY_SCREEN.md), que aparece apenas nas safe zones. Ele é o único acesso aos locais de caça.
 
 O modal lista as áreas onde o treinador pode caçar, com os dados necessários para o jogador escolher. Selecionar uma área abre os [detalhes da área](HUNT_AREA_DETAILS.md), de onde a caçada é iniciada.
 
-> O botão de Áreas de Caça é, junto com o de Configurações, um dos poucos da toolbar que não é placeholder. Os demais ainda não têm função definida, conforme o [escopo das fases alfa e beta](#escopo-das-fases-alfa-e-beta).
+> Como o botão de play só existe nas safe zones, trocar de área no meio de uma caçada é impossível: o jogador precisa primeiro sair da caçada, conforme [Trocar de Área](HUNT.md#trocar-de-área).
 
 ## Mockup
 
@@ -113,21 +113,15 @@ A seleção não inicia a caçada diretamente. Ela abre os detalhes, para que o 
 
 Ao clicar em **Iniciar caçada**, o jogador leva **5 segundos** para entrar na área.
 
-Durante a espera, o botão fica desabilitado e mostra a contagem regressiva, de **Iniciando caçada em 5** até **Iniciando caçada em 1**.
+Durante a espera, o botão fica desabilitado e mostra a contagem regressiva, de **Entrando na caçada em 5** até **Entrando na caçada em 1**.
 
-> A espera vale para qualquer início de caçada, sem exceção: tanto quando o jogador está em uma cidade ou em outra área segura, quanto quando está no meio de outra caçada. Ela não é uma troca de área, é o tempo de entrada em um local de caça.
+> A espera vale para qualquer início de caçada, sem exceção: entrar em uma área nova e entrar de novo em uma área já conhecida passam pela mesma espera. Ela não é uma troca de área, é o tempo de entrada em um local de caça.
 
 > A contagem fica no próprio botão, que já é o lugar onde o jogador está olhando para decidir se entra. Uma tela de espera separada esconderia a ação que o jogador acabou de tomar.
 
 > A demora existe para que a entrada não seja imediata. Um jogador que entra e sai de uma área em segundos consegue escapar de uma situação de forma imprevisível, como uma criatura desmaiando.
 
-O que acontece durante esses 5 segundos e o que o jogador vê está em [Caçada](HUNT.md).
-
-### Trocar de Área
-
-O jogador que está caçando pode abrir este mesmo modal e escolher outra área, seguindo o mesmo fluxo: selecionar o card e depois iniciar a caçada no drawer.
-
-A troca passa pela mesma espera de 5 segundos de [iniciar caçada](#iniciar-caçada).
+Quando a contagem chega a zero, a tela dá lugar à [tela de carregamento](PLAY_SCREEN.md#estados-da-tela), que fica visível até a área estar pronta para ser renderizada. O que o jogador vê depois disso está em [Caçada](HUNT.md).
 
 ## Comportamento
 
@@ -137,7 +131,7 @@ O modal não pausa o jogo. A simulação continua rodando com ele aberto.
 
 Se a conexão com o servidor cai enquanto o modal está aberto, o modal é fechado junto com o restante da tela.
 
-> Isso acontece por consequência da regra de [conexão da tela do jogo](PLAY_SCREEN.md#estados-da-tela): ao perder a conexão, o cliente sai da tela do jogo e passa a exibir um dos estados de conexão. Ao restabelecer, os componentes da tela são montados de novo, e o modal e o drawer abrem fechados. Não é preciso nenhum tratamento específico para esse caso.
+> Isso acontece por consequência da regra de [conexão da tela do jogo](PLAY_SCREEN.md#estados-da-tela): ao perder a conexão, o cliente sai da tela do jogo e passa a exibir a tela de conexão perdida. Ao restabelecer, os componentes da tela são montados de novo, e o modal e o drawer abrem fechados. Não é preciso nenhum tratamento específico para esse caso.
 
 ## Escopo das Fases Alfa e Beta
 
@@ -145,9 +139,3 @@ Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem 
 
 - Os detalhes de como o modal se adapta a telas pequenas ainda serão definidos junto com o design da interface.
 - A quantidade de cards por página ainda não foi definida. O mockup sugere uma grade, mas o número de áreas por página depende do tamanho da tela.
-
-## Pendências
-
-Os pontos abaixo ainda não foram decididos:
-
-- O que o jogador vê durante os 5 segundos de espera.

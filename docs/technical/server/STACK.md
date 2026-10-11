@@ -63,7 +63,7 @@ O `@supabase/supabase-js` roda no servidor e é ele que faz a validação, usand
 
 Quando o token deixa de ser válido durante a partida, o servidor encerra o canal.
 
-> A renovação é responsabilidade do cliente, que acompanha a validade do token e reenvia o novo pelo mesmo canal. O servidor não renova nada: apenas recusa o token velho e fecha a conexão, e o cliente reage com o estado de [sessão expirada](../../game/PLAY_SCREEN.md).
+> A renovação é responsabilidade do cliente, que acompanha a validade do token e reenvia o novo pelo mesmo canal. O servidor não renova nada: apenas recusa o token velho e fecha a conexão, e o cliente reage com a tela de [conexão perdida](../../game/PLAY_SCREEN.md#estados-da-tela).
 
 ### Banco de Dados
 

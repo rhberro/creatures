@@ -21,7 +21,7 @@ O Creatures é composto por duas aplicações independentes que se comunicam ent
 | Validação | Valida apenas o formato da entrada antes de enviá-la | Valida se a ação é permitida e aplica as regras do jogo |
 | Regras e mecânicas | Nenhuma decisão de gameplay | Todas as regras, mecânicas e computações |
 | Persistência | Não guarda dados do jogo | Persiste o estado da conta e do treinador |
-| Conexão | Mantém a conexão e trata reconexão e sessão expirada | Mantém as conexões ativas e gerencia a queda delas |
+| Conexão | Mantém a conexão e, ao perdê-la, reconecta por ação do jogador | Mantém as conexões ativas e gerencia a queda delas |
 
 > A regra que resume a tabela: **o cliente mostra, o servidor decide.** Se a resposta muda ao desligar o servidor, ela é do servidor.
 

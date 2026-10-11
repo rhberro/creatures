@@ -12,11 +12,15 @@ O nível do treinador sobe apenas completando missões e missões diárias. Bata
 
 > O nível do treinador não tem relação com o nível das criaturas, que é individual de cada criatura. São duas progressões separadas: a do personagem do jogador e a das criaturas.
 
+> No futuro, o nível do treinador vai liberar benefícios, como melhor chance de captura e mais experiência para as criaturas. Por enquanto, apenas esses dois benefícios estão definidos.
+
 ## Stamina
 
 A stamina é o tempo de caça do treinador. Ela é medida em horas, e o máximo é **12 horas**, para todo e qualquer treinador.
 
 A stamina máxima é sempre 12 horas. Nenhum item, habilidade ou situação aumenta ou diminui esse valor.
+
+> A stamina é exibida na [toolbar da tela do jogo](PLAY_SCREEN.md#treinador), em uma barra com a porcentagem restante e, do lado, o tempo ainda disponível em horas e minutos.
 
 > Um número único e imutável existe para o jogo ter uma regra só. Enquanto o treinador tem stamina, ele pode caçar; quando ela acaba, ele para. Nenhum jogador tem tempo de caça extra por item ou por construção de personagem.
 
@@ -39,7 +43,7 @@ Enquanto caça, o treinador não recupera stamina. A recuperação só acontece 
 
 Iniciar uma caçada exige pelo menos **30 minutos** de stamina. Um treinador pode estar caçando com menos do que isso — a caçada começa com 30 minutos ou mais e consome até acabar —, mas não pode começar uma nova com menos.
 
-> A regra vale para qualquer início de caçada, sem exceção: entrar em uma área nova, [trocar de área](HUNT.md#trocar-de-área) e reiniciar na mesma área passam pelo mesmo mínimo.
+> A regra vale para qualquer início de caçada, sem exceção: entrar em uma área nova e entrar de novo em uma área já conhecida passam pelo mesmo mínimo.
 
 ### Sessão Offline
 
@@ -86,6 +90,8 @@ Quando a criatura ativa desmaia, a primeira criatura apta, da esquerda para a di
 
 > A ordem do time é o que decide a prioridade de entrada. Quem quer que a criatura C seja a primeira e que a A entre quando ela desmaiar deixa o time na ordem C, A, B.
 
+> A entrada não muda a ordem do time: a criatura que entrou e a desmaiada continuam nas suas posições. Quem entra é decidido pela ordem, e a batalha não reordena nada.
+
 Se não existir mais nenhuma criatura apta no time, a caçada é finalizada automaticamente e o treinador volta para a [cidade](SAFE_AREAS.md).
 
 ### Troca Manual
@@ -104,22 +110,12 @@ O armazenamento é onde ficam as criaturas capturadas que não estão no time, q
 
 O nome é provisório. No futuro o armazenamento pode ser um computador ou qualquer outra coisa, e o comportamento continua o mesmo: criaturas que não estão no time ficam guardadas.
 
-O jogador pode consultar o armazenamento de qualquer lugar, caçando ou não, para acompanhar as criaturas que capturou sem precisar voltar para a [cidade](SAFE_AREAS.md).
+O jogador pode consultar o armazenamento de qualquer lugar, caçando ou não, para acompanhar as criaturas que capturou sem precisar voltar para a [cidade](SAFE_AREAS.md). Não existe limite de criaturas guardadas.
 
-> A consulta de qualquer lugar existe porque sair da caçada para ver as criaturas seria punir o jogador por querer informação. A interface do armazenamento será documentada em um documento próprio quando o menu for definido.
+> A consulta de qualquer lugar existe porque sair da caçada para ver as criaturas seria punir o jogador por querer informação. A interface do armazenamento está em [Armazenamento](STORAGE.md).
 
 ## Escopo das Fases Alfa e Beta
 
 Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem ser revistos conforme o jogo evolui:
 
 - As missões e missões diárias, que dão experiência ao treinador, ainda não existem, então por enquanto o nível do treinador não sobe.
-- O armazenamento ainda não tem interface.
-
-## Pendências
-
-Os pontos abaixo ainda não foram decididos:
-
-- O que o nível do treinador libera.
-- Onde a stamina do treinador é exibida na interface.
-- Se existe limite de criaturas no armazenamento.
-- Se a criatura que entra no lugar da desmaiada muda de posição no time.

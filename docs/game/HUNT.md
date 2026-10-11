@@ -14,21 +14,19 @@ A caçada é a atividade principal do jogo. O treinador está em uma área de ca
 
 O jogador entra em uma caçada pelo drawer de [detalhes da área](HUNT_AREA_DETAILS.md#iniciar-caçada): seleciona a área, espera os 5 segundos e a caçada começa.
 
-A entrada funciona da mesma forma em qualquer situação, sem exceção: tanto quando o jogador está em uma cidade ou em outra área segura, quanto quando já está no meio de outra caçada.
+A entrada só termina quando a área está carregada: depois da contagem, a [tela de carregamento](PLAY_SCREEN.md#estados-da-tela) fica visível até a caçada estar pronta para ser renderizada.
+
+A entrada sempre acontece a partir de uma safe zone. O [modal de seleção](HUNT_AREA_SELECT.md) só é acessível pelo [botão de play](PLAY_SCREEN.md#botão-de-play), que existe apenas nas safe zones, então não há como iniciar uma caçada — nem trocar de área — no meio de outra caçada.
 
 ## Trocar de Área
 
-O jogador pode trocar de área durante a caçada, abrindo o [modal de seleção](HUNT_AREA_SELECT.md) e escolhendo outra área.
+Trocar de área não acontece durante a caçada. Como o [modal de seleção](HUNT_AREA_SELECT.md) só é acessível pelo [botão de play](PLAY_SCREEN.md#botão-de-play), que existe apenas nas safe zones, o jogador que está caçando não tem acesso à lista de áreas.
 
-A troca passa pelos mesmos 5 segundos de espera, e a caçada atual é encerrada para começar na nova área.
+Para trocar de área, ou para reiniciar a caçada na mesma, o jogador precisa primeiro sair da caçada atual. De volta à safe zone, ele abre o modal, escolhe a área — que pode ser a mesma onde estava — e inicia a caçada pelo [fluxo de sempre](#entrar-na-caçada).
 
-> A troca não é uma ação diferente de iniciar uma caçada. O jogador sai de onde está e entra em outro lugar, e é o mesmo fluxo com a mesma espera.
+> A troca e o reinício são a mesma ação: começar uma caçada. O que muda é só a área escolhida, e não vale uma regra própria para cada caso.
 
-## Reiniciar a Caçada
-
-O jogador pode selecionar a área em que já está caçando, e a caçada é reiniciada nela.
-
-> A regra completa está em [Iniciar Caçada](HUNT_AREA_DETAILS.md#iniciar-caçada).
+> O jogador encerra a caçada pelo botão **Finalizar Caçada**, no painel da sessão do [analisador de caçada](HUNT_ANALYZER.md), e só então escolhe a próxima área.
 
 ## Fim da Caçada
 
@@ -38,9 +36,11 @@ A caçada é finalizada automaticamente em três situações:
 - A [sessão offline](TRAINER.md#sessão-offline) da conta se esgota, mesmo com stamina sobrando.
 - O [time](TRAINER.md#time) do treinador não tem mais nenhuma criatura apta a batalhar.
 
-Nas três situações o treinador volta para a [cidade](SAFE_AREAS.md), e a caçada só recomeça se o jogador entrar em uma área de novo.
+Nas três situações o treinador volta para a [cidade](SAFE_AREAS.md), e a caçada só recomeça se o jogador entrar em uma área de novo. A volta passa pela [tela de carregamento](PLAY_SCREEN.md#estados-da-tela), como qualquer entrada em uma área.
 
-> Nas três situações o fim vem do jogo, e não de uma ação do jogador. Como o jogador encerra a caçada por vontade própria ainda está em aberto, nas [pendências](#pendências).
+O jogador também pode finalizar a caçada quando quiser, pelo botão **Finalizar Caçada** no painel da sessão do [analisador de caçada](HUNT_ANALYZER.md).
+
+> Nas três situações acima o fim vem do jogo, e não de uma ação do jogador. Finalizar a caçada é a escolha do jogador, e o que acontece com os itens obtidos nela ainda está em aberto, nas [pendências](#pendências).
 
 ## Áreas de Caça
 
@@ -56,6 +56,5 @@ Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem 
 
 Os pontos abaixo ainda não foram decididos:
 
-- O que o jogador vê durante o carregamento da área, depois da contagem de 5 segundos.
-- Como o jogador encerra a caçada e o que acontece com os itens obtidos nela.
+- O que acontece quando o jogador finaliza a caçada, incluindo o que ocorre com os itens obtidos nela.
 - O que é renderizado no canvas durante a caçada, incluindo vida, inimigos e o loot.

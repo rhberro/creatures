@@ -4,7 +4,7 @@ Este documento cobre a tela principal do jogo, onde o jogador passa a maior part
 
 > A **tela do jogo** é composta por uma **toolbar** fixa no topo, um **canvas**, que renderiza o mundo do jogo, e **elementos HTML flutuando sobre o canvas**, como o botão de play, as linguetas do time e a barra de habilidades. O que é renderizado dentro do canvas (mapa, criaturas, vida, chat, informações do alvo etc.) é tema de um documento próprio, assim como cada modal e menu aberto a partir dessa tela.
 
-> Este documento cobre **a tela em si**. Cada módulo aberto a partir dela — o modal de locais de caça, o menu do armazenamento, a configuração da barra de habilidades — tem documento próprio, e aqui só interessa o acesso a eles.
+> Este documento cobre **a tela em si**. Cada módulo aberto a partir dela — o modal da [mochila](BACKPACK.md), o modal de [locais de caça](HUNT_AREA_SELECT.md), o menu do [armazenamento](STORAGE.md), a configuração da barra de habilidades — tem documento próprio, e aqui só interessa o acesso a eles.
 
 ## Visão Geral
 
@@ -22,7 +22,7 @@ A tela fica na rota `/game` e o acesso é feito pela [tela de lista de treinador
 
 > O mockup é ilustrativo e mostra a disposição geral, não o design final. Ele serve para conferir a estrutura da tela, não cores, tipografia ou espaçamento.
 
-O mockup mostra a tela em uma safe zone. No topo, a toolbar ocupa toda a largura, com o avatar, o nome e o nível do treinador à esquerda e espaços para os botões dos menus central e direito. Abaixo do avatar, à esquerda, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura. O restante do meio da tela é a área do canvas.
+O mockup mostra a tela em uma safe zone. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome, com a barra de stamina e o tempo restante; depois de um divisor vertical vem a primeira seção de botões, e na extrema direita fica a segunda. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura. O restante do meio da tela é a área do canvas.
 
 ## Estrutura da Tela
 
@@ -36,6 +36,10 @@ A tela é dividida em três partes: a toolbar, o canvas e os elementos sobrepost
 
 Nenhum elemento HTML da tela, incluindo os modais abertos a partir dela, pausa ou bloqueia o canvas. A simulação segue rodando com ou sem modais abertos, e o que o jogador pode fazer em cada momento depende só do que está acontecendo no jogo, como estar em uma cidade ou em uma batalha.
 
+Modais e drawers têm tamanho fixo: depois de abertos, eles não mudam de altura nem de largura por causa do conteúdo. A única escala que existe é a da tela, para caber em telas menores.
+
+> O tamanho fixo existe para a interface não pular debaixo do jogador. Uma lista que muda o tamanho do modal a cada item mexe no que está ao redor e faz o jogador perder o lugar do clique.
+
 ## Visibilidade dos Elementos
 
 Parte dos elementos da tela existe só em alguns contextos. Elementos de safe zone, como o botão de play, aparecem na cidade e desaparecem nas batalhas, e o contrário também pode acontecer: elementos de batalha aparecem durante a caçada e não existem na cidade.
@@ -44,15 +48,15 @@ Parte dos elementos da tela existe só em alguns contextos. Elementos de safe zo
 
 ## Toolbar
 
-Barra no topo da tela, dividida em três áreas: treinador à esquerda, menu central e menu da direita, mais ou menos assim: `| Treinador ---------- Menu Central ---------- Menu Direita |`.
+Barra no topo da tela. Da esquerda para a direita: o treinador, um divisor vertical, a primeira seção de botões e, na extrema direita, a segunda seção de botões, mais ou menos assim: `| Treinador | Botões --------------------- Botões |`.
 
 ### Treinador
 
-No canto esquerdo ficam o avatar do treinador e, ao lado dele, o nome, com o nível logo abaixo.
+No canto esquerdo ficam o avatar do treinador e, ao lado dele, o nome. O nível do treinador fica em uma label abaixo do avatar, e abaixo do nome fica a barra de stamina, que mostra a porcentagem de stamina restante e, do lado, o tempo ainda disponível em horas e minutos — um treinador com 12 horas de stamina que já caçou por 4 horas vê 08:00 na label, conforme as regras de [stamina](TRAINER.md#stamina).
 
-### Menu Central
+### Menu da Esquerda
 
-Uma área centralizada com botões de acesso às funcionalidades do jogo. Por enquanto, o primeiro botão é o de **Áreas de Caça**, que abre o modal de [seleção de área de caça](HUNT_AREA_SELECT.md). Os demais botões são placeholders para funcionalidades que ainda serão definidas.
+Depois do divisor vertical ficam os botões de acesso às funcionalidades do jogo: o primeiro botão abre a [mochila](BACKPACK.md) e o segundo abre o [armazenamento](STORAGE.md). Os demais botões são placeholders para funcionalidades que ainda serão definidas.
 
 ### Menu da Direita
 
@@ -62,7 +66,7 @@ Uma área alinhada à direita, também com botões de acesso. O último botão, 
 
 ## Linguetas do Time
 
-Logo abaixo da toolbar e sobre o canvas, as linguetas ficam alinhadas à esquerda, em uma linha que começa debaixo do avatar do treinador, com no máximo 5 criaturas, conforme as regras do [time](TRAINER.md#time).
+Logo abaixo da toolbar e sobre o canvas, as linguetas ficam centralizadas na tela, em uma linha, com no máximo 5 criaturas, conforme as regras do [time](TRAINER.md#time).
 
 - **Slot preenchido:** lingueta maior, que exibe o avatar, o nome e o nível da criatura.
 - **Slot vazio:** lingueta menor, sem informações, indicando que ainda há espaço no time.
@@ -83,11 +87,19 @@ Clicar em uma criatura apta, em qualquer posição, a coloca no lugar da criatur
 
 O botão de play fica na lateral esquerda da tela, encostado na borda, um pouco acima da altura da barra de habilidades. Ele aparece apenas nas safe zones e desaparece nas batalhas.
 
-Ao clicar, o jogador abre o modal de [seleção de área de caça](HUNT_AREA_SELECT.md), o mesmo modal que o botão **Áreas de Caça** da toolbar abre.
+Ao clicar, o jogador abre o modal de [seleção de área de caça](HUNT_AREA_SELECT.md). Ele é o único acesso aos locais de caça: a toolbar não tem nenhum botão que abra esse modal.
 
-> O botão de play é a mesma ação em dois lugares, e não duas ações diferentes. A toolbar é o acesso de sempre; o play é o atalho que aparece quando o jogador está parado, em uma safe zone, que é justamente quando ele vai querer começar uma caçada.
+> O botão de play só existe nas safe zones, e o modal de locais de caça só se abre por ele. Por isso, trocar de área no meio de uma caçada é impossível: o jogador precisa primeiro sair da caçada, conforme [Trocar de Área](HUNT.md#trocar-de-área).
 
-> Como o botão de play não existe nas batalhas, a troca de área no meio de uma caçada é feita pelo botão Áreas de Caça da toolbar, que está sempre disponível.
+> O play é o atalho que aparece quando o jogador está parado, em uma safe zone, que é justamente quando ele vai querer começar uma caçada.
+
+## Painéis da Caçada
+
+Durante a caçada, o canto superior esquerdo da tela, logo abaixo da toolbar, recebe dois painéis flutuando sobre o canvas: o painel da sessão e o [analisador de caçada](HUNT_ANALYZER.md).
+
+Os painéis são flutuantes: ficam por cima do canvas, sem empurrá-lo, como a barra de habilidades. O que cada painel mostra, os números da análise e o botão de finalizar a caçada estão no documento do [analisador de caçada](HUNT_ANALYZER.md).
+
+> Os painéis existem só durante a caçada e somem nas safe zones, como os demais elementos de batalha.
 
 ## Barra de Habilidades
 
@@ -113,20 +125,18 @@ Em celulares, o jogo funciona somente na horizontal (modo paisagem). Quando a te
 
 ## Estados da Tela
 
-Quando o jogador não consegue ver o jogo, é exibida uma tela cheia com fundo preto, um título centralizado, uma descrição logo abaixo e, quando necessário, um botão. Todos os estados abaixo seguem esse mesmo modelo.
+Quando o jogador não consegue ver o jogo, é exibida uma tela cheia com fundo preto, um título centralizado, uma descrição logo abaixo e, quando necessário, um botão. Existem apenas dois estados, e eles cobrem todos os casos.
 
 | Estado | Título | Descrição | Botão |
 | --- | --- | --- | --- |
 | Carregando | Carregando | Estamos preparando o seu treinador. Isso pode levar alguns instantes. | Nenhum, com barra de carregamento |
-| Tentando reconectar | Tentando reconectar | Você perdeu a conexão com o servidor. Estamos tentando reconectar automaticamente. | Nenhum |
 | Conexão perdida | Conexão perdida | Você perdeu a conexão com o servidor. Clique no botão abaixo para tentar se reconectar. | Reconectar |
-| Sessão expirada | Sessão expirada | Sua sessão expirou. Faça login novamente para continuar jogando. | Fazer login |
 
-> A tela de **carregando** é exibida ao entrar no jogo, até que o estado do treinador seja recebido do serviço e esteja pronto para ser renderizado. Se não for possível carregar, é exibida a tela de conexão perdida.
+> A tela de **carregando** é exibida sempre que uma área precisa ser carregada: ao entrar no jogo, até que o estado do treinador seja recebido do serviço e esteja pronto para ser renderizado, e também ao entrar em uma caçada, ao voltar para a cidade e em qualquer outra troca de área. Se não for possível carregar, é exibida a tela de conexão perdida.
 
-> Ao perder a conexão, o cliente tenta reconectar sozinho algumas vezes, exibindo a tela de **tentando reconectar**. Se não conseguir, é exibida a tela de **conexão perdida**, e ao clicar em "Reconectar" o cliente volta para a tela de tentando reconectar. Se a conexão é restabelecida em qualquer momento, o jogador volta direto para o jogo, já com o estado atualizado.
+> A tela de **conexão perdida** cobre qualquer motivo que impeça o jogo de continuar: a conexão caiu, o servidor ficou fora do ar, a sessão foi perdida ou qualquer outro problema. Não existe tentativa automática de reconexão: é o botão que dispara a nova tentativa.
 
-> Se a sessão expira enquanto o jogador está no jogo, é exibida a tela de **sessão expirada**, e ao clicar em "Fazer login" o jogador é redirecionado para a [tela de login](AUTHENTICATION.md#tela-de-login). Se a sessão já estiver expirada ao acessar a tela do jogo, o usuário é redirecionado direto para a tela de login, conforme o [controle de acesso](AUTHENTICATION.md#controle-de-acesso).
+> Ao clicar em "Reconectar", o cliente tenta restabelecer a conexão. Se conseguir, o jogador volta direto para o jogo, já com o estado atualizado. Se não conseguir, permanece na tela e pode clicar de novo.
 
 ## Conexão e Atividade Idle
 
@@ -140,7 +150,6 @@ Cada conta só pode estar conectada com um treinador por vez. Se o jogador entra
 
 Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem ser revistos conforme o jogo evolui:
 
-- Os botões dos menus da toolbar, com exceção de Áreas de Caça e Configurações, são placeholders para funcionalidades ainda não definidas.
+- Os botões dos menus da toolbar, com exceção dos de Mochila, Armazenamento e Configurações, são placeholders para funcionalidades ainda não definidas.
 - Os detalhes de como a tela se adapta a telas pequenas ainda serão definidos junto com o design da interface.
-- A quantidade de tentativas automáticas de reconexão ainda não foi definida.
 - O painel de estatísticas da batalha, que aparece durante as caçadas, ainda não existe.
