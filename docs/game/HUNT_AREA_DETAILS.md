@@ -102,7 +102,7 @@ Quando a contagem chega a zero, o drawer é fechado, o [modal de seleção](HUNT
 
 > Os dois fechamentos são para que o jogador entre na caçada sem nenhuma camada de interface por cima. O modal permanece aberto atrás do drawer desde a seleção da área, e sem fechá-lo a tela do jogo ficaria com as duas camadas visíveis depois da entrada.
 
-> O que o jogador vê durante o carregamento da área não faz parte deste documento. Ele está em [Caçada](HUNT.md).
+> O que o jogador vê durante o carregamento da área não faz parte deste documento. A [tela de carregamento](PLAY_SCREEN.md#estados-da-tela) está descrita na tela do jogo, e o que vem depois dela está em [Caçada](HUNT.md).
 
 A regra da espera de 5 segundos está descrita em [Iniciar Caçada](HUNT_AREA_SELECT.md#iniciar-caçada).
 

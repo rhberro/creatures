@@ -92,7 +92,7 @@ Quando a criatura ativa desmaia, a primeira criatura apta, da esquerda para a di
 
 > A entrada não muda a ordem do time: a criatura que entrou e a desmaiada continuam nas suas posições. Quem entra é decidido pela ordem, e a batalha não reordena nada.
 
-Se não existir mais nenhuma criatura apta no time, a caçada é finalizada automaticamente e o treinador volta para a [cidade](SAFE_AREAS.md).
+Se não existir mais nenhuma criatura apta no time, a caçada é finalizada automaticamente e o treinador volta para a [cidade](CITY.md).
 
 ### Troca Manual
 
@@ -104,13 +104,21 @@ Para evitar spam, depois de uma troca manual qualquer nova troca fica bloqueada 
 
 > A troca é a única coisa que o jogador faz com o time durante uma caçada, além de receber criaturas capturadas em slots vagos. Adicionar, remover e reordenar criaturas não acontecem nos slots: os slots são para clicar e para acompanhar o estado das criaturas.
 
+## Experiência das Criaturas
+
+Cada criatura tem a própria experiência, ganha em batalhas. A criatura ativa, que está em campo, recebe a experiência da batalha.
+
+As criaturas do time que não estão em campo recebem 10% da experiência da batalha. A fração vale para todas as criaturas fora de campo, e uma criatura desmaiada não ganha experiência.
+
+> A experiência da criatura é separada do nível do treinador, conforme o [nível](#nível): são duas progressões independentes.
+
 ## Armazenamento
 
 O armazenamento é onde ficam as criaturas capturadas que não estão no time, quando o time já está cheio.
 
 O nome é provisório. No futuro o armazenamento pode ser um computador ou qualquer outra coisa, e o comportamento continua o mesmo: criaturas que não estão no time ficam guardadas.
 
-O jogador pode consultar o armazenamento de qualquer lugar, caçando ou não, para acompanhar as criaturas que capturou sem precisar voltar para a [cidade](SAFE_AREAS.md). Não existe limite de criaturas guardadas.
+O jogador pode consultar o armazenamento de qualquer lugar, caçando ou não, para acompanhar as criaturas que capturou sem precisar voltar para a [cidade](CITY.md). Não existe limite de criaturas guardadas.
 
 > A consulta de qualquer lugar existe porque sair da caçada para ver as criaturas seria punir o jogador por querer informação. A interface do armazenamento está em [Armazenamento](STORAGE.md).
 
@@ -119,3 +127,10 @@ O jogador pode consultar o armazenamento de qualquer lugar, caçando ou não, pa
 Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem ser revistos conforme o jogo evolui:
 
 - As missões e missões diárias, que dão experiência ao treinador, ainda não existem, então por enquanto o nível do treinador não sobe.
+- A experiência das criaturas fora de campo é de 10% da experiência da batalha, valor provisório.
+
+## Pendências
+
+Os pontos abaixo ainda não foram decididos:
+
+- O que são os itens do treinador: como são obtidos, quais existem e o que cada um faz.

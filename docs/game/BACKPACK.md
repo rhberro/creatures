@@ -47,7 +47,7 @@ No topo do conteúdo do modal, acima dos slots de itens, ficam os filtros rápid
 
 ### Slots de Itens
 
-Abaixo dos filtros ficam os slots de itens, em uma grade que ocupa o corpo do modal. A grade não tem número máximo de slots e não existe limite de itens: ela cresce com a quantidade de itens do treinador. O modal tem tamanho fixo — ele não muda com a quantidade de itens e só escala com o tamanho da tela, conforme a regra da [tela do jogo](PLAY_SCREEN.md#estrutura-da-tela).
+Abaixo dos filtros ficam os slots de itens, em uma grade que ocupa o corpo do modal. A grade não tem número máximo de slots e não existe limite de itens: ela cresce com a quantidade de itens do treinador, dentro do [tamanho fixo](INTERFACE.md#tamanho-fixo) do modal.
 
 A grade sempre exibe fileiras completas de 6 slots. A última fileira é completada com slots vazios, então um treinador com 7 itens vê duas fileiras: a primeira cheia e a segunda com 1 item e 5 slots vazios. Quando as fileiras dos itens não preenchem a área visível, fileiras vazias completam o espaço, e um treinador sem item nenhum vê a área inteira coberta de slots vazios.
 
@@ -57,7 +57,7 @@ A grade sempre exibe fileiras completas de 6 slots. A última fileira é complet
 
 Uma barra de rolagem fica fixa na lateral direita da área da grade, sempre visível, mesmo quando o conteúdo cabe na tela.
 
-> A barra sempre visível é preferível a aparecer e sumir: a barra que só aparece quando precisa muda a largura do conteúdo e faz o layout piscar. Com ela sempre presente, o jogador vê a mesma tela com ou sem rolagem.
+> A [barra de rolagem](INTERFACE.md#barra-de-rolagem) sempre visível vale para toda área rolável do jogo.
 
 ### Busca
 
@@ -75,13 +75,7 @@ Quando a busca não encontra nenhum item, o corpo do modal exibe a mensagem **Ne
 
 ### Popup do Item
 
-Ao passar o cursor sobre um item, é exibido um popup com informações dele. Por enquanto o popup exibe apenas o **nome do item**, e exibirá mais informações no futuro.
-
-O popup some quando o cursor sai do item. Clicar no item mantém o popup aberto: ele continua visível mesmo sem o cursor sobre o item, até o jogador clicar em outro lugar, como em um slot vazio.
-
-> O popup funciona nos dois formatos de tela. No desktop, o hover mostra o popup e tirar o cursor o esconde, sem clique nenhum. No celular, onde não existe hover, o clique no item mostra o popup e ele fica aberto até o jogador clicar em outro lugar, então ele lê a informação sem precisar segurar o toque em nenhum lugar da tela.
-
-> Esse é o comportamento padrão de popup de item e criatura no jogo. O [armazenamento](STORAGE.md#popup-da-criatura) usa o mesmo comportamento, e superfícies futuras devem segui-lo.
+Ao passar o cursor sobre um item, é exibido um popup com informações dele, seguindo o comportamento padrão de [popup](INTERFACE.md#popup) da interface. Por enquanto o popup exibe apenas o **nome do item**, e exibirá mais informações no futuro.
 
 ## Comportamento
 

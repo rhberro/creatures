@@ -48,19 +48,15 @@ A criatura ativa é destacada dentro da seção. As criaturas do time aparecem a
 
 A segunda seção, **Criaturas**, exibe uma grade de slots com as criaturas capturadas que não estão no time. A grade segue exatamente a mesma regra da [grade de itens da mochila](BACKPACK.md#slots-de-itens): fileiras completas de 6 slots, última fileira completada com slots vazios, fileiras vazias preenchendo a área visível e nenhum limite de criaturas.
 
-A ordem é a de captura: a criatura capturada mais recentemente aparece no primeiro slot, e a leitura segue de cima para baixo, da esquerda para a direita. O modal tem tamanho fixo, conforme a regra da [tela do jogo](PLAY_SCREEN.md#estrutura-da-tela).
+A ordem é a de captura: a criatura capturada mais recentemente aparece no primeiro slot, e a leitura segue de cima para baixo, da esquerda para a direita. O modal tem [tamanho fixo](INTERFACE.md#tamanho-fixo), como o da mochila.
 
 Uma barra de rolagem fica fixa na lateral direita da seção, sempre visível, mesmo quando o conteúdo cabe na tela.
 
-> A barra sempre visível segue a mesma regra da [mochila](BACKPACK.md#slots-de-itens): a barra que só aparece quando precisa muda a largura do conteúdo e faz o layout piscar.
+> A [barra de rolagem](INTERFACE.md#barra-de-rolagem) sempre visível vale para toda área rolável do jogo.
 
 ### Popup da Criatura
 
-Ao passar o cursor sobre uma criatura, é exibido um popup com informações dela. Por enquanto o popup exibe apenas o **nome da criatura**, e exibirá mais informações no futuro.
-
-O comportamento é idêntico ao do [popup do item](BACKPACK.md#popup-do-item): o hover exibe o popup e ele some quando o cursor sai, e o clique na criatura mantém o popup aberto até o jogador clicar em outro lugar.
-
-> O popup funciona nos dois formatos de tela pelo mesmo motivo do popup do item: no desktop, pelo hover, e no celular, pelo toque, sem precisar segurar o toque em nenhum lugar da tela.
+Ao passar o cursor sobre uma criatura, é exibido um popup com informações dela, seguindo o comportamento padrão de [popup](INTERFACE.md#popup) da interface. Por enquanto o popup exibe apenas o **nome da criatura**, e exibirá mais informações no futuro.
 
 ### Busca
 

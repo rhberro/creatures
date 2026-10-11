@@ -4,7 +4,7 @@ Este documento cobre a tela principal do jogo, onde o jogador passa a maior part
 
 > A **tela do jogo** é composta por uma **toolbar** fixa no topo, um **canvas**, que renderiza o mundo do jogo, e **elementos HTML flutuando sobre o canvas**, como o botão de play, as linguetas do time e a barra de habilidades. O que é renderizado dentro do canvas (mapa, criaturas, vida, chat, informações do alvo etc.) é tema de um documento próprio, assim como cada modal e menu aberto a partir dessa tela.
 
-> Este documento cobre **a tela em si**. Cada módulo aberto a partir dela — o modal da [mochila](BACKPACK.md), o modal de [locais de caça](HUNT_AREA_SELECT.md), o menu do [armazenamento](STORAGE.md), a configuração da barra de habilidades — tem documento próprio, e aqui só interessa o acesso a eles.
+> Este documento cobre **a tela em si**. Cada módulo aberto a partir dela — o modal da [mochila](BACKPACK.md), o modal de [locais de caça](HUNT_AREA_SELECT.md), o modal do [armazenamento](STORAGE.md), a configuração da barra de habilidades — tem documento próprio, e aqui só interessa o acesso a eles.
 
 ## Visão Geral
 
@@ -22,7 +22,7 @@ A tela fica na rota `/game` e o acesso é feito pela [tela de lista de treinador
 
 > O mockup é ilustrativo e mostra a disposição geral, não o design final. Ele serve para conferir a estrutura da tela, não cores, tipografia ou espaçamento.
 
-O mockup mostra a tela em uma safe zone. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome, com a barra de stamina e o tempo restante; depois de um divisor vertical vem a primeira seção de botões, e na extrema direita fica a segunda. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura. O restante do meio da tela é a área do canvas.
+O mockup mostra a tela na cidade. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome, com a barra de stamina e o tempo restante; depois de um divisor vertical vem a primeira seção de botões, e na extrema direita fica a segunda. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura. O restante do meio da tela é a área do canvas.
 
 ## Estrutura da Tela
 
@@ -30,19 +30,17 @@ A tela é dividida em três partes: a toolbar, o canvas e os elementos sobrepost
 
 - **Toolbar:** fixa no topo, ocupa 100% da largura da tela.
 - **Canvas:** ocupa 100% da largura e todo o restante da altura, abaixo da toolbar.
-- **Elementos sobrepostos:** o botão de play, as linguetas do time e a barra de habilidades ficam por cima do canvas.
+- **Elementos sobrepostos:** o botão de play, as linguetas do time, os painéis da caçada e a barra de habilidades ficam por cima do canvas.
 
 > A toolbar não fica sobre o canvas: ela ocupa o próprio espaço e o canvas começa logo abaixo, então nenhuma parte dele fica escondida. Já os elementos sobrepostos ficam por cima do canvas, que continua ocupando toda a sua área.
 
 Nenhum elemento HTML da tela, incluindo os modais abertos a partir dela, pausa ou bloqueia o canvas. A simulação segue rodando com ou sem modais abertos, e o que o jogador pode fazer em cada momento depende só do que está acontecendo no jogo, como estar em uma cidade ou em uma batalha.
 
-Modais e drawers têm tamanho fixo: depois de abertos, eles não mudam de altura nem de largura por causa do conteúdo. A única escala que existe é a da tela, para caber em telas menores.
-
-> O tamanho fixo existe para a interface não pular debaixo do jogador. Uma lista que muda o tamanho do modal a cada item mexe no que está ao redor e faz o jogador perder o lugar do clique.
+Modais e drawers seguem a convenção de [tamanho fixo](INTERFACE.md#tamanho-fixo): depois de abertos, eles não mudam de altura nem de largura por causa do conteúdo.
 
 ## Visibilidade dos Elementos
 
-Parte dos elementos da tela existe só em alguns contextos. Elementos de safe zone, como o botão de play, aparecem na cidade e desaparecem nas batalhas, e o contrário também pode acontecer: elementos de batalha aparecem durante a caçada e não existem na cidade.
+Parte dos elementos da tela existe só em alguns contextos. Elementos de cidade, como o botão de play, existem enquanto o treinador está na cidade e desaparecem nas batalhas, e o contrário também pode acontecer: elementos de batalha aparecem durante a caçada e não existem na cidade.
 
 > A tela não é a mesma em todos os momentos, e esconder o que não faz sentido é parte da informação. Um botão de começar a caçar não tem utilidade no meio de uma batalha, e um painel de estatísticas da batalha não tem utilidade na cidade.
 
@@ -71,7 +69,7 @@ Logo abaixo da toolbar e sobre o canvas, as linguetas ficam centralizadas na tel
 - **Slot preenchido:** lingueta maior, que exibe o avatar, o nome e o nível da criatura.
 - **Slot vazio:** lingueta menor, sem informações, indicando que ainda há espaço no time.
 
-> A lingueta da criatura ativa é destacada em vermelho. Se o treinador estiver em uma batalha, é a criatura que está em campo. Se estiver fora de uma batalha, em uma cidade por exemplo, é a criatura que será chamada assim que uma batalha começar.
+> A lingueta da criatura ativa é destacada. Se o treinador estiver em uma batalha, é a criatura que está em campo. Se estiver na cidade, por exemplo, é a criatura que será chamada assim que uma batalha começar.
 
 > A vida da criatura não é exibida na lingueta, pois já é renderizada no canvas. Se a criatura estiver desmaiada, o avatar dela é exibido em tons de cinza e com opacidade reduzida.
 
@@ -85,13 +83,13 @@ Clicar em uma criatura apta, em qualquer posição, a coloca no lugar da criatur
 
 ## Botão de Play
 
-O botão de play fica na lateral esquerda da tela, encostado na borda, um pouco acima da altura da barra de habilidades. Ele aparece apenas nas safe zones e desaparece nas batalhas.
+O botão de play fica na lateral esquerda da tela, encostado na borda, um pouco acima da altura da barra de habilidades. Ele aparece apenas na cidade e desaparece nas batalhas.
 
 Ao clicar, o jogador abre o modal de [seleção de área de caça](HUNT_AREA_SELECT.md). Ele é o único acesso aos locais de caça: a toolbar não tem nenhum botão que abra esse modal.
 
-> O botão de play só existe nas safe zones, e o modal de locais de caça só se abre por ele. Por isso, trocar de área no meio de uma caçada é impossível: o jogador precisa primeiro sair da caçada, conforme [Trocar de Área](HUNT.md#trocar-de-área).
+> O botão de play só existe na cidade, e o modal de locais de caça só se abre por ele. Por isso, trocar de área no meio de uma caçada é impossível: o jogador precisa primeiro sair da caçada, conforme [Trocar de Área](HUNT.md#trocar-de-área).
 
-> O play é o atalho que aparece quando o jogador está parado, em uma safe zone, que é justamente quando ele vai querer começar uma caçada.
+> O play é o atalho que aparece quando o jogador está parado, na cidade, que é justamente quando ele vai querer começar uma caçada.
 
 ## Painéis da Caçada
 
@@ -99,7 +97,7 @@ Durante a caçada, o canto superior esquerdo da tela, logo abaixo da toolbar, re
 
 Os painéis são flutuantes: ficam por cima do canvas, sem empurrá-lo, como a barra de habilidades. O que cada painel mostra, os números da análise e o botão de finalizar a caçada estão no documento do [analisador de caçada](HUNT_ANALYZER.md).
 
-> Os painéis existem só durante a caçada e somem nas safe zones, como os demais elementos de batalha.
+> Os painéis existem só durante a caçada e somem na cidade, como os demais elementos de batalha.
 
 ## Barra de Habilidades
 

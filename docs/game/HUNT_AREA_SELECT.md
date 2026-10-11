@@ -2,15 +2,15 @@
 
 Este documento cobre o modal que o jogador abre para escolher em que área vai caçar, o passo que acontece antes de entrar na caçada.
 
-> Este documento cobre **a tela de escolha**. O que acontece depois que o jogador entra na área está em [Caçada](HUNT.md), e a cidade de onde ele sai está em [Áreas Seguras](SAFE_AREAS.md). Os detalhes de uma área selecionada estão em [Detalhes da Área de Caça](HUNT_AREA_DETAILS.md).
+> Este documento cobre **a tela de escolha**. O que acontece depois que o jogador entra na área está em [Caçada](HUNT.md), e a [cidade](CITY.md) de onde ele sai está em [Cidade](CITY.md). Os detalhes de uma área selecionada estão em [Detalhes da Área de Caça](HUNT_AREA_DETAILS.md).
 
 ## Visão Geral
 
-A seleção de área de caça é um modal aberto pelo [botão de play](PLAY_SCREEN.md#botão-de-play) da [tela do jogo](PLAY_SCREEN.md), que aparece apenas nas safe zones. Ele é o único acesso aos locais de caça.
+A seleção de área de caça é um modal aberto pelo [botão de play](PLAY_SCREEN.md#botão-de-play) da [tela do jogo](PLAY_SCREEN.md), que aparece apenas na cidade. Ele é o único acesso aos locais de caça.
 
 O modal lista as áreas onde o treinador pode caçar, com os dados necessários para o jogador escolher. Selecionar uma área abre os [detalhes da área](HUNT_AREA_DETAILS.md), de onde a caçada é iniciada.
 
-> Como o botão de play só existe nas safe zones, trocar de área no meio de uma caçada é impossível: o jogador precisa primeiro sair da caçada, conforme [Trocar de Área](HUNT.md#trocar-de-área).
+> Como o botão de play só existe na cidade, trocar de área no meio de uma caçada é impossível: o jogador precisa primeiro sair da caçada, conforme [Trocar de Área](HUNT.md#trocar-de-área).
 
 ## Mockup
 

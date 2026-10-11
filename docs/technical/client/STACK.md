@@ -21,7 +21,7 @@ Este documento lista as tecnologias escolhidas para o cliente, o motivo de cada 
 
 ## Bun
 
-O Bun é o runtime do servidor, o gerenciador de pacotes e o runner de testes do projeto.
+O Bun é o gerenciador de pacotes e o runner de testes do projeto.
 
 > Não se usa `npm`, `yarn` nem `pnpm`. Um único gerenciador de pacotes em todo o projeto, com um lockfile só.
 
@@ -55,7 +55,7 @@ O React cuida dos elementos de interface, e não do mundo do jogo, que é desenh
 
 O roteamento entre as telas é feito pelo React Router.
 
-> Escolhido porque o controle de acesso descrito em [Autenticação](../../game/AUTHENTICATION.md) é o problema central do roteamento aqui: das nove rotas, cinco são públicas e quatro exigem sessão. Isso é uma rota intermediária que verifica a sessão e redireciona, e é exatamente o que o React Router resolve de forma direta.
+> Escolhido porque o controle de acesso descrito em [Autenticação](../../game/AUTHENTICATION.md) é o problema central do roteamento aqui: das nove rotas, seis são públicas e três exigem sessão. Isso é uma rota intermediária que verifica a sessão e redireciona, e é exatamente o que o React Router resolve de forma direta.
 
 O TanStack Router foi considerado e descartado. Os diferenciais dele são search params tipado e code splitting automático por rota, e nenhum dos dois se aplica: o estado do jogo chega pelo WebSocket e não por busca de dados na rota.
 
