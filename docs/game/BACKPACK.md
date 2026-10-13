@@ -8,6 +8,8 @@ Este documento cobre o modal da mochila, onde o jogador vê todos os itens que o
 
 A mochila é um modal aberto pelo primeiro botão do menu da esquerda da [toolbar](PLAY_SCREEN.md#menu-da-esquerda) da tela do jogo, onde o jogador vê a lista de todos os itens do treinador. Por enquanto o jogador só consulta os itens: nenhuma interação com eles existe ainda, e elas serão definidas no futuro.
 
+> A mochila é só de consulta, e vender item acontece fora dela: a venda é uma aba da [loja](STORE.md).
+
 O modal segue o mesmo layout do [modal de locais de caça](HUNT_AREA_SELECT.md): título no topo, conteúdo no corpo e rodapé com a busca. O que ele tem de diferente são os filtros por categoria e a grade de slots de itens no lugar da lista de áreas.
 
 > O modal não pausa o jogo. A simulação continua rodando com ele aberto, conforme a regra da [tela do jogo](PLAY_SCREEN.md): nenhum elemento da tela, inclusive os modais abertos a partir dela, pausa ou bloqueia o jogo.
@@ -36,11 +38,11 @@ No canto superior direito há um botão circular com o ícone de fechar, que fec
 
 ### Filtros Rápidos
 
-No topo do conteúdo do modal, acima dos slots de itens, ficam os filtros rápidos, exibidos como abas: **Todos**, **Consumíveis**, **Captura** e **Variados**. O filtro ativo fica destacado, e clicar em outro filtro troca a exibição.
+No topo do conteúdo do modal, acima dos slots de itens, ficam os filtros rápidos, exibidos como abas: **Todos**, **Consumíveis**, **Dispositivos** e **Variados**. O filtro ativo fica destacado, e clicar em outro filtro troca a exibição.
 
 - **Todos:** exibe todos os itens do treinador, sem olhar categoria.
 - **Consumíveis:** exibe os itens de uso, como as poções de cura.
-- **Captura:** exibe os dispositivos de captura de criaturas.
+- **Dispositivos:** exibe os dispositivos usados para capturar criaturas.
 - **Variados:** exibe os itens que não se encaixam nas outras categorias, como os drops de criaturas.
 
 > A categoria é definida no próprio item, e é ela que decide em qual filtro o item aparece. Um item sem categoria alguma aparece apenas no filtro Todos, e Variados é a categoria que fica com o que sobra: o drop de criatura e o item que ainda não tem lugar nas outras três.
@@ -49,9 +51,11 @@ No topo do conteúdo do modal, acima dos slots de itens, ficam os filtros rápid
 
 Abaixo dos filtros ficam os slots de itens, em uma grade que ocupa o corpo do modal. A grade não tem número máximo de slots e não existe limite de itens: ela cresce com a quantidade de itens do treinador, dentro do [tamanho fixo](INTERFACE.md#tamanho-fixo) do modal.
 
-A grade sempre exibe fileiras completas de 6 slots. A última fileira é completada com slots vazios, então um treinador com 7 itens vê duas fileiras: a primeira cheia e a segunda com 1 item e 5 slots vazios. Quando as fileiras dos itens não preenchem a área visível, fileiras vazias completam o espaço, e um treinador sem item nenhum vê a área inteira coberta de slots vazios.
+A grade sempre exibe fileiras completas: a última fileira é completada com slots vazios, então um jogador com itens para uma fileira e meia vê a segunda fileira completa, com a metade vazia. Quando as fileiras dos itens não preenchem a área visível, fileiras vazias completam o espaço, e um treinador sem item nenhum vê a área inteira coberta de slots vazios.
 
-> A regra das fileiras completas existe para o jogador entender que ali existe um slot, e não um espaço sobrando. Com ela, o espaço vazio no final da lista é no máximo de 5 slots, e nenhum quadrado branco solto aparece na tela.
+O número de colunas não é regra: ele depende do tamanho do modal e será validado no design da interface. O que a grade garante é a forma — fileira completa, espaço vazio preenchido —, e não uma quantidade fixa de colunas.
+
+> A regra das fileiras completas existe para o jogador entender que ali existe um slot, e não um espaço sobrando. Com ela, nenhum quadrado branco solto aparece na tela.
 
 > As fileiras vazias que completam a área visível mantêm o layout estável: a lista não muda de tamanho com a quantidade de itens, e o rodapé com a busca continua no mesmo lugar.
 
@@ -95,9 +99,3 @@ Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem 
 - O popup exibe apenas o nome do item. Mais informações serão adicionadas depois.
 - O rodapé tem apenas o campo de busca. A paginação ainda não existe.
 - A categorização é fixa nos quatro filtros definidos e será revista quando existirem mais tipos de item.
-
-## Pendências
-
-Os pontos abaixo ainda não foram decididos:
-
-- Onde o jogador compra os itens que aparecem na mochila.

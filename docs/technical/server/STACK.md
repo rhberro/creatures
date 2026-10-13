@@ -123,5 +123,6 @@ Decisões que afetam a estrutura do servidor e ainda não foram tomadas:
 
 - Como o estado em memória é persistido, e com que frequência.
 - Como o servidor se comporta com mais de uma instância, já que o estado de um jogador fica no processo dele.
+- Como a cidade agrupa os jogadores em instâncias, e como a presença de outros jogadores aparece para quem está em outro processo.
 - Qual a frequência do ciclo de simulação.
 - O formato do protocolo de mensagens, que ainda não foi escrito.

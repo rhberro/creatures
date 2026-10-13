@@ -46,7 +46,7 @@ A criatura ativa é destacada dentro da seção. As criaturas do time aparecem a
 
 ### Criaturas Capturadas
 
-A segunda seção, **Criaturas**, exibe uma grade de slots com as criaturas capturadas que não estão no time. A grade segue exatamente a mesma regra da [grade de itens da mochila](BACKPACK.md#slots-de-itens): fileiras completas de 6 slots, última fileira completada com slots vazios, fileiras vazias preenchendo a área visível e nenhum limite de criaturas.
+A segunda seção, **Criaturas**, exibe uma grade de slots com as criaturas capturadas que não estão no time. A grade segue exatamente a mesma regra da [grade de itens da mochila](BACKPACK.md#slots-de-itens): fileiras completas, última fileira completada com slots vazios, fileiras vazias preenchendo a área visível e nenhum limite de criaturas.
 
 A ordem é a de captura: a criatura capturada mais recentemente aparece no primeiro slot, e a leitura segue de cima para baixo, da esquerda para a direita. O modal tem [tamanho fixo](INTERFACE.md#tamanho-fixo), como o da mochila.
 

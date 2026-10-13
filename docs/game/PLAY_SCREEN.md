@@ -22,7 +22,7 @@ A tela fica na rota `/game` e o acesso é feito pela [tela de lista de treinador
 
 > O mockup é ilustrativo e mostra a disposição geral, não o design final. Ele serve para conferir a estrutura da tela, não cores, tipografia ou espaçamento.
 
-O mockup mostra a tela na cidade. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome, com a barra de stamina e o tempo restante; depois de um divisor vertical vem a primeira seção de botões, e na extrema direita fica a segunda. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura. O restante do meio da tela é a área do canvas.
+O mockup mostra a tela na cidade. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome; depois de um divisor vertical vem a primeira seção de botões; na direita ficam os totais de gold coins e de diamantes, e depois deles a segunda seção de botões. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura, e as barras abaixo dos slots. O restante do meio da tela é a área do canvas.
 
 ## Estrutura da Tela
 
@@ -50,7 +50,7 @@ Barra no topo da tela. Da esquerda para a direita: o treinador, um divisor verti
 
 ### Treinador
 
-No canto esquerdo ficam o avatar do treinador e, ao lado dele, o nome. O nível do treinador fica em uma label abaixo do avatar, e abaixo do nome fica a barra de stamina, que mostra a porcentagem de stamina restante e, do lado, o tempo ainda disponível em horas e minutos — um treinador com 12 horas de stamina que já caçou por 4 horas vê 08:00 na label, conforme as regras de [stamina](TRAINER.md#stamina).
+No canto esquerdo ficam o avatar do treinador e, ao lado dele, o nome, com o nível do treinador em uma label abaixo do avatar.
 
 ### Menu da Esquerda
 
@@ -58,7 +58,7 @@ Depois do divisor vertical ficam os botões de acesso às funcionalidades do jog
 
 ### Menu da Direita
 
-Uma área alinhada à direita, também com botões de acesso. O último botão, na extrema direita, é o de **Configurações**, o menu principal do jogo, com as configurações do jogo e outras opções. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
+Uma área alinhada à direita. Antes dos botões ficam os totais das duas moedas do treinador, cada um em seu próprio retângulo: os **gold coins**, gastos e ganhos na [loja](STORE.md), e os **diamantes**, gastos em serviços como a conta paga, conforme as [moedas](TRAINER.md#moedas). Depois vêm os botões de acesso: o último, na extrema direita, é o de **Configurações**, o menu principal do jogo, com as configurações do jogo e outras opções. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
 
 > Dentro do menu Configurações ficam a opção "Trocar treinador", que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), e a opção "Sair", que encerra a sessão conforme descrito na [sessão](AUTHENTICATION.md#sessão), e é a mesma ação da opção "Sair" da tela de lista de treinadores. O comportamento da desconexão está em [conexão e atividade idle](#conexão-e-atividade-idle).
 
@@ -71,13 +71,13 @@ Logo abaixo da toolbar e sobre o canvas, as linguetas ficam centralizadas na tel
 
 > A lingueta da criatura ativa é destacada. Se o treinador estiver em uma batalha, é a criatura que está em campo. Se estiver na cidade, por exemplo, é a criatura que será chamada assim que uma batalha começar.
 
-> A vida da criatura não é exibida na lingueta, pois já é renderizada no canvas. Se a criatura estiver desmaiada, o avatar dela é exibido em tons de cinza e com opacidade reduzida.
+> A vida da criatura não é exibida na lingueta: ela é renderizada no canvas e acompanhada na [barra de habilidades](SKILL_BAR.md), que mostra a vida da criatura ativa. Se a criatura estiver desmaiada, o avatar dela é exibido em tons de cinza e com opacidade reduzida.
 
 ### Troca de Criatura
 
 Clicar em uma criatura apta, em qualquer posição, a coloca no lugar da criatura ativa, e a troca é instantânea. As regras da troca, incluindo a espera entre uma troca e outra, estão em [Troca Manual](TRAINER.md#troca-manual).
 
-> Durante a espera, os slots recebem uma máscara com a contagem, para o jogador entender que a troca está em cooldown, e não impedida por um erro.
+> Durante a espera, os slots recebem uma máscara com a contagem e a [animação de cooldown](INTERFACE.md#animação-de-cooldown), para o jogador entender que a troca está em cooldown, e não impedida por um erro.
 
 > As linguetas servem para clicar e selecionar a criatura em batalha e para acompanhar o estado das criaturas. Adicionar, remover e reordenar criaturas não acontece nos slots: o remanejo do time é feito fora de uma caçada, na cidade, conforme [Time](TRAINER.md#time).
 
@@ -99,23 +99,31 @@ Os painéis são flutuantes: ficam por cima do canvas, sem empurrá-lo, como a b
 
 > Os painéis existem só durante a caçada e somem na cidade, como os demais elementos de batalha.
 
+## Botão da Loja
+
+O botão da loja fica flutuando sobre o canvas, logo acima da barra de habilidades. Ele existe só na cidade e desaparece nas batalhas, como os demais elementos de cidade.
+
+Ao clicar, o jogador abre o modal da [loja](STORE.md). A loja também é acessível pelo NPC da cidade, e os dois caminhos abrem o mesmo modal.
+
+> O botão segue a regra dos elementos de cidade: ele existe onde dá para usá-lo. A loja é da cidade, e durante a caçada o botão não tem função.
+
 ## Barra de Habilidades
 
-Barra flutuando sobre o canvas, na parte inferior da tela, com 7 slots divididos em 3 categorias:
+Barra flutuando sobre o canvas, na parte inferior da tela, com 7 slots divididos em 3 categorias. Abaixo dos slots ficam duas barras: a vida da criatura ativa e a [stamina](TRAINER.md#stamina) do treinador.
 
-- **2 slots de cura:** o jogador escolhe o que vai em cada um, entre poções de cura e magias de cura da criatura em batalha, quando ela as tiver. Uma criatura com habilidade de cura pode ocupar os dois slots com uma poção e uma magia, em qualquer ordem.
-- **4 slots de habilidades:** as habilidades da criatura ativa, de ataque, suporte, defesa, o que for, exceto as de cura, que ficam na primeira categoria.
-- **1 slot de dispositivo de captura:** uma vez selecionado, o dispositivo é usado automaticamente para tentar a captura quando uma criatura selvagem desmaia.
+- **4 slots de habilidades:** as habilidades ativas da criatura em campo, usadas automaticamente pela criatura durante a caçada.
+- **2 slots de consumíveis:** os consumíveis que a criatura usa em si mesma, como poções de cura, cada um com o seu gatilho de vida.
+- **1 slot de dispositivo de captura:** uma vez selecionado, o dispositivo é usado automaticamente para tentar a captura quando uma criatura selvagem desmaia. Sem dispositivo selecionado, a tentativa de captura não acontece, e o resto da caçada segue normalmente.
 
 Por meio dela o jogador acompanha o que está sendo usado e o tempo de recarga (cooldown) de cada habilidade.
 
-> Os slots são clicáveis, e cada um abre o fluxo de configuração do que vai naquele slot. Como configurar curas, habilidades e o dispositivo de captura será descrito em um documento próprio da barra de habilidades.
+> Os slots são clicáveis, e cada um abre o fluxo de configuração do que vai naquele slot. Como configurar curas, habilidades e o dispositivo de captura está em [Barra de Habilidades](SKILL_BAR.md).
 
-> As habilidades e as curas exibidas são da criatura ativa, então esses slots mudam quando a criatura ativa muda. Uma criatura pode ter muito mais habilidades do que as 4 equipadas.
+> As habilidades exibidas são da criatura ativa, então esses slots mudam quando a criatura ativa muda. Uma criatura pode ter muito mais habilidades do que as 4 equipadas.
 
 ## Responsividade
 
-O jogo precisa rodar bem em celulares e desktops, em qualquer tamanho de tela, e os elementos da tela se adaptam ao espaço disponível. Os detalhes de como a toolbar, as linguetas e a barra de habilidades se comportam em telas pequenas serão definidos junto com o design da interface.
+O jogo precisa rodar bem em celulares e desktops, em qualquer tamanho de tela, e os elementos da tela se adaptam ao espaço disponível. Os detalhes de como a toolbar, as linguetas e a barra de habilidades se comportam em telas pequenas serão definidos em [Interface](INTERFACE.md).
 
 ### Orientação
 
@@ -140,7 +148,7 @@ Quando o jogador não consegue ver o jogo, é exibida uma tela cheia com fundo p
 
 Cada conta só pode estar conectada com um treinador por vez. Se o jogador entra com um segundo treinador, ou com o mesmo treinador em outra aba ou dispositivo, a conexão anterior é derrubada e exibe a tela de [conexão perdida](#estados-da-tela).
 
-> Fechar a aba ou o navegador não envia nenhum aviso ao serviço, que percebe a queda da conexão por conta própria. Se o treinador estiver caçando, a caçada continua sozinha (idle) até o fim da [sessão offline](TRAINER.md#sessão-offline) da conta, consumindo stamina normalmente. Ao reabrir o jogo, o jogador encontra tudo atualizado.
+> Fechar a aba ou o navegador não envia nenhum aviso ao serviço, que percebe a queda da conexão por conta própria. Se o treinador estiver caçando, a caçada continua sozinha (idle) até o fim da [sessão offline](TRAINER.md#sessão-offline) da conta, consumindo stamina normalmente, e ao reabrir o jogo o jogador encontra tudo atualizado. Se o treinador estiver na [cidade](CITY.md), não existe nada para continuar: ele apenas desconecta.
 
 > Ao usar "Trocar treinador" no menu Configurações, o cliente avisa o serviço de que está se desconectando. Nesse caso o treinador para qualquer atividade e não continua jogando sozinho.
 

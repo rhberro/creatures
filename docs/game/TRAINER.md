@@ -20,13 +20,13 @@ A stamina é o tempo de caça do treinador. Ela é medida em horas, e o máximo 
 
 A stamina máxima é sempre 12 horas. Nenhum item, habilidade ou situação aumenta ou diminui esse valor.
 
-> A stamina é exibida na [toolbar da tela do jogo](PLAY_SCREEN.md#treinador), em uma barra com a porcentagem restante e, do lado, o tempo ainda disponível em horas e minutos.
+> A stamina é exibida na [barra de habilidades](SKILL_BAR.md), em uma barra com a porcentagem restante e, do lado, o tempo ainda disponível em horas e minutos.
 
 > Um número único e imutável existe para o jogo ter uma regra só. Enquanto o treinador tem stamina, ele pode caçar; quando ela acaba, ele para. Nenhum jogador tem tempo de caça extra por item ou por construção de personagem.
 
 ### Recuperação
 
-A stamina recupera sempre que o treinador não está caçando. Estar na cidade, com o jogo aberto ou desconectado não faz diferença: o que bloqueia a recuperação é apenas estar em uma caçada.
+A stamina recupera sempre que o treinador não está caçando. Online, offline, na cidade ou em qualquer outro local, andando ou parado: não importa onde nem como, o que bloqueia a recuperação é apenas estar em uma caçada. A recuperação é o passar do tempo, e não uma atividade do treinador.
 
 A velocidade da recuperação depende do tipo de conta:
 
@@ -60,13 +60,24 @@ A stamina é do treinador, não da conta. Cada treinador tem a sua própria stam
 
 O tipo de conta é da conta, e não do treinador. A velocidade de recuperação e a duração da sessão offline valem para todos os treinadores da conta.
 
+## Moedas
+
+O treinador lida com duas moedas, e as duas ficam visíveis na [toolbar](PLAY_SCREEN.md#menu-da-direita) da tela do jogo.
+
+- **Gold coin:** a moeda do jogo, ganha vendendo loot e gasta em NPCs e comércios. As regras dela estão na [loja da cidade](CITY.md#lojas).
+- **Diamante:** a moeda premium, obtida com doações em dinheiro real e gasta em serviços. Por enquanto, no alfa e no beta, o único uso do diamante é comprar a conta paga: **30 diamantes por 30 dias de conta paga**.
+
+> O diamante é a ponte entre o dinheiro real e o jogo: o jogador faz uma doação, recebe diamantes e troca por serviços. Os benefícios da conta paga estão em [Recuperação](TRAINER.md#recuperação) e [Sessão Offline](TRAINER.md#sessão-offline).
+
+> O valor do diamante ainda não está definido. A referência é algo em torno de R$20 por 50 diamantes.
+
 ## Time
 
 O treinador carrega consigo no máximo **5 criaturas**. O time é exibido nas [linguetas da tela do jogo](PLAY_SCREEN.md#linguetas-do-time).
 
 ### Fora da Caçada
 
-Fora de uma caçada, na cidade, o treinador pode remanejar o time à vontade: adicionar criaturas, remover criaturas e trocar. A ordem do time também pode ser alterada, e é ela que define quem entra em campo quando uma criatura desmaia.
+Fora de uma caçada, na [cidade](CITY.md), o treinador pode remanejar o time à vontade: adicionar criaturas, remover criaturas e trocar. A ordem do time também pode ser alterada, e é ela que define quem entra em campo quando uma criatura desmaia.
 
 ### Durante a Caçada
 
@@ -80,7 +91,7 @@ Com o time cheio, qualquer criatura capturada vai para o [armazenamento](#armaze
 
 ## Criaturas Desmaiadas
 
-Uma criatura desmaiada não entra mais em batalha, e o slot dela é exibido em tons de cinza com opacidade reduzida, para o jogador perceber de longe.
+Uma criatura desmaiada não entra mais em batalha, e o slot dela é exibido em tons de cinza com opacidade reduzida, para o jogador perceber de longe. Ela volta a batalhar depois de ser curada no [local de cura](CITY.md#local-de-cura) da cidade.
 
 ### Entrada Automática
 
@@ -134,3 +145,5 @@ Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem 
 Os pontos abaixo ainda não foram decididos:
 
 - O que são os itens do treinador: como são obtidos, quais existem e o que cada um faz.
+- Onde e como o jogador faz a doação que gera diamantes, e qual o valor final do diamante.
+- Se a conta paga se renova sozinha ou o jogador precisa recomprar.

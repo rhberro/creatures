@@ -39,7 +39,7 @@ No rodapé do painel fica o botão **Finalizar Caçada**, que encerra a caçada.
 
 #### Finalizar a Caçada
 
-Clicar em **Finalizar Caçada** começa uma contagem de **5 segundos**, a mesma da entrada em uma área. Durante a espera o botão fica desabilitado e o rótulo muda para **Finalizando caçada em 5**, contando até **Finalizando caçada em 1**.
+Clicar em **Finalizar Caçada** começa uma contagem de **5 segundos**, a mesma da entrada em uma área. Durante a espera o botão fica desabilitado e o rótulo muda para **Finalizando caçada em 5**, contando até **Finalizando caçada em 1**. O painel não sai do lugar durante a espera: ele fica visível com o botão desabilitado, e a tela só muda quando a contagem termina.
 
 Quando a contagem chega a zero, a [tela de carregamento](PLAY_SCREEN.md#estados-da-tela) é exibida e o treinador segue para a cidade, como em qualquer troca de área.
 

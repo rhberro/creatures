@@ -8,6 +8,8 @@ Este documento cobre a atividade de caça: o que acontece quando o treinador est
 
 A caçada é a atividade principal do jogo. O treinador está em uma área de caça, com suas criaturas, e encontra criaturas selvagens lá.
 
+Durante a caçada o treinador não anda: o personagem é automatizado e as batalhas acontecem sozinhas, sem depender do jogador. Andar livremente pelo mapa é exclusivo da [cidade](CITY.md).
+
 > O que exatamente existe aqui dentro da área ainda é escopo das fases alfa e beta e será definido. Este documento está escrito só com as regras já decididas.
 
 ## Entrar na Caçada
@@ -36,7 +38,7 @@ A caçada é finalizada automaticamente em três situações:
 - A [sessão offline](TRAINER.md#sessão-offline) da conta se esgota, mesmo com stamina sobrando.
 - O [time](TRAINER.md#time) do treinador não tem mais nenhuma criatura apta a batalhar.
 
-Nas três situações o treinador volta para a [cidade](CITY.md), e a caçada só recomeça se o jogador entrar em uma área de novo. A volta passa pela [tela de carregamento](PLAY_SCREEN.md#estados-da-tela), como qualquer entrada em uma área.
+Nas três situações o treinador volta para a [cidade](CITY.md), e a caçada só recomeça se o jogador entrar em uma área de novo. A volta passa pela [tela de carregamento](PLAY_SCREEN.md#estados-da-tela), como qualquer entrada em uma área. Na cidade, o [local de cura](CITY.md#local-de-cura) devolve o time ao normal, inclusive revivendo as criaturas desmaiadas.
 
 O jogador também pode finalizar a caçada quando quiser, pelo botão **Finalizar Caçada** no painel da sessão do [analisador de caçada](HUNT_ANALYZER.md): a caçada passa pela mesma contagem de 5 segundos e pela [tela de carregamento](PLAY_SCREEN.md#estados-da-tela), e o treinador volta para a cidade.
 
@@ -45,6 +47,10 @@ O jogador também pode finalizar a caçada quando quiser, pelo botão **Finaliza
 ## Áreas de Caça
 
 Cada área de caça tem suas próprias criaturas e itens, descritos nos [detalhes da área](HUNT_AREA_DETAILS.md).
+
+O que uma criatura selvagem deixa são as partes e os itens que ela carrega, e nada além disso: criatura não dropa gold coin. A única exceção admitida é uma criatura criada de propósito com tema de dinheiro, que possa ter o gold coin como drop específico.
+
+> O drop é o que a criatura carrega, e não uma recompensa inventada. O dinheiro do jogo vem da venda do loot, conforme a [loja da cidade](CITY.md#lojas), e não de criatura nenhuma.
 
 ## Escopo das Fases Alfa e Beta
 

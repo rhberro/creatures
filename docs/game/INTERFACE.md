@@ -30,6 +30,24 @@ As áreas roláveis mostram a barra de rolagem sempre visível, mesmo quando o c
 
 > A barra sempre visível é preferível a aparecer e sumir: a barra que só aparece quando precisa muda a largura do conteúdo e faz o layout piscar. Com ela sempre presente, o jogador vê a mesma tela com ou sem rolagem.
 
+## Animação de Cooldown
+
+Tudo que tem cooldown mostra o progresso pelo ícone: uma sombra cobre 100% da altura do ícone e vai descendo conforme o tempo passa, chegando a zero quando o item está pronto de novo.
+
+A animação é o padrão do jogo para cooldown, e vale para habilidades e consumíveis na barra de habilidades. Dispositivo fica de fora porque não tem cooldown.
+
+> A sombra que desce informa duas coisas de uma vez: que aquele item está em espera e quanto falta, sem precisar de texto nenhum no ícone.
+
+## Fechamento de Painéis
+
+Cada tipo de camada sobre a tela tem o seu jeito de fechar, e o jogador aprende uma vez só:
+
+- **Painéis e popups simples**, como os de seleção de habilidade, consumível e dispositivo: fecham ao clicar em qualquer lugar fora deles.
+- **Modais compostos**, como a mochila, a loja e o modal de locais de caça: fecham só pelo ESC ou pelo botão de fechar no canto superior direito. Clicar fora não fecha.
+- **Drawer**, como o de detalhes da área: fecha pelo ESC e pelo clique no dropshadow — a área escura em volta dele.
+
+> Quanto mais conteúdo a camada tem, mais fácil é fechar sem querer. O painel simples some com um clique fora porque não há nada a perder; o modal cheio só fecha por ação explícita, para um clique errado não derrubar o que o jogador montou.
+
 ## Pendências
 
 Os pontos abaixo ainda não foram decididos:

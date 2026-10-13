@@ -137,5 +137,5 @@ Se a conexão com o servidor cai enquanto o modal está aberto, o modal é fecha
 
 Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem ser revistos conforme o jogo evolui:
 
-- Os detalhes de como o modal se adapta a telas pequenas ainda serão definidos junto com o design da interface.
+- Os detalhes de como o modal se adapta a telas pequenas ainda serão definidos em [Interface](INTERFACE.md).
 - A quantidade de cards por página ainda não foi definida. O mockup sugere uma grade, mas o número de áreas por página depende do tamanho da tela.
