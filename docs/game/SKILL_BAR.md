@@ -36,7 +36,7 @@ Nenhuma habilidade ou consumível tem cooldown menor que o intervalo de ativaç�
 
 ### Habilidades
 
-Os 4 slots de habilidade mostram as 4 habilidades equipadas da criatura ativa. Cada habilidade tem o seu cooldown, e a criatura as usa sozinha seguindo as regras de ativação.
+Os 4 slots de habilidade mostram as 4 habilidades equipadas da criatura ativa. Cada habilidade tem o seu cooldown, e a criatura as usa sozinha seguindo as regras de ativação. As habilidades de cada espécie, seus elementos e cooldowns estão em [Criaturas](CREATURES.md#habilidades).
 
 Equipar uma habilidade no meio de uma caçada a coloca em cooldown na hora: uma habilidade de 7 segundos recém-colocada só dispara depois dos 7 segundos. A regra vale para qualquer troca, em qualquer lugar, e existe para o jogador não ficar trocando habilidades para criar combos que não existiriam.
 
@@ -60,7 +60,7 @@ Como nas habilidades, equipar ou trocar um consumível vem com o cooldown dele: 
 
 O slot de dispositivo não é da criatura: é configuração do treinador e vale em qualquer caçada. Ele guarda o dispositivo usado para tentar a captura, e a captura acontece sozinha quando uma criatura selvagem desmaia, usando o dispositivo que está selecionado.
 
-Sem dispositivo selecionado, a tentativa de captura não acontece — e a caçada segue normalmente: a batalha rola, a criatura ganha experiência e loot, só não há captura. A captura exige as duas coisas juntas: um dispositivo selecionado na barra e quantidade dele na mochila.
+Sem dispositivo selecionado, a tentativa de captura não acontece — e a caçada segue normalmente: a batalha rola, a criatura ganha experiência e loot, só não há captura. A captura exige as duas coisas juntas: um dispositivo selecionado na barra e quantidade dele na mochila. A chance de captura da espécie e o multiplicador de cada dispositivo estão em [Captura](CREATURES.md#captura), e a criatura capturada não dropa itens, conforme as regras de [drops](CREATURES.md#drops).
 
 ## Seleção do Slot
 

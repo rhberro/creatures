@@ -83,7 +83,7 @@ Fora de uma caçada, na [cidade](CITY.md), o treinador pode remanejar o time à 
 
 Durante a caçada o time está fechado: o time que o treinador entra é o time que ele sai. Fora de uma exceção, ele não adiciona nem remove criaturas do time.
 
-A exceção é a captura. Se existe um slot disponível, a criatura capturada entra direto no próximo slot vago do time, em vez de ir para o [armazenamento](#armazenamento). Um treinador pode entrar em uma caçada com 3 criaturas, capturar duas durante ela e sair com 5, preenchendo os slots 4 e 5.
+A exceção é a captura. Se existe um slot disponível, a criatura capturada entra direto no próximo slot vago do time, em vez de ir para o [armazenamento](#armazenamento). Um treinador pode entrar em uma caçada com 3 criaturas, capturar duas durante ela e sair com 5, preenchendo os slots 4 e 5. A chance de captura de cada espécie e o multiplicador dos dispositivos estão em [Captura](CREATURES.md#captura).
 
 > A exceção existe porque reabrir o time no meio da caçada daria ao jogador a chance de consertar um time perdido sem custo nenhum. Um slot vago, porém, é espaço que já existia quando a caçada começou, e ocupá-lo não é remanejo.
 
@@ -121,7 +121,7 @@ Cada criatura tem a própria experiência, ganha em batalhas. A criatura ativa, 
 
 As criaturas do time que não estão em campo recebem 10% da experiência da batalha. A fração vale para todas as criaturas fora de campo, e uma criatura desmaiada não ganha experiência.
 
-> A experiência da criatura é separada do nível do treinador, conforme o [nível](#nível): são duas progressões independentes.
+> A experiência da criatura é separada do nível do treinador, conforme o [nível](#nível): são duas progressões independentes. Como a experiência é ganha e como o nível sobe está em [Criaturas](CREATURES.md#experiência).
 
 ## Armazenamento
 

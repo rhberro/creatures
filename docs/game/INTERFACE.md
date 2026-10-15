@@ -48,6 +48,12 @@ Cada tipo de camada sobre a tela tem o seu jeito de fechar, e o jogador aprende 
 
 > Quanto mais conteúdo a camada tem, mais fácil é fechar sem querer. O painel simples some com um clique fora porque não há nada a perder; o modal cheio só fecha por ação explícita, para um clique errado não derrubar o que o jogador montou.
 
+## Alerta
+
+O alerta é o aviso que aparece no canto superior direito da tela, por cima de tudo. Ele é um quadrado com o ícone na esquerda e o conteúdo na direita, um botão de fechar no canto superior direito e uma barra de tempo embaixo, que vai diminuindo até zerar — quando zera, o alerta desaparece sozinho.
+
+> O alerta é para o aviso que não exige ação: ele avisa, some sozinho e pode ser fechado antes. Quem precisa de uma decisão do jogador usa diálogo, e não alerta.
+
 ## Pendências
 
 Os pontos abaixo ainda não foram decididos:

@@ -53,7 +53,7 @@ Cada card representa uma área de caça e é dividido em quatro partes, de cima 
 
 #### Criaturas da Área
 
-Toda área tem uma ou mais criaturas, e sempre existe uma **criatura principal**, que é a exibida em tamanho grande no card. As demais criaturas da área aparecem na sequência de círculos sobrepostos.
+Toda área tem uma ou mais criaturas, e sempre existe uma **criatura principal**, que é a exibida em tamanho grande no card. As demais criaturas da área aparecem na sequência de círculos sobrepostos. As criaturas de uma área são espécies, com atributos, chance de captura e drops próprios, descritos em [Criaturas](CREATURES.md).
 
 > Os círculos se sobrepõem de propósito. Uma área pode ter várias criaturas, e a lista inteira não pode ocupar o espaço do card. A sobreposição mostra que existem outras criaturas sem que cada uma precise de espaço próprio.
 

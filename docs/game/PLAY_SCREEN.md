@@ -20,9 +20,13 @@ A tela fica na rota `/game` e o acesso é feito pela [tela de lista de treinador
 
 ![Mockup da tela do jogo](../assets/play_screen.png)
 
+![Mockup da tela do jogo durante a caçada](../assets/hunt_screen.png)
+
 > O mockup é ilustrativo e mostra a disposição geral, não o design final. Ele serve para conferir a estrutura da tela, não cores, tipografia ou espaçamento.
 
-O mockup mostra a tela na cidade. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome; depois de um divisor vertical vem a primeira seção de botões; na direita ficam os totais de gold coins e de diamantes, e depois deles a segunda seção de botões. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em cura, habilidades e captura, e as barras abaixo dos slots. O restante do meio da tela é a área do canvas.
+O primeiro mockup mostra a tela na cidade. No topo, a toolbar ocupa toda a largura: à esquerda ficam o avatar do treinador, com o nível abaixo dele, e o nome; depois de um divisor vertical vem a primeira seção de botões; na direita ficam os totais de gold coins e de diamantes, e depois deles a segunda seção de botões. No centro, abaixo da toolbar, ficam as linguetas do time, com três criaturas ocupando os primeiros slots — a primeira destacada como ativa e a terceira em cinza — e dois slots vazios. Na lateral esquerda, pouco acima da barra de habilidades, fica o botão de play. A barra de habilidades fica na parte inferior, sobre a área do canvas, com os slots agrupados em habilidades, consumíveis e dispositivo, e as barras de vida e stamina abaixo dos slots. O restante do meio da tela é a área do canvas.
+
+O segundo mockup mostra a mesma tela durante a caçada. A toolbar, as linguetas do time e a barra de habilidades são as mesmas; o que muda é a composição dos elementos de cidade e de batalha: o botão de play dá lugar aos dois painéis da caçada, que ficam no canto superior esquerdo, e os elementos de cidade, como o botão da loja, ficam de fora. O que cada painel mostra está no [analisador de caçada](HUNT_ANALYZER.md).
 
 ## Estrutura da Tela
 
@@ -46,7 +50,9 @@ Parte dos elementos da tela existe só em alguns contextos. Elementos de cidade,
 
 ## Toolbar
 
-Barra no topo da tela. Da esquerda para a direita: o treinador, um divisor vertical, a primeira seção de botões e, na extrema direita, a segunda seção de botões, mais ou menos assim: `| Treinador | Botões --------------------- Botões |`.
+Barra no topo da tela. Da esquerda para a direita: o treinador, um divisor vertical, a primeira seção de botões e, na extrema direita, a segunda seção de botões, mais ou menos assim:
+
+`| Treinador | Botões --------------------- Botões |`
 
 ### Treinador
 
@@ -60,7 +66,7 @@ Depois do divisor vertical ficam os botões de acesso às funcionalidades do jog
 
 Uma área alinhada à direita. Antes dos botões ficam os totais das duas moedas do treinador, cada um em seu próprio retângulo: os **gold coins**, gastos e ganhos na [loja](STORE.md), e os **diamantes**, gastos em serviços como a conta paga, conforme as [moedas](TRAINER.md#moedas). Depois vêm os botões de acesso: o último, na extrema direita, é o de **Configurações**, o menu principal do jogo, com as configurações do jogo e outras opções. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
 
-> Dentro do menu Configurações ficam a opção "Trocar treinador", que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), e a opção "Sair", que encerra a sessão conforme descrito na [sessão](AUTHENTICATION.md#sessão), e é a mesma ação da opção "Sair" da tela de lista de treinadores. O comportamento da desconexão está em [conexão e atividade idle](#conexão-e-atividade-idle).
+> Dentro do menu Configurações ficam a opção "Trocar treinador", que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), e a opção "Sair", que encerra a sessão conforme descrito na [sessão](AUTHENTICATION.md#sessão), e é a mesma ação do botão "Sair da conta" da tela de lista de treinadores. O comportamento da desconexão está em [conexão e atividade idle](#conexão-e-atividade-idle).
 
 ## Linguetas do Time
 
@@ -137,6 +143,12 @@ Quando o jogador não consegue ver o jogo, é exibida uma tela cheia com fundo p
 | --- | --- | --- | --- |
 | Carregando | Carregando | Estamos preparando o seu treinador. Isso pode levar alguns instantes. | Nenhum, com barra de carregamento |
 | Conexão perdida | Conexão perdida | Você perdeu a conexão com o servidor. Clique no botão abaixo para tentar se reconectar. | Reconectar |
+
+![Mockup da tela de carregando](../assets/loading_screen.png)
+
+![Mockup da tela de conexão perdida](../assets/reconnect_screen.png)
+
+> Os mockups são ilustrativos e mostram a composição das telas, não o design final: servem para conferir a estrutura, não cores, tipografia ou espaçamento. Os dois estados levam o nome do jogo no topo, o título centralizado e a descrição abaixo, e só a conexão perdida tem o botão para agir.
 
 > A tela de **carregando** é exibida sempre que uma área precisa ser carregada: ao entrar no jogo, até que o estado do treinador seja recebido do serviço e esteja pronto para ser renderizado, e também ao entrar em uma caçada, ao voltar para a cidade e em qualquer outra troca de área. Se não for possível carregar, é exibida a tela de conexão perdida.
 

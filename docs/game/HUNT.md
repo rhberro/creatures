@@ -50,7 +50,7 @@ Cada área de caça tem suas próprias criaturas e itens, descritos nos [detalhe
 
 O que uma criatura selvagem deixa são as partes e os itens que ela carrega, e nada além disso: criatura não dropa gold coin. A única exceção admitida é uma criatura criada de propósito com tema de dinheiro, que possa ter o gold coin como drop específico.
 
-> O drop é o que a criatura carrega, e não uma recompensa inventada. O dinheiro do jogo vem da venda do loot, conforme a [loja da cidade](CITY.md#lojas), e não de criatura nenhuma.
+> O drop é o que a criatura carrega, e não uma recompensa inventada. O que cada espécie dropa está em [Drops](CREATURES.md#drops), e criatura capturada não dropa nada: quem capturou apenas a desmaiou, não a finalizou. O dinheiro do jogo vem da venda do loot, conforme a [loja da cidade](CITY.md#lojas), e não de criatura nenhuma.
 
 ## Escopo das Fases Alfa e Beta
 
