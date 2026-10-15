@@ -6,6 +6,6 @@ Este documento é a porta de entrada da documentação técnica do servidor. Ele
 
 ## Documentações
 
-| Documentação | Descrição | Quando consultar | Onde consultar |
-| --- | --- | --- | --- |
-| Stack | As tecnologias escolhidas para o servidor, com as decisões e os motivos por trás de cada uma. | Antes de escrever código do servidor, ao adicionar uma dependência, ou diante de dúvida sobre qual biblioteca usar e por quê. | `docs/technical/server/STACK.md` |
+| Documentação | Descrição                                                                                     | Quando consultar                                                                                                              | Onde consultar                   |
+| ------------ | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Stack        | As tecnologias escolhidas para o servidor, com as decisões e os motivos por trás de cada uma. | Antes de escrever código do servidor, ao adicionar uma dependência, ou diante de dúvida sobre qual biblioteca usar e por quê. | `docs/technical/server/STACK.md` |

@@ -139,10 +139,10 @@ Em celulares, o jogo funciona somente na horizontal (modo paisagem). Quando a te
 
 Quando o jogador não consegue ver o jogo, é exibida uma tela cheia com fundo preto, um título centralizado, uma descrição logo abaixo e, quando necessário, um botão. Existem apenas dois estados, e eles cobrem todos os casos.
 
-| Estado | Título | Descrição | Botão |
-| --- | --- | --- | --- |
-| Carregando | Carregando | Estamos preparando o seu treinador. Isso pode levar alguns instantes. | Nenhum, com barra de carregamento |
-| Conexão perdida | Conexão perdida | Você perdeu a conexão com o servidor. Clique no botão abaixo para tentar se reconectar. | Reconectar |
+| Estado          | Título          | Descrição                                                                               | Botão                             |
+| --------------- | --------------- | --------------------------------------------------------------------------------------- | --------------------------------- |
+| Carregando      | Carregando      | Estamos preparando o seu treinador. Isso pode levar alguns instantes.                   | Nenhum, com barra de carregamento |
+| Conexão perdida | Conexão perdida | Você perdeu a conexão com o servidor. Clique no botão abaixo para tentar se reconectar. | Reconectar                        |
 
 ![Mockup da tela de carregando](../assets/loading_screen.png)
 

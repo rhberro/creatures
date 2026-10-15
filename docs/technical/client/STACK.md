@@ -6,18 +6,18 @@ Este documento lista as tecnologias escolhidas para o cliente, o motivo de cada 
 
 ## Stack
 
-| Tecnologia | Papel |
-| --- | --- |
-| Bun | Runtime, gerenciador de pacotes e runner de testes |
-| TypeScript | Tipagem do código, no cliente e no servidor |
-| Vite | Build e servidor de desenvolvimento |
-| React | Renderização da interface e componentes sobrepostos ao canvas |
-| React Router | Roteamento entre as telas do cliente |
-| Chakra UI | Design system dos elementos de interface |
-| PixiJS | Renderização do mundo do jogo no canvas |
-| Zustand | Armazenamento do estado do cliente |
-| Supabase Auth | Autenticação do usuário |
-| WebSocket | Comunicação com o servidor durante o jogo |
+| Tecnologia    | Papel                                                         |
+| ------------- | ------------------------------------------------------------- |
+| Bun           | Runtime, gerenciador de pacotes e runner de testes            |
+| TypeScript    | Tipagem do código, no cliente e no servidor                   |
+| Vite          | Build e servidor de desenvolvimento                           |
+| React         | Renderização da interface e componentes sobrepostos ao canvas |
+| React Router  | Roteamento entre as telas do cliente                          |
+| Chakra UI     | Design system dos elementos de interface                      |
+| PixiJS        | Renderização do mundo do jogo no canvas                       |
+| Zustand       | Armazenamento do estado do cliente                            |
+| Supabase Auth | Autenticação do usuário                                       |
+| WebSocket     | Comunicação com o servidor durante o jogo                     |
 
 ## Bun
 
