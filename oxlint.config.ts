@@ -1,10 +1,7 @@
-import { oxsomePluginEntry, oxsomeRules } from "@rhberro/oxsome";
-import { defineConfig } from "oxlint";
+import { oxsome } from "@rhberro/oxsome";
+import { type OxlintConfig, defineConfig } from "oxlint";
 
-// Declared as a variable instead of an inline argument to
-// `defineConfig(...)`: our own no-inline-functions-objects-arrays rule
-// rejects an object literal passed straight into a call.
-const config = {
+const config: OxlintConfig = {
   categories: {
     correctness: "error",
     nursery: "error",
@@ -13,12 +10,12 @@ const config = {
     // style: "error",
     suspicious: "error",
   },
-  extends: [oxsomeRules],
+  extends: [oxsome.recommended],
   globals: {
     document: "readonly",
   },
   ignorePatterns: ["*.d.ts"],
-  jsPlugins: [oxsomePluginEntry],
+  jsPlugins: ["@rhberro/oxsome/plugin"],
   overrides: [
     {
       files: ["**/*.{ts,tsx,jsx}"],
