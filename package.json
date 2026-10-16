@@ -18,7 +18,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@oxlint/plugins": "^1.86.0",
+    "@rhberro/oxsome": "file:../../oxsome",
     "@types/bun": "^1.4.2",
     "concurrently": "^9.1.0",
     "husky": "^9.1.7",

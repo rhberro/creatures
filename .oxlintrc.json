@@ -12,7 +12,12 @@
     "document": "readonly"
   },
   "ignorePatterns": ["*.d.ts"],
-  "jsPlugins": ["./tools/oxc/plugins"],
+  "jsPlugins": [
+    {
+      "name": "oxsome",
+      "specifier": "@rhberro/oxsome/plugin"
+    }
+  ],
   "overrides": [
     {
       "files": ["**/*.{ts,tsx,jsx}"],
@@ -31,11 +36,13 @@
   ],
   "rules": {
     "eslint/curly": ["error", "all"],
+    "eslint/func-style": ["error", "declaration"],
     "eslint/sort-keys": "error",
     "eslint/sort-vars": "error",
-    "oxlint-plugins/no-destructuring-in-params": "error",
-    "oxlint-plugins/no-inline-functions-objects-arrays": "error",
-    "oxlint-plugins/no-jsx-inline-computation": "error"
+    "oxsome/no-arrow-functions": "error",
+    "oxsome/no-destructuring-in-params": "error",
+    "oxsome/no-inline-functions-objects-arrays": "error",
+    "oxsome/no-jsx-inline-computation": "error"
   },
   "plugins": ["eslint", "import", "oxc", "react", "react-perf", "typescript", "unicorn"]
 }
