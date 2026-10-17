@@ -56,21 +56,21 @@ Os atributos são definidos por dois grupos de valores.
 
 Os BVs são fixos por espécie e não mudam entre criaturas da mesma espécie. Uma criatura da espécie A sempre tem os mesmos BVs, por exemplo:
 
-| Atributo      | BV  |
-| ------------- | --- |
-| Vida          | 22  |
-| Ataque Físico | 8   |
-| Ataque Mágico | 4   |
-| Defesa Física | 7   |
-| Defesa Mágica | 2   |
+| Atributo | BV |
+| --- | --- |
+| Vida | 22 |
+| Ataque Físico | 8 |
+| Ataque Mágico | 4 |
+| Defesa Física | 7 |
+| Defesa Mágica | 2 |
 
 ### Valores de Potencial (PV)
 
 Os PVs são porcentagens de 0% a 100% e pertencem à criatura, não à espécie. Duas criaturas da mesma espécie podem ter PVs completamente diferentes, e eles são gerados de forma aleatória no momento da captura. Uma criatura pode ter, por exemplo:
 
-| Atributo      | PV  |
-| ------------- | --- |
-| Vida          | 20% |
+| Atributo | PV |
+| --- | --- |
+| Vida | 20% |
 | Ataque Físico | 33% |
 | Ataque Mágico | 94% |
 | Defesa Física | 84% |

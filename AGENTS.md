@@ -6,11 +6,11 @@ Este documento é a porta de entrada para todas as instruções dos agentes que 
 
 A tabela a seguir lista todas as documentações disponíveis para consulta pelos agentes. Se estiver com dúvidas e não souber qual documento consultar, consulte todos os documentos um a um.
 
-| Documentação  | Descrição                                                                                                               | Quando consultar                                                                                                                                                           | Onde consultar                   |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| Coding Styles | Convenções de código do projeto: padrões de estilo, nomenclatura, organização e boas práticas que o código deve seguir. | Sempre que for escrever, alterar ou revisar código, antes de criar novos arquivos ou módulos, e diante de qualquer dúvida sobre como algo deve ser escrito ou estruturado. | `docs/CODING_STYLES.md`          |
-| Game Design   | Fonte de verdade sobre como o jogo funciona no nível de produto: regras, entidades, mecânicas e opções disponíveis.     | Sempre que a tarefa envolver comportamento, regras ou conteúdo do jogo, ou quando houver dúvida sobre alguma mecânica ou regra.                                            | `docs/game/GAME.md`              |
-| Technical     | Porta de entrada da documentação técnica: arquitetura do projeto e stack, com o índice dos demais documentos técnicos.  | Sempre que a tarefa envolver a estrutura do código, a arquitetura entre cliente e servidor, as tecnologias escolhidas ou decisões de implementação.                        | `docs/technical/ARCHITECTURE.md` |
+| Documentação | Descrição | Quando consultar | Onde consultar |
+| --- | --- | --- | --- |
+| Coding Styles | Convenções de código do projeto: padrões de estilo, nomenclatura, organização e boas práticas que o código deve seguir. | Sempre que for escrever, alterar ou revisar código, antes de criar novos arquivos ou módulos, e diante de qualquer dúvida sobre como algo deve ser escrito ou estruturado. | `docs/CODING_STYLES.md` |
+| Game Design | Fonte de verdade sobre como o jogo funciona no nível de produto: regras, entidades, mecânicas e opções disponíveis. | Sempre que a tarefa envolver comportamento, regras ou conteúdo do jogo, ou quando houver dúvida sobre alguma mecânica ou regra. | `docs/game/GAME.md` |
+| Technical | Porta de entrada da documentação técnica: arquitetura do projeto e stack, com o índice dos demais documentos técnicos. | Sempre que a tarefa envolver a estrutura do código, a arquitetura entre cliente e servidor, as tecnologias escolhidas ou decisões de implementação. | `docs/technical/ARCHITECTURE.md` |
 
 ## Context7
 
@@ -22,10 +22,10 @@ Esta regra vale somente para documentações externas. As documentações intern
 
 A tabela a seguir lista as aplicações disponíveis no projeto, onde encontrar a documentação correspondente e quando consultar cada uma delas.
 
-| Aplicação | Descrição                                                        | Quando consultar                                             | Documentação            |
-| --------- | ---------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------- |
-| Cliente   | A aplicação web que o jogador utiliza para interagir com o jogo. | Quando precisar de informações sobre a interface do usuário. | `apps/client/README.md` |
-| Servidor  | O servidor que gerencia as conexões e a lógica do jogo.          | Quando precisar de informações sobre o servidor.             | `apps/server/README.md` |
+| Aplicação | Descrição | Quando consultar | Documentação |
+| --- | --- | --- | --- |
+| Cliente | A aplicação web que o jogador utiliza para interagir com o jogo. | Quando precisar de informações sobre a interface do usuário. | `apps/client/README.md` |
+| Servidor | O servidor que gerencia as conexões e a lógica do jogo. | Quando precisar de informações sobre o servidor. | `apps/server/README.md` |
 
 ## Comandos
 

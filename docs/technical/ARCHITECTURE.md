@@ -13,24 +13,24 @@ O Creatures é composto por duas aplicações independentes que se comunicam ent
 
 ## Responsabilidades
 
-| Responsabilidade     | Cliente                                                          | Servidor                                                |
-| -------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
-| Renderização         | Renderiza o mundo do jogo, a interface e o estado recebido       | —                                                       |
-| Interação do usuário | Captura cliques e teclas e as transforma em comandos             | —                                                       |
-| Estado do jogo       | Apenas exibe o estado recebido, nunca o altera por conta própria | Calcula, mantém e distribui o estado do jogo            |
-| Validação            | Valida apenas o formato da entrada antes de enviá-la             | Valida se a ação é permitida e aplica as regras do jogo |
-| Regras e mecânicas   | Nenhuma decisão de gameplay                                      | Todas as regras, mecânicas e computações                |
-| Persistência         | Não guarda dados do jogo                                         | Persiste o estado da conta e do treinador               |
-| Conexão              | Mantém a conexão e, ao perdê-la, reconecta por ação do jogador   | Mantém as conexões ativas e gerencia a queda delas      |
+| Responsabilidade | Cliente | Servidor |
+| --- | --- | --- |
+| Renderização | Renderiza o mundo do jogo, a interface e o estado recebido | — |
+| Interação do usuário | Captura cliques e teclas e as transforma em comandos | — |
+| Estado do jogo | Apenas exibe o estado recebido, nunca o altera por conta própria | Calcula, mantém e distribui o estado do jogo |
+| Validação | Valida apenas o formato da entrada antes de enviá-la | Valida se a ação é permitida e aplica as regras do jogo |
+| Regras e mecânicas | Nenhuma decisão de gameplay | Todas as regras, mecânicas e computações |
+| Persistência | Não guarda dados do jogo | Persiste o estado da conta e do treinador |
+| Conexão | Mantém a conexão e, ao perdê-la, reconecta por ação do jogador | Mantém as conexões ativas e gerencia a queda delas |
 
 > A regra que resume a tabela: **o cliente mostra, o servidor decide.** Se a resposta muda ao desligar o servidor, ela é do servidor.
 
 ## Índice
 
-| Documento | Descrição                                                                                      | Quando consultar                                                                                   | Onde consultar                    |
-| --------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------- |
-| Cliente   | Arquitetura da aplicação cliente: estrutura interna, stack e responsabilidades de cada módulo. | Quando for criar ou alterar código do cliente, ou dúvida sobre onde uma responsabilidade pertence. | `docs/technical/client/CLIENT.md` |
-| Servidor  | Arquitetura da aplicação servidora: estrutura interna, stack, persistência e simulação.        | Quando for criar ou alterar código do servidor, ou dúvida sobre como uma ação é processada.        | `docs/technical/server/SERVER.md` |
+| Documento | Descrição | Quando consultar | Onde consultar |
+| --- | --- | --- | --- |
+| Cliente | Arquitetura da aplicação cliente: estrutura interna, stack e responsabilidades de cada módulo. | Quando for criar ou alterar código do cliente, ou dúvida sobre onde uma responsabilidade pertence. | `docs/technical/client/CLIENT.md` |
+| Servidor | Arquitetura da aplicação servidora: estrutura interna, stack, persistência e simulação. | Quando for criar ou alterar código do servidor, ou dúvida sobre como uma ação é processada. | `docs/technical/server/SERVER.md` |
 
 ## Documentos Relacionados
 

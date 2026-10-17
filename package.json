@@ -18,9 +18,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@rhberro/oxsome": "^0.1.0",
-    "@types/bun": "^1.4.2",
-    "concurrently": "^9.1.0",
+    "@rhberro/oxsome": "^0.2.0",
+    "@types/bun": "^1.4.3",
+    "concurrently": "^9.2.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "oxfmt": "0.71.0",

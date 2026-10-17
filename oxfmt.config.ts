@@ -1,11 +1,8 @@
-import { defineConfig } from "oxfmt";
+import { oxfmt, OxfmtPreset } from "@rhberro/oxsome";
+import { defineConfig, type OxfmtConfig } from "oxfmt";
 
-// Declared as a variable instead of an inline argument to `defineConfig(...)`:
-// our own no-inline-functions-objects-arrays rule rejects an object literal
-// passed straight into a call.
-const config = {
-  ignorePatterns: ["*.md"],
-  sortImports: true,
-};
+const base = { ignorePatterns: ["*.md"] };
+
+const config: OxfmtConfig = Object.assign<OxfmtPreset, OxfmtConfig>(oxfmt, base);
 
 export default defineConfig(config);

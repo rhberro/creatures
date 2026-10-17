@@ -6,17 +6,17 @@ Este documento cobre todo o processo de autenticação, desde a criação de con
 
 ## Rotas
 
-| Rota               | Tela                                                                | Acesso    |
-| ------------------ | ------------------------------------------------------------------- | --------- |
-| `/signin`          | [Tela de signin](#tela-de-signin)                                   | Pública   |
-| `/signup`          | [Tela de signup](#tela-de-signup)                                   | Pública   |
-| `/forgot-password` | [Tela de esquecimento de senha](#tela-de-esquecimento-de-senha)     | Pública   |
-| `/reset-password`  | [Tela de redefinir senha](#tela-de-redefinir-senha)                 | Pública   |
-| `/terms`           | [Tela de termos de serviço](#tela-de-termos-de-serviço)             | Pública   |
-| `/privacy`         | [Tela de política de privacidade](#tela-de-política-de-privacidade) | Pública   |
-| `/trainers`        | [Tela de lista de treinadores](#tela-de-lista-de-treinadores)       | Protegida |
-| `/trainers/new`    | [Tela de criar treinador](#tela-de-criar-treinador)                 | Protegida |
-| `/game`            | [Tela do jogo](PLAY_SCREEN.md)                                      | Protegida |
+| Rota | Tela | Acesso |
+| --- | --- | --- |
+| `/signin` | [Tela de signin](#tela-de-signin) | Pública |
+| `/signup` | [Tela de signup](#tela-de-signup) | Pública |
+| `/forgot-password` | [Tela de esquecimento de senha](#tela-de-esquecimento-de-senha) | Pública |
+| `/reset-password` | [Tela de redefinir senha](#tela-de-redefinir-senha) | Pública |
+| `/terms` | [Tela de termos de serviço](#tela-de-termos-de-serviço) | Pública |
+| `/privacy` | [Tela de política de privacidade](#tela-de-política-de-privacidade) | Pública |
+| `/trainers` | [Tela de lista de treinadores](#tela-de-lista-de-treinadores) | Protegida |
+| `/trainers/new` | [Tela de criar treinador](#tela-de-criar-treinador) | Protegida |
+| `/game` | [Tela do jogo](PLAY_SCREEN.md) | Protegida |
 
 ## Escopo das Fases Alfa e Beta
 

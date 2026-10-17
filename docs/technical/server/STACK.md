@@ -6,13 +6,13 @@ Este documento lista as tecnologias escolhidas para o servidor, o motivo de cada
 
 ## Stack
 
-| Tecnologia | Papel                                             |
-| ---------- | ------------------------------------------------- |
-| Bun        | Runtime, servidor HTTP e servidor WebSocket       |
-| TypeScript | Tipagem do código, no cliente e no servidor       |
-| pino       | Logs estruturados                                 |
-| Supabase   | Autenticação, banco de dados e validação de token |
-| WebSocket  | Comunicação com o cliente durante o jogo          |
+| Tecnologia | Papel |
+| --- | --- |
+| Bun | Runtime, servidor HTTP e servidor WebSocket |
+| TypeScript | Tipagem do código, no cliente e no servidor |
+| pino | Logs estruturados |
+| Supabase | Autenticação, banco de dados e validação de token |
+| WebSocket | Comunicação com o cliente durante o jogo |
 
 ## Bun
 
