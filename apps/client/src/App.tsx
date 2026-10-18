@@ -1,12 +1,8 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import type { ReactElement } from 'react';
+import { RouterProvider } from 'react-router-dom';
 
-export function App(): React.ReactElement {
-  return (
-    <Box p={8}>
-      <Heading size="2xl">Hello World</Heading>
-      <Text mt={2} color="gray.600">
-        creatures client is alive
-      </Text>
-    </Box>
-  );
+import { router } from '~/router/router';
+
+export function App(): ReactElement {
+  return <RouterProvider router={router} />;
 }

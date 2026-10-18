@@ -1,0 +1,4 @@
+export const INTERFACE_BASE_FONT_SIZE = 16;
+export const INTERFACE_MAX_SCALE = 1;
+export const INTERFACE_MIN_SCALE = 0.75;
+export const INTERFACE_REFERENCE_WIDTH = 1280;

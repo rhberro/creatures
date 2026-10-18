@@ -10,9 +10,14 @@
   },
   "dependencies": {
     "@chakra-ui/react": "^3.37.0",
+    "@creatures/contracts": "workspace:*",
+    "@supabase/supabase-js": "^2.118.0",
     "pixi.js": "^8.22.0",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4",
+    "zod": "^3.23.0",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

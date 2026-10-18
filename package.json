@@ -2,7 +2,8 @@
   "name": "creatures",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "apps/shared/*"
   ],
   "type": "module",
   "scripts": {
