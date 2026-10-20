@@ -4,8 +4,15 @@ export type IconButtonProps = {
   children: ReactElement;
   label: string;
   onClick: () => void;
+  radius?: string;
   size?: string;
   tone?: IconButtonTone;
 };
 
-export type IconButtonTone = 'danger' | 'neutral' | 'primary' | 'secondary';
+export type IconButtonTone =
+  | 'danger'
+  | 'dangerGhost'
+  | 'ghost'
+  | 'neutral'
+  | 'primary'
+  | 'secondary';

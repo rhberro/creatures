@@ -45,15 +45,18 @@ type BackpackModalProps = {
   onClose: () => void;
 };
 
-export function BackpackModal(props: BackpackModalProps): ReactElement | null {
+export function BackpackModal(props: BackpackModalProps): ReactElement {
   const { contained = false, isOpen, onClose } = props;
-  if (!isOpen) {
-    return null;
-  }
   const cells = ITEMS.map(renderBagCell);
   const tabs = FILTERS.map(renderFilter);
   return (
-    <Modal contained={contained} height={BAG_HEIGHT} onClose={onClose} width={BAG_WIDTH}>
+    <Modal
+      contained={contained}
+      isOpen={isOpen}
+      height={BAG_HEIGHT}
+      onClose={onClose}
+      width={BAG_WIDTH}
+    >
       <ModalHeader>{TITLE}</ModalHeader>
       <Box borderBottom="1px solid" borderColor="border" paddingBlock="2" paddingInline="4">
         <TabBar>{tabs}</TabBar>

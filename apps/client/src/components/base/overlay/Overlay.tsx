@@ -1,11 +1,12 @@
-import { Box } from '@chakra-ui/react';
+import { Dialog } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
 type OverlayProps = {
-  onClick?: () => void;
+  contained?: boolean;
 };
 
 export function Overlay(props: OverlayProps): ReactElement {
-  const { onClick } = props;
-  return <Box bg="bg.overlay" inset="0" onClick={onClick} position="absolute" />;
+  const { contained = false } = props;
+  const position = contained ? 'absolute' : 'fixed';
+  return <Dialog.Backdrop bg="bg.overlay" position={position} />;
 }

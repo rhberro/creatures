@@ -1,6 +1,7 @@
 import type { Trainer } from '@creatures/contracts/trainer';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
+import { TrainerDeleteDialog } from '~/components/domain/trainer/TrainerDeleteDialog';
 import { TrainersPanel } from '~/components/domain/trainer/TrainersPanel';
 
 const TRAINERS: Trainer[] = [
@@ -31,18 +32,56 @@ const TRAINERS: Trainer[] = [
 ];
 
 export function TrainersList(): ReactElement {
-  return (
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const pendingName = findTrainerName(TRAINERS, pendingDeleteId);
+  const isDialogOpen = pendingDeleteId !== null;
+  const panel = (
     <TrainersPanel
       isLoading={false}
       selectedId="t1"
       trainers={TRAINERS}
       onCreate={noop}
-      onDelete={noop}
+      onDelete={setPendingDeleteId}
       onEnter={noop}
       onSelect={noop}
       onSignOut={noop}
     />
   );
+  const cancelDelete = handleCancel(setPendingDeleteId);
+  const dialog = (
+    <TrainerDeleteDialog
+      isOpen={isDialogOpen}
+      trainerName={pendingName}
+      onCancel={cancelDelete}
+      onConfirm={noop}
+    />
+  );
+  return (
+    <>
+      {panel}
+      {dialog}
+    </>
+  );
+}
+
+function handleCancel(setPendingDeleteId: (id: string | null) => void): () => void {
+  return function cancel(): void {
+    setPendingDeleteId(null);
+  };
+}
+
+function findTrainerName(trainers: Trainer[], pendingDeleteId: string | null): string {
+  if (pendingDeleteId === null) {
+    return '';
+  }
+  const trainer = trainers.find(matchesId(pendingDeleteId));
+  return trainer?.name ?? '';
+}
+
+function matchesId(id: string): (trainer: Trainer) => boolean {
+  return function matches(trainer: Trainer): boolean {
+    return trainer.id === id;
+  };
 }
 
 function noop(): void {

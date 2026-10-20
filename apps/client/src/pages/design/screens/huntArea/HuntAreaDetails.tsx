@@ -16,7 +16,7 @@ const DRAWER_HEIGHT = '720px';
 export function HuntAreaDetails(): ReactElement {
   const area = AREAS[1];
   return (
-    <Drawer contained height={DRAWER_HEIGHT} onClose={noop} width={DRAWER_WIDTH}>
+    <Drawer contained height={DRAWER_HEIGHT} isOpen onClose={noop} width={DRAWER_WIDTH}>
       <AreaHeader area={area} />
       <DrawerBody>
         <Box display="flex" flexDirection="column" gap="5">

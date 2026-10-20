@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
+import { NativeButton } from '~/components/base/button/NativeButton';
 import { Text } from '~/components/base/text/Text';
-import { FOCUS_BORDER } from '~/theme/focus';
+import { FOCUS_RING } from '~/theme/focus';
 
 import { CHIP_TONE_COLORS, SKEW, SKEW_BACK } from './chip.constants';
 import type { ChipProps } from './chip.types';
@@ -17,8 +18,8 @@ export function Chip(props: ChipProps): ReactElement {
   const opacity = disabled ? 0.5 : 1;
   const shadow = active ? 'sm' : 'none';
   return (
-    <Box
-      _focusVisible={FOCUS_BORDER}
+    <NativeButton
+      _focusVisible={FOCUS_RING}
       bg={background}
       borderColor={borderColor}
       borderRadius="sm"
@@ -26,11 +27,10 @@ export function Chip(props: ChipProps): ReactElement {
       boxShadow={shadow}
       color={color}
       cursor={cursor}
+      disabled={disabled}
       opacity={opacity}
       paddingBlock="1.5"
       paddingInline="4"
-      role="button"
-      tabIndex={0}
       transitionProperty="background-color, border-color, box-shadow, color, transform"
       transitionDuration="150ms"
       transitionTimingFunction="ease-out"
@@ -40,6 +40,6 @@ export function Chip(props: ChipProps): ReactElement {
         {children}
         <Text variant="label">{label}</Text>
       </Box>
-    </Box>
+    </NativeButton>
   );
 }

@@ -1,11 +1,14 @@
 import { Box } from '@chakra-ui/react';
 import type { Trainer } from '@creatures/contracts/trainer';
-import type { MouseEvent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
+import { IconButton } from '~/components/base/button/IconButton';
 import { IconClose, IconTeam } from '~/components/base/icon';
 import { Pressable } from '~/components/base/interactive/Pressable';
 import { Text } from '~/components/base/text/Text';
 import { SELECTED_RING } from '~/theme/selection';
+
+import { DELETE_BUTTON_SIZE, DELETE_ICON_SIZE } from './trainerCard.constants';
 
 const GENDER_LABELS = {
   female: 'Feminino',
@@ -23,72 +26,75 @@ type TrainerCardProps = {
 
 export function TrainerCard(props: TrainerCardProps): ReactElement {
   const { isSelected, onDelete, onSelect, trainer } = props;
-  const ring = isSelected ? SELECTED_RING : undefined;
   const genderLabel = GENDER_LABELS[trainer.gender];
   const subtitle = `${genderLabel} · Nível ${trainer.level}`;
+  const deleteLabel = `Excluir ${trainer.name}`;
 
   function handleSelect(): void {
     onSelect(trainer.id);
   }
 
-  function handleDeleteClick(event: MouseEvent<HTMLDivElement>): void {
-    event.stopPropagation();
+  function handleDelete(): void {
     onDelete(trainer.id);
   }
 
+  const body = <TrainerCardBody isSelected={isSelected} name={trainer.name} subtitle={subtitle} />;
+
   return (
-    <Pressable onPress={handleSelect}>
-      <Box
-        _before={ring}
-        alignItems="center"
-        bg="bg.raised"
-        borderRadius="sm"
-        boxShadow="raised"
-        display="flex"
-        gap="3"
-        p="2"
-        position="relative"
-        transitionProperty="box-shadow"
-        transitionDuration="150ms"
-        transitionTimingFunction="ease-out"
-      >
-        <TrainerAvatar />
-        <Box flex="1" minW="0">
-          <Text color="fg" overflow="hidden" variant="name" whiteSpace="nowrap">
-            {trainer.name}
-          </Text>
-          <Text color="fg.muted" overflow="hidden" variant="meta" whiteSpace="nowrap">
-            {subtitle}
-          </Text>
-        </Box>
-        <DeleteControl onClick={handleDeleteClick} />
+    <Box position="relative" width="full">
+      <Pressable onPress={handleSelect} radius="sm" width="full">
+        {body}
+      </Pressable>
+      <Box position="absolute" right="6px" top="50%" transform="translateY(-50%)">
+        <IconButton
+          label={deleteLabel}
+          onClick={handleDelete}
+          radius="full"
+          size={DELETE_BUTTON_SIZE}
+          tone="dangerGhost"
+        >
+          <IconClose size={DELETE_ICON_SIZE} />
+        </IconButton>
       </Box>
-    </Pressable>
+    </Box>
   );
 }
 
-type DeleteControlProps = {
-  onClick: (event: MouseEvent<HTMLDivElement>) => void;
+type TrainerCardBodyProps = {
+  isSelected: boolean;
+  name: string;
+  subtitle: string;
 };
 
-function DeleteControl(props: DeleteControlProps): ReactElement {
-  const { onClick } = props;
+function TrainerCardBody(props: TrainerCardBodyProps): ReactElement {
+  const { isSelected, name, subtitle } = props;
+  const ring = isSelected ? SELECTED_RING : undefined;
   return (
     <Box
+      _before={ring}
       alignItems="center"
-      color="fg.subtle"
-      cursor="pointer"
+      bg="bg.raised"
+      borderRadius="sm"
+      boxShadow="raised"
       display="flex"
-      flexShrink="0"
-      height={AVATAR_SIZE}
-      justifyContent="center"
-      transitionProperty="color"
+      gap="3"
+      p="2"
+      paddingInlineEnd="48px"
+      position="relative"
+      transitionProperty="box-shadow"
       transitionDuration="150ms"
       transitionTimingFunction="ease-out"
-      width={AVATAR_SIZE}
-      onClick={onClick}
+      width="full"
     >
-      <IconClose />
+      <TrainerAvatar />
+      <Box flex="1" minW="0">
+        <Text color="fg" overflow="hidden" variant="name" whiteSpace="nowrap">
+          {name}
+        </Text>
+        <Text color="fg.muted" overflow="hidden" variant="meta" whiteSpace="nowrap">
+          {subtitle}
+        </Text>
+      </Box>
     </Box>
   );
 }

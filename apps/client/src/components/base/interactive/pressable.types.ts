@@ -4,4 +4,6 @@ export type PressableProps = {
   children: ReactNode;
   disabled?: boolean;
   onPress: () => void;
+  radius?: string;
+  width?: string;
 };

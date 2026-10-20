@@ -24,13 +24,10 @@ type TrainerDeleteDialogProps = {
   trainerName: string;
 };
 
-export function TrainerDeleteDialog(props: TrainerDeleteDialogProps): ReactElement | null {
+export function TrainerDeleteDialog(props: TrainerDeleteDialogProps): ReactElement {
   const { contained = false, isDeleting = false, isOpen, onCancel, onConfirm, trainerName } = props;
-  if (!isOpen) {
-    return null;
-  }
   return (
-    <Dialog contained={contained} onClose={onCancel}>
+    <Dialog contained={contained} isOpen={isOpen} onClose={onCancel}>
       <DialogHeader>{TITLE}</DialogHeader>
       <DialogBody>
         <Text color="fg.muted" variant="body">

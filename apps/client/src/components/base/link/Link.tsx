@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import { Button } from '~/components/base/button/Button';
-import { FOCUS_BORDER } from '~/theme/focus';
+import { FOCUS_RING } from '~/theme/focus';
 
 import { LINK_COLOR, LINK_HOVER } from './link.constants';
 import type { LinkProps } from './link.types';
@@ -21,7 +21,7 @@ export function Link(props: LinkProps): ReactElement {
   }
   return (
     <ChakraLink
-      _focusVisible={FOCUS_BORDER}
+      _focusVisible={FOCUS_RING}
       _hover={LINK_HOVER}
       asChild
       color={LINK_COLOR}

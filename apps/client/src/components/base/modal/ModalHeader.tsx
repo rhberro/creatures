@@ -1,26 +1,28 @@
-import { Box } from '@chakra-ui/react';
+import { Dialog as ChakraDialog } from '@chakra-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 
-import { Text } from '~/components/base/text/Text';
-
 type ModalHeaderProps = {
-  align?: 'center' | 'start';
   children: ReactNode;
 };
 
 export function ModalHeader(props: ModalHeaderProps): ReactElement {
-  const { align = 'center', children } = props;
+  const { children } = props;
   return (
-    <Box
+    <ChakraDialog.Title
       borderBottom="1px solid"
       borderColor="border"
+      color="fg"
+      fontFamily="display"
+      fontSize="2xl"
+      fontWeight="700"
+      letterSpacing="0.04em"
+      lineHeight="1.15"
       paddingBlock="3"
       paddingInline="4"
-      textAlign={align}
+      textAlign="center"
+      textTransform="uppercase"
     >
-      <Text color="fg" variant="title">
-        {children}
-      </Text>
-    </Box>
+      {children}
+    </ChakraDialog.Title>
   );
 }

@@ -44,13 +44,16 @@ type StoreModalProps = {
   onClose: () => void;
 };
 
-export function StoreModal(props: StoreModalProps): ReactElement | null {
+export function StoreModal(props: StoreModalProps): ReactElement {
   const { contained = false, isOpen, onClose } = props;
-  if (!isOpen) {
-    return null;
-  }
   return (
-    <Modal contained={contained} height={STORE_HEIGHT} onClose={onClose} width={STORE_WIDTH}>
+    <Modal
+      contained={contained}
+      isOpen={isOpen}
+      height={STORE_HEIGHT}
+      onClose={onClose}
+      width={STORE_WIDTH}
+    >
       <ModalHeader>{TITLE}</ModalHeader>
       <Box borderBottom="1px solid" borderColor="border" paddingBlock="2" paddingInline="4">
         <TabBar>

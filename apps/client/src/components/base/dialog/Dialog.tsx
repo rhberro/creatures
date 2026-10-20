@@ -1,44 +1,56 @@
-import { Box } from '@chakra-ui/react';
-import { useRef, type ReactElement } from 'react';
+import { Dialog as ChakraDialog, Portal } from '@chakra-ui/react';
+import type { ReactElement } from 'react';
 
-import { Frame } from '~/components/base/frame/Frame';
 import { Overlay } from '~/components/base/overlay/Overlay';
-import { OverlayContext } from '~/components/base/overlay/overlay.context';
-import type { OverlayContextValue } from '~/components/base/overlay/overlay.types';
-import { useOverlay } from '~/components/base/overlay/useOverlay';
 
 import type { DialogProps } from './dialog.types';
 
 const DIALOG_WIDTH = '420px';
 
 export function Dialog(props: DialogProps): ReactElement {
-  const { children, contained = false, onClose, width = DIALOG_WIDTH } = props;
+  const { children, contained = false, isOpen, onClose, width = DIALOG_WIDTH } = props;
+  const handleOpenChange = buildOpenChange(onClose);
+  const closeOnOutside = false;
+  const isModalLayer = !contained;
   const position = contained ? 'absolute' : 'fixed';
-  const contentRef = useRef<HTMLDivElement>(null);
-  useOverlay({ contentRef, dismissOnOutside: true, interactive: !contained, onClose });
-  const context: OverlayContextValue = { onClose };
   return (
-    <OverlayContext.Provider value={context}>
-      <Box
-        alignItems="center"
-        display="flex"
-        inset="0"
-        justifyContent="center"
-        position={position}
-        zIndex="modal"
-      >
-        <Overlay />
-        <Box
-          maxH="calc(100dvh - 64px)"
-          maxW="calc(100% - 32px)"
-          position="relative"
-          ref={contentRef}
-          width={width}
-          zIndex="1"
-        >
-          <Frame tone="overlay">{children}</Frame>
-        </Box>
-      </Box>
-    </OverlayContext.Provider>
+    <ChakraDialog.Root
+      closeOnEscape
+      closeOnInteractOutside={closeOnOutside}
+      modal={isModalLayer}
+      onOpenChange={handleOpenChange}
+      open={isOpen}
+      size="sm"
+    >
+      <Portal disabled={contained}>
+        <Overlay contained={contained} />
+        <ChakraDialog.Positioner padding="4" position={position}>
+          <ChakraDialog.Content
+            bg="bg.panel"
+            borderColor="border"
+            borderRadius="lg"
+            borderWidth="1px"
+            boxShadow="overlay"
+            display="flex"
+            flexDirection="column"
+            maxH="calc(100dvh - 64px)"
+            maxW="calc(100% - 32px)"
+            overflow="hidden"
+            position="relative"
+            width={width}
+          >
+            {children}
+          </ChakraDialog.Content>
+        </ChakraDialog.Positioner>
+      </Portal>
+    </ChakraDialog.Root>
   );
+}
+
+function buildOpenChange(onClose: () => void): (details: { open: boolean }) => void {
+  return function handleOpenChange(details: { open: boolean }): void {
+    if (!details.open) {
+      onClose();
+    }
+  };
 }

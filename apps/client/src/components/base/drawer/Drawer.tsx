@@ -1,52 +1,50 @@
-import { Box } from '@chakra-ui/react';
-import { useRef, type ReactElement } from 'react';
+import { Dialog as ChakraDialog, Portal } from '@chakra-ui/react';
+import type { ReactElement } from 'react';
 
-import { CloseControl } from '~/components/base/frame/CloseControl';
 import { Overlay } from '~/components/base/overlay/Overlay';
-import { OverlayContext } from '~/components/base/overlay/overlay.context';
-import type { OverlayContextValue } from '~/components/base/overlay/overlay.types';
-import { useOverlay } from '~/components/base/overlay/useOverlay';
+import { OverlayPanel } from '~/components/base/overlay/OverlayPanel';
 
 import type { DrawerProps } from './drawer.types';
 
 const DRAWER_WIDTH = '320px';
-const DRAWER_MAX_HEIGHT = 'calc(100dvh - 32px)';
-const CLOSE_OFFSET = '-12px';
-const CLOSE_SIZE = '32px';
 
 export function Drawer(props: DrawerProps): ReactElement {
-  const { children, contained = false, height, onClose, width = DRAWER_WIDTH } = props;
+  const { children, contained = false, height, isOpen, onClose, width = DRAWER_WIDTH } = props;
+  const handleOpenChange = buildOpenChange(onClose);
+  const closeOnOutside = !contained;
+  const isModalLayer = !contained;
   const position = contained ? 'absolute' : 'fixed';
-  const contentRef = useRef<HTMLDivElement>(null);
-  useOverlay({ contentRef, dismissOnOutside: true, interactive: !contained, onClose });
-  const context: OverlayContextValue = { onClose };
   return (
-    <OverlayContext.Provider value={context}>
-      <Box inset="0" position={position} zIndex="modal">
-        <Overlay />
-        <Box
-          bg="bg.panel"
-          borderColor="border"
-          borderLeftWidth="1px"
-          bottom="0"
-          boxShadow="overlay"
-          display="flex"
-          flexDirection="column"
-          height={height}
-          maxH={DRAWER_MAX_HEIGHT}
-          position="absolute"
-          ref={contentRef}
-          right="0"
-          top="0"
-          width={width}
-          zIndex="1"
+    <ChakraDialog.Root
+      closeOnEscape
+      closeOnInteractOutside={closeOnOutside}
+      modal={isModalLayer}
+      onOpenChange={handleOpenChange}
+      open={isOpen}
+      size="sm"
+    >
+      <Portal disabled={contained}>
+        <Overlay contained={contained} />
+        <ChakraDialog.Positioner
+          alignItems="stretch"
+          inset="0"
+          justifyContent="flex-end"
+          padding="0"
+          position={position}
         >
-          {children}
-        </Box>
-        <Box position="absolute" right={CLOSE_OFFSET} top={CLOSE_OFFSET}>
-          <CloseControl onClick={onClose} size={CLOSE_SIZE} />
-        </Box>
-      </Box>
-    </OverlayContext.Provider>
+          <OverlayPanel height={height} onClose={onClose} variant="drawer" width={width}>
+            {children}
+          </OverlayPanel>
+        </ChakraDialog.Positioner>
+      </Portal>
+    </ChakraDialog.Root>
   );
+}
+
+function buildOpenChange(onClose: () => void): (details: { open: boolean }) => void {
+  return function handleOpenChange(details: { open: boolean }): void {
+    if (!details.open) {
+      onClose();
+    }
+  };
 }

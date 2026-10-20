@@ -82,7 +82,7 @@ function LayersBlock(): ReactElement {
         </LayerSample>
         <LayerSample description="Camada centrada sobre a tela." label="Modal">
           <Box height="280px" overflow="hidden" padding="16px" position="relative" width="392px">
-            <Modal contained onClose={noop} width="280px">
+            <Modal contained isOpen onClose={noop} width="280px">
               <ModalHeader>Loja</ModalHeader>
               <Box padding="4">
                 <Text color="fg.muted" variant="body">
@@ -94,7 +94,7 @@ function LayersBlock(): ReactElement {
         </LayerSample>
         <LayerSample description="Camada pela lateral da tela." label="Drawer">
           <Box height="280px" overflow="hidden" padding="16px" position="relative" width="392px">
-            <Drawer contained onClose={noop}>
+            <Drawer contained isOpen onClose={noop}>
               <DrawerHeader>Detalhes da área</DrawerHeader>
               <Box padding="4">
                 <Text color="fg.muted" variant="body">

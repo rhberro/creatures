@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Dialog as ChakraDialog } from '@chakra-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 
 type DialogBodyProps = {
@@ -8,8 +8,8 @@ type DialogBodyProps = {
 export function DialogBody(props: DialogBodyProps): ReactElement {
   const { children } = props;
   return (
-    <Box display="flex" flexDirection="column" gap="4" padding="4">
+    <ChakraDialog.Body flex="1" minH="0" overflowY="auto" padding="4">
       {children}
-    </Box>
+    </ChakraDialog.Body>
   );
 }

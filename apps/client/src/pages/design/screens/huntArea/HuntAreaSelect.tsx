@@ -17,7 +17,7 @@ const MODAL_HEIGHT = '720px';
 export function HuntAreaSelect(): ReactElement {
   const cards = AREAS.map(renderAreaCard);
   return (
-    <Modal contained height={MODAL_HEIGHT} onClose={noop} width={MODAL_WIDTH}>
+    <Modal contained height={MODAL_HEIGHT} isOpen onClose={noop} width={MODAL_WIDTH}>
       <ModalHeader>Locais de Caça</ModalHeader>
       <ModalBody>
         <Box display="grid" gap="3" gridTemplateColumns="repeat(4, 1fr)">

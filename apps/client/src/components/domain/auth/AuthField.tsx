@@ -4,6 +4,8 @@ import type { ChangeEvent, ReactElement } from 'react';
 import { TextField } from '~/components/base/field/TextField';
 import { Text } from '~/components/base/text/Text';
 
+import { FieldLabel } from './FieldLabel';
+
 type AuthFieldProps = {
   autoComplete?: string;
   error?: string;
@@ -28,12 +30,10 @@ export function AuthField(props: AuthFieldProps): ReactElement {
     type,
     value,
   } = props;
-  const message = error ? <FieldError message={error} /> : null;
+  const message = error ? <FieldErrorMessage message={error} /> : null;
   return (
     <Box>
-      <Text color="fg.muted" marginBlockEnd="1" variant="meta">
-        {label}
-      </Text>
+      <FieldLabel>{label}</FieldLabel>
       <TextField
         autoComplete={autoComplete}
         name={name}
@@ -48,14 +48,14 @@ export function AuthField(props: AuthFieldProps): ReactElement {
   );
 }
 
-type FieldErrorProps = {
+type FieldErrorMessageProps = {
   message: string;
 };
 
-function FieldError(props: FieldErrorProps): ReactElement {
+function FieldErrorMessage(props: FieldErrorMessageProps): ReactElement {
   const { message } = props;
   return (
-    <Text color="fg.error" marginBlockStart="1" role="alert" variant="body">
+    <Text color="fg.error" role="alert" variant="body">
       {message}
     </Text>
   );

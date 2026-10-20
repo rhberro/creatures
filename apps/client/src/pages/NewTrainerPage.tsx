@@ -1,4 +1,4 @@
-import { Stack } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import type { Gender, NewTrainerInput } from '@creatures/contracts/trainer';
 import type { FormEvent } from 'react';
 import { createElement, useEffect, useState } from 'react';
@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import type { AlertInput } from '~/components/base/alert/alert.types';
 import { useAlerts } from '~/components/base/alert/useAlerts';
 import { Text } from '~/components/base/text/Text';
+import { FieldLabel } from '~/components/domain/auth/FieldLabel';
 import { BrandLayout } from '~/components/domain/brand/BrandLayout';
 import { CreateTrainerPanel } from '~/components/domain/trainer/CreateTrainerPanel';
 import { GenderToggle } from '~/components/domain/trainer/GenderToggle';
@@ -55,7 +56,10 @@ export function NewTrainerPage(): ReactElement {
         <form noValidate onSubmit={form.handleSubmit}>
           <Stack gap={6}>
             <TrainerAvatar gender={form.gender} />
-            <GenderToggle value={form.gender} onChange={form.handleGenderChange} />
+            <Box>
+              <FieldLabel>Gênero</FieldLabel>
+              <GenderToggle value={form.gender} onChange={form.handleGenderChange} />
+            </Box>
             <NameField
               error={form.nameError}
               name={form.name}
@@ -63,6 +67,7 @@ export function NewTrainerPage(): ReactElement {
               onChange={form.handleNameChange}
             />
             <StarterSection
+              error={starters.error}
               isLoading={starters.isLoading}
               selectedId={form.starterId}
               starters={starters.starters}

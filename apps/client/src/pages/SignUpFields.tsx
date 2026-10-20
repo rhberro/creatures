@@ -14,14 +14,6 @@ export function SignUpFields(props: SignUpFieldsProps): ReactElement {
   return (
     <>
       <AuthField
-        autoComplete="name"
-        label="Nome"
-        name="name"
-        onChange={onEmailChange}
-        placeholder="Como você quer ser chamado"
-        value={email}
-      />
-      <AuthField
         autoComplete="email"
         label="E-mail"
         name="email"

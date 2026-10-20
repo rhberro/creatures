@@ -7,6 +7,7 @@ type PaletteSteps = {
   fg: ScaleStep;
   muted: ScaleStep;
   solid: ScaleStep;
+  solidHover: ScaleStep;
   subtle: ScaleStep;
 };
 
@@ -24,6 +25,7 @@ function createPalette(name: string, steps: PaletteSteps): Palette {
     focusRing: { value: reference(steps.focusRing) },
     muted: { value: reference(steps.muted) },
     solid: { value: reference(steps.solid) },
+    solidHover: { value: reference(steps.solidHover) },
     subtle: { value: reference(steps.subtle) },
   };
 }
@@ -32,9 +34,13 @@ const STANDARD_STEPS: PaletteSteps = {
   contrast: 50,
   emphasized: 400,
   fg: 300,
-  focusRing: 500,
+  // Passo claro de propósito: o anel de foco precisa contrastar com o fundo
+  // solido da paleta, que usa o passo 500.
+  focusRing: 300,
   muted: 900,
   solid: 500,
+  // Um passo mais claro que o solido: e o hover do botao primario.
+  solidHover: 400,
   subtle: 950,
 };
 
@@ -43,9 +49,10 @@ export const neutralPalette = {
   contrast: { value: '{colors.base.50}' },
   emphasized: { value: '{colors.base.600}' },
   fg: { value: '{colors.base.300}' },
-  focusRing: { value: '{colors.arcane.500}' },
+  focusRing: { value: '{colors.arcane.300}' },
   muted: { value: '{colors.base.700}' },
   solid: { value: '{colors.base.700}' },
+  solidHover: { value: '{colors.base.600}' },
   subtle: { value: '{colors.base.800}' },
 };
 
@@ -160,6 +167,7 @@ function createAliasPalette(source: string, steps: PaletteSteps): Palette {
     focusRing: { value: reference(steps.focusRing) },
     muted: { value: reference(steps.muted) },
     solid: { value: reference(steps.solid) },
+    solidHover: { value: reference(steps.solidHover) },
     subtle: { value: reference(steps.subtle) },
   };
 }

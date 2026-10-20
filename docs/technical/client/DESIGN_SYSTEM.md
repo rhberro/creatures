@@ -248,7 +248,8 @@ O que o base **pode** fazer é expor os ganchos: o `Slot` sabe o que é selecion
 | `TextField` | `~/components/base/field/TextField` | Campo de texto e de senha. Já vem em 16px. `clearable` mostra o **X** dentro do campo, à direita, que limpa o valor. |
 | `IconButton` | `~/components/base/button/IconButton` | Botão só de ícone. `tone`: `neutral`, `primary`, `secondary`, `danger`. Sempre 44px de alvo. |
 | `IconBadge` | `~/components/base/badge/IconBadge` | O quadrado arredondado que segura um ícone dentro de um alerta ou de um item. |
-| `Pressable` | `~/components/base/interactive/Pressable` | Torna qualquer coisa clicável **e** acessível: `role="button"`, `tabIndex`, Enter e Espaço, anel de foco visível e hover. Todo card que se clica usa este, e não um `onClick` solto. |
+| `Pressable` | `~/components/base/interactive/Pressable` | Torna qualquer coisa clicável **e** acessível: é um `<button>` de verdade, com Enter e Espaço, disabled nativo, anel de foco e hover. Todo card que se clica usa este. |
+| `NativeButton` | `~/components/base/button/NativeButton` | O botão sem estilo. É a base de `Pressable`, `IconButton`, `Tab` e `Chip`. |
 | `Link` | `~/components/base/link/Link` | Link de navegação. Sem `tone`, é link de texto: cor primária, sublinhado, hover mais claro. Com `tone`, é um link **com cara de botão** — o mesmo `as="button"` do shadcn, e o sublinhado some. Aceita `width`, para o botão de link ocupar a largura do card. Nenhum link de texto usa o `Link` cru do router. |
 | `Icon` | `~/components/base/icon/Icon` | A primitiva do svg: `size`, traço de 2px, grade de 24. Todo ícone é composed dela. |
 | Ícones | `~/components/base/icon` | `IconBag`, `IconBell`, `IconBolt`, `IconChest`, `IconClose`, `IconCoin`, `IconCrosshair`, `IconGem`, `IconGear`, `IconHeart`, `IconMap`, `IconPlay`, `IconPotion`, `IconPrism`, `IconSearch`, `IconStore`, `IconTeam`, `IconUsers`. |
@@ -305,9 +306,29 @@ São **dois componentes diferentes**, com pesos diferentes.
 | `Dialog` / `DialogHeader` / `DialogBody` / `DialogFooter` | `~/components/base/dialog/*` |
 | `Modal` / `ModalHeader` / `ModalBody` / `ModalFooter` | `~/components/base/modal/*` |
 | `Drawer` / `DrawerHeader` / `DrawerBody` / `DrawerFooter` | `~/components/base/drawer/*` |
-| `Overlay` / `useOverlay` / `useOverlayContext` | `~/components/base/overlay/*` |
+| `Overlay` | `~/components/base/overlay/Overlay` | O fundo escurecido da camada. |
 
-**Camada contida não é camada.** Um overlay `contained` — o que a galeria usa para mostrar um modal dentro da página — **não escuta ESC nem clique fora**. Um listener global de `mousedown` que chame `preventDefault()` rouba o foco de todo input da página; por isso o overlay só fica ativo quando ele é uma camada de verdade.
+**As três camadas são o `Dialog` do Chakra.** `Dialog`, `Modal` e `Drawer` são o mesmo componente Ark UI com pesos diferentes: o `Dialog` é a confirmação, o `Modal` é a tela com conteúdo, o `Drawer` é a lateral. O que o Chakra já resolve — *focus trap*, `aria-modal`, `aria-labelledby`, restauração do foco no gatilho, scroll lock, portal e inércia do fundo — vem de graça, e **não se reimplementa**.
+
+O que é nosso é a aparência: o `Frame` é o `Dialog.Content` com o nosso fundo, borda e sombra.
+
+**Camada contida não é camada.** Um overlay `contained` — o que a galeria usa para mostrar um modal dentro da página — passa `modal={false}`: sem focus trap, sem `aria-modal`, sem roubar o foco da página. E o `Overlay` dele é `absolute`, não `fixed`, para não cobrir a página inteira e engolir os cliques de tudo que está embaixo.
+
+**A camada é do Chakra, não nossa.** Escrever o `Dialog` com `Box` é trocar comportamento por estética: perde-se focus trap, `aria-modal`, rótulo acessível, restauração de foco e scroll lock. Quando o Chakra já resolve, o design system usa o Chakra.
+
+**Inscrição acontece dentro do efeito, nunca no render.** `useEffect(subscribe(...), deps)` inscreve no `document` **durante o render** — o React recebe o `teardown` como se fosse o efeito e o chama logo após o mount. Resultado: cada re-render deixa um listener a mais no `document`, e só o primeiro teardown remove um deles. Os órfãos ficam vivos com o nó do conteúdo já desmontado: todo clique vira "fora do diálogo", o `preventDefault()` impede o foco de qualquer input, e o `onClose` antigo fecha o diálogo que está aberto.
+
+O padrão certo é uma função de inscrição **estável**, criada uma vez e passada ao `useEffect`:
+
+```ts
+const subscribeRef = useRef<(() => void) | null>(null);
+if (subscribeRef.current === null) {
+  subscribeRef.current = buildSubscribe(stateRef);
+}
+useEffect(subscribeRef.current, DEPS);
+```
+
+É o mesmo padrão do `useOverlay` e do `Popup`. Vale para qualquer `addEventListener` que vive dentro de um componente.
 
 **A anatomia é a mesma, o peso não.** Todo dialog e todo modal têm cabeçalho, corpo e rodapé; o que muda é o tamanho e o que cabe dentro.
 
@@ -375,6 +396,7 @@ O `ModalHeader` não recebe `onClose`: ele lê do contexto do overlay. Isso é R
 | `StorageModal` | `~/components/domain/game/StorageModal` | O armazenamento: seção Time e seção Criaturas, com a busca no rodapé. |
 | `StarterCard` | `~/components/domain/trainer/StarterCard` | O card de criatura inicial, focusável pelo teclado. |
 | `FieldError` | `~/components/domain/auth/FieldError` | A mensagem de erro de um campo. |
+| `FieldLabel` | `~/components/domain/auth/FieldLabel` | O rótulo de um campo. Todo campo com rótulo usa este, para o mesmo estilo em toda parte. |
 | `LegalNotice` | `~/components/domain/auth/LegalNotice` | O aviso de termos e privacidade, variando a ação que o precede. |
 | `Toolbar` / `ToolbarLeft` / `ToolbarRight` / `ToolbarIdentity` / `CurrencyBadge` | `~/components/domain/game/*` | A barra superior do jogo. É a **mesma** no app e na galeria — nunca duas cópias. |
 | `TeamStrip` / `CreatureTab` / `CreaturePortrait` / `EmptyCreatureTab` | `~/components/domain/game/*` | As linguetas do time, logo abaixo da toolbar. Slot preenchido é maior e mostra retrato, nível e nome; slot vazio é menor e não mostra nada. |
@@ -448,10 +470,12 @@ export function CityPanel(): ReactElement {
 - [ ] Nenhuma prop que desenha: estrutura vem de `children` e de partes.
 - [ ] A lógica com estado está em um hook, não no corpo do componente.
 - [ ] Todo card clicável usa `Pressable`, e não um `onClick` solto em um `Box`.
+- [ ] Todo controle clicável é `<button>` ou `<a>` de verdade — Enter e Espaço funcionam de graça.
+- [ ] Nenhum botão dentro de outro botão.
 - [ ] Todo link de texto usa o `Link` do design system, e não o `Link` cru do router.
 - [ ] Nenhuma tela do app tem cópia de um componente que já existe em `base/` ou `domain/`.
 - [ ] Todo botão tem `tone`, não `variant` solto.
-- [ ] Todo estado de seleção usa a borda de seleção, e todo foco usa a borda interna — nunca outline.
+- [ ] Todo estado de seleção usa a borda de seleção; todo foco usa o outline externo.
 - [ ] Alvo de toque de no mínimo 44px.
 - [ ] Cor nunca é a única informação: sempre com ícone ou rótulo.
 - [ ] A superfície tem os cinco estados.
@@ -464,7 +488,9 @@ export function CityPanel(): ReactElement {
 
 **Sombra para profundidade, borda para estado.** Painel, cartão e slot usam sombra em camadas. Borda fica para o que comunica estado ou separa layout: o traço do slot selecionado, o divisor do rodapé, a borda do campo de texto.
 
-**Estado sem brilho.** Seleção e foco se marcam com **borda**, nunca com um outline fora do bloco: o foco é uma borda interna de 2px em `arcane.500` e a seleção é a borda do próprio elemento em `arcane.400`. Elevação e marcador de canto completam. Nenhum estado usa halo, sombra colorida que se dissolve ou gradiente de fade: são eles que fazem a interface parecer uma vitrine em vez de um jogo.
+**Estado sem brilho.** O foco é um **outline de 2px fora do elemento**, como o padrão do Chakra (`focusVisibleRing="outside"`), na cor `arcane.300` — um passo claro, que contrasta tanto no fundo escuro do sistema quanto no fundo violeta do botão primário. A seleção é a **borda do próprio elemento** em `arcane.400`. Elevação e marcador de canto completam. Nenhum estado usa halo, sombra colorida que se dissolve ou gradiente de fade: são eles que fazem a interface parecer uma vitrine em vez de um jogo.
+
+> A borda interna foi experimentada e não serve: no botão primário ela some, porque a cor de foco era a mesma do fundo, e no card do treinador ela ficava **por trás** do conteúdo, invisível. O outline por fora é o padrão do Chakra e resolve os dois casos.
 
 **Raios concêntricos.** O raio externo é o raio interno mais o padding entre eles.
 

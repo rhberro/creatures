@@ -1,8 +1,9 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
+import { Button } from '~/components/base/button/Button';
 import { TextField } from '~/components/base/field/TextField';
-import { Text } from '~/components/base/text/Text';
+import { FieldLabel } from '~/components/domain/auth/FieldLabel';
 import { CreateTrainerPanel } from '~/components/domain/trainer/CreateTrainerPanel';
 import { GenderToggle } from '~/components/domain/trainer/GenderToggle';
 import { StarterGrid } from '~/components/domain/trainer/StarterGrid';
@@ -15,37 +16,30 @@ const STARTERS: StarterEntry[] = [
   { id: 's3', name: 'Pedrino' },
 ];
 
+const CREATE_LABEL = 'Criar';
+const BACK_LABEL = 'Voltar';
+
 export function CreateTrainerScreen(): ReactElement {
   return (
     <CreateTrainerPanel>
       <TrainerAvatar gender="male" />
-      <Field label="Gênero">
+      <Box>
+        <FieldLabel>Gênero</FieldLabel>
         <GenderToggle onChange={noop} value="male" />
-      </Field>
-      <Field label="Nome">
+      </Box>
+      <Box>
+        <FieldLabel>Nome</FieldLabel>
         <TextField autoComplete="name" name="name" placeholder="Como você quer ser chamado" />
-      </Field>
-      <Field label="Criatura inicial">
+      </Box>
+      <Box>
+        <FieldLabel>Criatura inicial</FieldLabel>
         <StarterGrid onSelect={noop} selectedId="s1" starters={STARTERS} />
-      </Field>
+      </Box>
+      <Box display="flex" flexDirection="column" gap="2">
+        <Button tone="primary">{CREATE_LABEL}</Button>
+        <Button tone="secondary">{BACK_LABEL}</Button>
+      </Box>
     </CreateTrainerPanel>
-  );
-}
-
-type FieldProps = {
-  children: ReactElement;
-  label: string;
-};
-
-function Field(props: FieldProps): ReactElement {
-  const { children, label } = props;
-  return (
-    <Box>
-      <Text color="fg.muted" marginBlockEnd="1" variant="meta">
-        {label}
-      </Text>
-      {children}
-    </Box>
   );
 }
 

@@ -2,7 +2,6 @@ import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
 import { Text } from '~/components/base/text/Text';
-import { TrainerDeleteDialog } from '~/components/domain/trainer/TrainerDeleteDialog';
 
 import { BackpackModalPreview } from './screens/BackpackModal';
 import { CreateTrainerScreen } from './screens/CreateTrainerScreen';
@@ -84,15 +83,6 @@ function TrainerGroup(): ReactElement {
           <TrainersList />
         </Box>
         <CreateTrainerScreen />
-        <Box height="340px" overflow="hidden" padding="16px" position="relative" width="452px">
-          <TrainerDeleteDialog
-            contained
-            isOpen
-            trainerName="Rafael"
-            onCancel={noop}
-            onConfirm={noop}
-          />
-        </Box>
       </Box>
     </Box>
   );
@@ -162,8 +152,4 @@ function HuntGroup(): ReactElement {
       </Box>
     </Box>
   );
-}
-
-function noop(): void {
-  void 0;
 }

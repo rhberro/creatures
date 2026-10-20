@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Dialog as ChakraDialog } from '@chakra-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 
 type ModalFooterProps = {
@@ -8,7 +8,7 @@ type ModalFooterProps = {
 export function ModalFooter(props: ModalFooterProps): ReactElement {
   const { children } = props;
   return (
-    <Box
+    <ChakraDialog.Footer
       alignItems="center"
       borderTop="1px solid"
       borderColor="border"
@@ -18,6 +18,6 @@ export function ModalFooter(props: ModalFooterProps): ReactElement {
       paddingInline="4"
     >
       {children}
-    </Box>
+    </ChakraDialog.Footer>
   );
 }

@@ -1,7 +1,10 @@
-import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
+import { NativeButton } from '~/components/base/button/NativeButton';
 import { Text } from '~/components/base/text/Text';
+import { FOCUS_RING } from '~/theme/focus';
+
+import { CARD_HOVER } from './createTrainerCard.constants';
 
 type CreateTrainerCardProps = {
   onCreate: () => void;
@@ -10,9 +13,10 @@ type CreateTrainerCardProps = {
 export function CreateTrainerCard(props: CreateTrainerCardProps): ReactElement {
   const { onCreate } = props;
   return (
-    <Box
+    <NativeButton
+      _focusVisible={FOCUS_RING}
+      _hover={CARD_HOVER}
       alignItems="center"
-      bg="bg.panel"
       borderColor="border"
       borderRadius="sm"
       borderStyle="dashed"
@@ -20,27 +24,16 @@ export function CreateTrainerCard(props: CreateTrainerCardProps): ReactElement {
       color="fg.muted"
       cursor="pointer"
       display="flex"
-      gap="3"
-      p="2"
-      transitionProperty="background-color, color"
+      justifyContent="center"
+      minH="76px"
+      padding="2"
+      transitionProperty="background-color, border-color, color"
       transitionDuration="150ms"
       transitionTimingFunction="ease-out"
+      width="full"
       onClick={onCreate}
     >
-      <Box
-        alignItems="center"
-        borderRadius="full"
-        display="flex"
-        flexShrink="0"
-        height="36px"
-        justifyContent="center"
-        width="36px"
-      >
-        <Text color="fg.subtle" variant="bodyLarge">
-          +
-        </Text>
-      </Box>
-      <Text variant="label">Criar treinador</Text>
-    </Box>
+      <Text variant="label">Criar Treinador</Text>
+    </NativeButton>
   );
 }

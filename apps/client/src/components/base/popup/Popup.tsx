@@ -26,11 +26,16 @@ export function Popup(props: PopupProps): ReactElement {
   const isPinnedRef = useRef<boolean>(false);
   const isHoveredRef = useRef<boolean>(false);
   const hasHoverRef = useRef<boolean>(false);
+  const subscribeRef = useRef<(() => void) | null>(null);
 
   useEffect(detectHoverCapability(setHasHover, hasHoverRef), EMPTY_DEPS);
   useEffect(refreshRef(isPinnedRef, isPinned));
   useEffect(refreshRef(isHoveredRef, isHovered));
-  useEffect(subscribeOutside(triggerRef, contentRef, isPinnedRef, setIsPinned), EMPTY_DEPS);
+  if (subscribeRef.current === null) {
+    subscribeRef.current = buildSubscribe(triggerRef, contentRef, isPinnedRef, setIsPinned);
+  }
+
+  useEffect(subscribeRef.current, EMPTY_DEPS);
 
   const isVisible = computeVisible(hasHover, isPinned, isHovered);
 
@@ -97,34 +102,71 @@ function buildSetHoveredFalse(setHovered: Dispatch<SetStateAction<boolean>>): ()
   };
 }
 
-function subscribeOutside(
+type OutsideState = {
+  content: HTMLDivElement | null;
+  isPinned: boolean;
+  setPinned: Dispatch<SetStateAction<boolean>>;
+  trigger: HTMLElement | null;
+};
+
+type StateReader = () => OutsideState;
+
+// O mesmo cuidado do overlay: a inscrição precisa acontecer dentro do efeito.
+// Feito no render, cada re-render deixa um listener a mais no document, e só o
+// primeiro teardown remove um deles — os órfãos continuam fechando o popup.
+function buildSubscribe(
   triggerRef: RefObject<HTMLElement | null>,
   contentRef: RefObject<HTMLDivElement | null>,
   isPinnedRef: RefObject<boolean>,
   setPinned: Dispatch<SetStateAction<boolean>>,
 ): () => void {
-  function handle(event: MouseEvent | TouchEvent): void {
-    if (!isPinnedRef.current) {
-      return;
+  return function subscribe(): () => void {
+    const readState = buildStateReader(triggerRef, contentRef, isPinnedRef, setPinned);
+
+    function onPointer(event: MouseEvent | TouchEvent): void {
+      handleOutside(readState(), event);
     }
-    const target = event.target;
-    if (!(target instanceof Node)) {
-      return;
-    }
-    if (triggerRef.current && triggerRef.current.contains(target)) {
-      return;
-    }
-    if (contentRef.current && contentRef.current.contains(target)) {
-      return;
-    }
-    setPinned(false);
-  }
-  document.addEventListener('mousedown', handle);
-  document.addEventListener('touchstart', handle);
-  return function teardown(): void {
-    document.removeEventListener('mousedown', handle);
-    document.removeEventListener('touchstart', handle);
+
+    document.addEventListener('mousedown', onPointer);
+    document.addEventListener('touchstart', onPointer);
+    return function teardown(): void {
+      document.removeEventListener('mousedown', onPointer);
+      document.removeEventListener('touchstart', onPointer);
+    };
   };
+}
+
+function buildStateReader(
+  triggerRef: RefObject<HTMLElement | null>,
+  contentRef: RefObject<HTMLDivElement | null>,
+  isPinnedRef: RefObject<boolean>,
+  setPinned: Dispatch<SetStateAction<boolean>>,
+): StateReader {
+  return function readState(): OutsideState {
+    return {
+      content: contentRef.current,
+      isPinned: isPinnedRef.current,
+      setPinned,
+      trigger: triggerRef.current,
+    };
+  };
+}
+
+function handleOutside(state: OutsideState, event: MouseEvent | TouchEvent): void {
+  if (!state.isPinned) {
+    return;
+  }
+  const target = event.target;
+  if (!(target instanceof Node)) {
+    return;
+  }
+  if (state.trigger && state.trigger.contains(target)) {
+    return;
+  }
+  if (state.content && state.content.contains(target)) {
+    return;
+  }
+  state.setPinned(false);
 }
 
 function renderContent(
