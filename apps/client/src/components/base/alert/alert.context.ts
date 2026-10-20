@@ -11,7 +11,6 @@ function stubShow(): string {
 }
 
 const STUB_STACK: AlertStackValue = {
-  alerts: [],
   dismiss: stubDismiss,
   show: stubShow,
 };

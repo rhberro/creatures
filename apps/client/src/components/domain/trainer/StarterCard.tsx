@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 
 import { Pressable } from '~/components/base/interactive/Pressable';
 import { Text } from '~/components/base/text/Text';
-import { SELECTED_RING } from '~/theme/selection';
+import { useSelectionRing } from '~/theme/recipes/useSelectionRing';
 
 const CARD_SIZE = '64px';
 
@@ -16,8 +16,9 @@ type StarterCardProps = {
 
 export function StarterCard(props: StarterCardProps): ReactElement {
   const { isSelected, onSelect, starterId, starterName } = props;
-  const ring = isSelected ? SELECTED_RING : undefined;
-  const borderColor = isSelected ? 'arcane.400' : 'border';
+  const selectionRing = useSelectionRing();
+  const ring = isSelected ? selectionRing : undefined;
+  const borderColor = isSelected ? 'state.selected' : 'border';
 
   function handleSelect(): void {
     onSelect(starterId);

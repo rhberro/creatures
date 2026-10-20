@@ -1,5 +1,6 @@
-import { Dialog as ChakraDialog } from '@chakra-ui/react';
 import type { ReactElement, ReactNode } from 'react';
+
+import { LayerBody } from '~/components/base/layer/LayerBody';
 
 type DialogBodyProps = {
   children: ReactNode;
@@ -7,9 +8,5 @@ type DialogBodyProps = {
 
 export function DialogBody(props: DialogBodyProps): ReactElement {
   const { children } = props;
-  return (
-    <ChakraDialog.Body flex="1" minH="0" overflowY="auto" padding="4">
-      {children}
-    </ChakraDialog.Body>
-  );
+  return <LayerBody weight="dialog">{children}</LayerBody>;
 }

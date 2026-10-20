@@ -1,8 +1,6 @@
 import { Box, Input } from '@chakra-ui/react';
 import { useRef, useState, type ChangeEvent, type ReactElement } from 'react';
 
-import { FOCUS_RING } from '~/theme/focus';
-
 import { ClearControl } from './ClearControl';
 import type { TextFieldProps } from './field.types';
 
@@ -44,13 +42,12 @@ export function TextField(props: TextFieldProps): ReactElement {
         borderColor="border"
         borderRadius="sm"
         color="fg"
+        focusVisibleRing="outside"
         fontSize="md"
-        focusRingColor="arcane.500"
         height="38px"
         paddingInlineEnd={endPadding}
         ref={inputRef}
         value={shownValue}
-        _focusVisible={FOCUS_RING}
         onChange={handleChange}
         {...rest}
       />

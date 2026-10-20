@@ -1,31 +1,49 @@
+import { Tabs as ChakraTabs } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { NativeButton } from '~/components/base/button/NativeButton';
 import { Text } from '~/components/base/text/Text';
-import { FOCUS_RING } from '~/theme/focus';
 
 import type { TabProps } from './tab.types';
 
+/**
+ * A aba.
+ *
+ * O sublinhado violeta e a barra rebaixada marcam a aba ativa. O estado vem
+ * do contexto das `Tabs` — a aba nao recebe `active` por prop: quem sabe que
+ * ela esta ativa e o proprio Ark UI, via `data-selected`.
+ */
 export function Tab(props: TabProps): ReactElement {
-  const { active = false, children } = props;
-  const background = active ? 'bg.raised' : 'transparent';
-  const borderColor = active ? 'arcane' : 'transparent';
-  const color = active ? 'fg' : 'fg.subtle';
+  const { children, value } = props;
+  const activeStyles = buildActiveStyles();
   return (
-    <NativeButton
-      _focusVisible={FOCUS_RING}
-      bg={background}
-      borderBottom="2px solid"
-      borderColor={borderColor}
-      color={color}
-      cursor="pointer"
+    <ChakraTabs.Trigger
+      bg="transparent"
+      borderBottomStyle="solid"
+      borderBottomWidth="2px"
+      borderColor="transparent"
+      color="fg.subtle"
+      css={activeStyles}
+      height="auto"
+      minW="auto"
       paddingBlock="2"
       paddingInline="4"
       transitionProperty="background-color, border-color, color"
       transitionDuration="150ms"
       transitionTimingFunction="ease-out"
+      value={value}
     >
       <Text variant="label">{children}</Text>
-    </NativeButton>
+    </ChakraTabs.Trigger>
   );
+}
+
+function buildActiveStyles(): Record<string, unknown> {
+  return {
+    // O Ark UI marca a aba ativa com `data-selected`, e nao com `data-state`.
+    '&[data-selected]': {
+      bg: 'bg.raised',
+      borderColor: 'state.selected',
+      color: 'fg',
+    },
+  };
 }

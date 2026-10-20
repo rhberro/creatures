@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 
 import { TextField } from '~/components/base/field/TextField';
 import { Slot } from '~/components/base/frame/Slot';
+import { SlotGrid } from '~/components/base/frame/SlotGrid';
 import { Modal } from '~/components/base/modal/Modal';
 import { ModalBody } from '~/components/base/modal/ModalBody';
 import { ModalFooter } from '~/components/base/modal/ModalFooter';
@@ -16,8 +17,7 @@ const CREATURES_LABEL = 'Criaturas';
 const SEARCH_PLACEHOLDER = 'Buscar criaturas';
 const STORE_WIDTH = '720px';
 const STORE_HEIGHT = '620px';
-const TEAM_COLUMNS = 'repeat(5, 56px)';
-const CAPTURED_COLUMNS = 'repeat(10, 56px)';
+const SEARCH_WIDTH = '240px';
 
 type StorageCreature = {
   empty?: boolean;
@@ -41,11 +41,6 @@ const CAPTURED: StorageCreature[] = [
   { level: '4', name: 'Fagulha', tone: 'ember.400' },
   { level: '6', name: 'Galho', tone: 'verdant.400' },
   { level: '2', name: 'Seixo', tone: 'base.300' },
-  { empty: true, level: '', name: '', tone: '' },
-  { empty: true, level: '', name: '', tone: '' },
-  { empty: true, level: '', name: '', tone: '' },
-  { empty: true, level: '', name: '', tone: '' },
-  { empty: true, level: '', name: '', tone: '' },
 ];
 
 type StorageModalProps = {
@@ -71,39 +66,38 @@ export function StorageModal(props: StorageModalProps): ReactElement {
         <Text color="fg.muted" marginBlockEnd="2" variant="label">
           {TEAM_LABEL}
         </Text>
-        <Box
-          display="grid"
-          gap="1"
-          gridTemplateColumns={TEAM_COLUMNS}
-          justifyContent="start"
-          marginBlockEnd="5"
-        >
-          {teamCells}
+        <Box marginBlockEnd="5">
+          <SlotGrid>{teamCells}</SlotGrid>
         </Box>
         <Text color="fg.muted" marginBlockEnd="2" variant="label">
           {CREATURES_LABEL}
         </Text>
         <ScrollArea maxH="320px">
-          <Box display="grid" gap="1" gridTemplateColumns={CAPTURED_COLUMNS} justifyContent="start">
-            {capturedCells}
-          </Box>
+          <SlotGrid>{capturedCells}</SlotGrid>
         </ScrollArea>
       </ModalBody>
       <ModalFooter>
         <Box display="flex" justifyContent="flex-end" width="full">
-          <TextField maxW="240px" name="buscar-armazenamento" placeholder={SEARCH_PLACEHOLDER} />
+          <Box maxW={SEARCH_WIDTH} width="full">
+            <TextField
+              aria-label={SEARCH_PLACEHOLDER}
+              clearable
+              name="buscar-armazenamento"
+              placeholder={SEARCH_PLACEHOLDER}
+            />
+          </Box>
         </Box>
       </ModalFooter>
     </Modal>
   );
 }
 
-function renderCreatureCell(creature: StorageCreature, index: number): ReactElement {
-  const cellKey = creature.name || `vazio-${index}`;
-  const content = creature.empty ? null : <CreatureGlyph tone={creature.tone} />;
+function renderCreatureCell(item: StorageCreature, index: number): ReactElement {
+  const cellKey = item.name || `vazio-${index}`;
+  const content = <CreatureGlyph tone={item.tone} />;
   return (
     <Box key={cellKey}>
-      <Slot empty={creature.empty}>{content}</Slot>
+      <Slot>{content}</Slot>
     </Box>
   );
 }
@@ -116,7 +110,7 @@ function CreatureGlyph(props: CreatureGlyphProps): ReactElement {
   const { tone } = props;
   return (
     <Box alignItems="center" display="flex" height="100%" justifyContent="center" width="100%">
-      <Box bg={tone} borderRadius="full" height="100%" width="100%" />
+      <Box bg={tone} borderRadius="sm" height="100%" width="100%" />
     </Box>
   );
 }

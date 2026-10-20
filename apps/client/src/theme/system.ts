@@ -1,6 +1,8 @@
 import { createSystem, defaultConfig, defineConfig } from '@chakra-ui/react';
 
-import { gameTokens, paletteTokens, radiusTokens, surfaceTokens } from './semanticTokens';
+import { layerRecipe } from './recipes/layer';
+import { selectionRingRecipe } from './recipes/selectionRing';
+import { semanticTokens } from './semanticTokens';
 import { textStyles } from './textStyles';
 import { colors, fonts, radii, shadows } from './tokens';
 
@@ -61,13 +63,12 @@ const globalCss = {
 const config = defineConfig({
   globalCss,
   theme: {
-    semanticTokens: {
-      colors: {
-        ...surfaceTokens,
-        ...gameTokens,
-        ...paletteTokens,
-      },
-      radii: radiusTokens,
+    recipes: {
+      selectionRing: selectionRingRecipe,
+    },
+    semanticTokens,
+    slotRecipes: {
+      layer: layerRecipe,
     },
     textStyles,
     tokens: {

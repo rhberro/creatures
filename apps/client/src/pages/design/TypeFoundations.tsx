@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 
 import { Text } from '~/components/base/text/Text';
 import type { TextVariant } from '~/components/base/text/text.types';
+import { DIVIDER_BOTTOM } from '~/theme/divider';
 import { TYPE_SAMPLES, type TypeSample } from '~/theme/foundations';
 
 import { SectionHeader } from './SectionHeader';
@@ -26,8 +27,7 @@ function renderTypeSample(sample: TypeSample): ReactElement {
   return (
     <Box
       alignItems="baseline"
-      borderBottom="1px solid"
-      borderColor="border"
+      css={DIVIDER_BOTTOM}
       display="flex"
       gap="6"
       key={sample.style}

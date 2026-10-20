@@ -10,15 +10,22 @@ export type IconButtonToneColors = {
   hoverColor: string;
 };
 
+/**
+ * As cores do botão de ícone, por tom.
+ *
+ * Todas apontam para tokens semânticos: as de papel (`bg.raised`,
+ * `fg.muted`) e as de paleta (`arcane.strong`, `blood.borderMuted`). Nenhum
+ * passo cru de escala entra em componente.
+ */
 export const ICON_BUTTON_TONE: Record<IconButtonTone, IconButtonToneColors> = {
   danger: {
     background: 'bg.raised',
-    borderColor: 'blood.700',
+    borderColor: 'blood.borderMuted',
     borderWidth: '1px',
     boxShadow: 'sm',
-    color: 'blood.400',
-    hoverBackground: 'blood.900',
-    hoverColor: 'blood.200',
+    color: 'blood.emphasized',
+    hoverBackground: 'blood.muted',
+    hoverColor: 'blood.textSoft',
   },
   dangerGhost: {
     background: 'transparent',
@@ -26,8 +33,8 @@ export const ICON_BUTTON_TONE: Record<IconButtonTone, IconButtonToneColors> = {
     borderWidth: '0',
     boxShadow: 'none',
     color: 'fg.subtle',
-    hoverBackground: 'blood.900',
-    hoverColor: 'blood.200',
+    hoverBackground: 'blood.muted',
+    hoverColor: 'blood.textSoft',
   },
   ghost: {
     background: 'transparent',
@@ -48,13 +55,13 @@ export const ICON_BUTTON_TONE: Record<IconButtonTone, IconButtonToneColors> = {
     hoverColor: 'fg',
   },
   primary: {
-    background: 'arcane.600',
-    borderColor: 'arcane.300',
+    background: 'arcane.strong',
+    borderColor: 'arcane.border',
     borderWidth: '1px',
     boxShadow: 'sm',
-    color: 'arcane.50',
-    hoverBackground: 'arcane.500',
-    hoverColor: 'arcane.50',
+    color: 'arcane.contrast',
+    hoverBackground: 'arcane.strongHover',
+    hoverColor: 'arcane.contrast',
   },
   secondary: {
     background: 'bg.panel',

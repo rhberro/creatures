@@ -1,18 +1,13 @@
 import type { ReactNode } from 'react';
 
-export type AlertItem = {
+export type AlertInput = {
   content: ReactNode;
   duration: number;
   icon: ReactNode;
-  id: string;
-  isLeaving?: boolean;
-  remaining: number;
+  tone?: string;
 };
 
-export type AlertInput = Omit<AlertItem, 'id' | 'isLeaving' | 'remaining'>;
-
 export type AlertStackValue = {
-  alerts: AlertItem[];
   dismiss: (id: string) => void;
   show: (input: AlertInput) => string;
 };

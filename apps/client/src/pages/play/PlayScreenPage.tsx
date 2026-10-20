@@ -58,9 +58,7 @@ function PlayScreenBody(): ReactElement {
         trainerLevel={TRAINER_LEVEL}
         trainerName={TRAINER_NAME}
         onOpenBackpack={toolbarHandlers.onOpenBackpack}
-        onOpenSettings={toolbarHandlers.onOpenSettings}
         onOpenStorage={overlays.onOpenStorage}
-        onShowAlert={toolbarHandlers.onShowAlert}
         onSignOut={toolbarHandlers.onSignOut}
       />
       <Box display="flex" flex="1" position="relative">
@@ -86,9 +84,7 @@ function buildToolbarHandlers(
   return {
     onCloseBackpack: noop,
     onOpenBackpack: openBackpack,
-    onOpenSettings: handleNotify(show, 'Configurações em breve.'),
     onOpenStorage: handleNotify(show, 'Armazenamento em breve.'),
-    onShowAlert: handleNotify(show, 'Notificação de exemplo.'),
     onSignOut: handleSignOut(signOut, navigate),
   };
 }
@@ -145,9 +141,7 @@ function DemoAlertIcon(): ReactElement {
 type ToolbarHandlers = {
   onCloseBackpack: () => void;
   onOpenBackpack: () => void;
-  onOpenSettings: () => void;
   onOpenStorage: () => void;
-  onShowAlert: () => void;
   onSignOut: () => void;
 };
 

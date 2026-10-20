@@ -2,7 +2,6 @@ import type { ReactElement } from 'react';
 
 import { NativeButton } from '~/components/base/button/NativeButton';
 import { IconClose } from '~/components/base/icon';
-import { FOCUS_RING } from '~/theme/focus';
 
 const CLOSE_SIZE = '32px';
 const ICON_SIZE = '16px';
@@ -15,7 +14,6 @@ export function AlertClose(props: AlertCloseProps): ReactElement {
   const { onClick } = props;
   return (
     <NativeButton
-      _focusVisible={FOCUS_RING}
       alignItems="center"
       aria-label="Fechar aviso"
       bg="bg.raised"

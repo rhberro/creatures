@@ -1,50 +1,39 @@
-import { Dialog as ChakraDialog, Portal } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { Overlay } from '~/components/base/overlay/Overlay';
-import { OverlayPanel } from '~/components/base/overlay/OverlayPanel';
+import { LayerRoot } from '~/components/base/layer/LayerRoot';
 
 import type { DrawerProps } from './drawer.types';
 
 const DRAWER_WIDTH = '320px';
 
+/**
+ * O drawer: a lateral.
+ *
+ * Encostada na borda direita, com botao de fechar no canto. Fecha pelo ESC e
+ * pelo clique no fundo.
+ */
 export function Drawer(props: DrawerProps): ReactElement {
-  const { children, contained = false, height, isOpen, onClose, width = DRAWER_WIDTH } = props;
-  const handleOpenChange = buildOpenChange(onClose);
-  const closeOnOutside = !contained;
-  const isModalLayer = !contained;
-  const position = contained ? 'absolute' : 'fixed';
+  const {
+    children,
+    contained = false,
+    height,
+    isOpen,
+    label,
+    onClose,
+    width = DRAWER_WIDTH,
+  } = props;
   return (
-    <ChakraDialog.Root
-      closeOnEscape
-      closeOnInteractOutside={closeOnOutside}
-      modal={isModalLayer}
-      onOpenChange={handleOpenChange}
-      open={isOpen}
-      size="sm"
+    <LayerRoot
+      closable
+      contained={contained}
+      height={height}
+      isOpen={isOpen}
+      label={label}
+      onClose={onClose}
+      weight="drawer"
+      width={width}
     >
-      <Portal disabled={contained}>
-        <Overlay contained={contained} />
-        <ChakraDialog.Positioner
-          alignItems="stretch"
-          inset="0"
-          justifyContent="flex-end"
-          padding="0"
-          position={position}
-        >
-          <OverlayPanel height={height} onClose={onClose} variant="drawer" width={width}>
-            {children}
-          </OverlayPanel>
-        </ChakraDialog.Positioner>
-      </Portal>
-    </ChakraDialog.Root>
+      {children}
+    </LayerRoot>
   );
-}
-
-function buildOpenChange(onClose: () => void): (details: { open: boolean }) => void {
-  return function handleOpenChange(details: { open: boolean }): void {
-    if (!details.open) {
-      onClose();
-    }
-  };
 }

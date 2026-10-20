@@ -98,16 +98,29 @@ function InputsBlock(): ReactElement {
         e ajuda andam juntos.
       </Text>
       <Box display="flex" flexWrap="wrap" gap="4" maxW="480px">
-        <TextField autoComplete="off" name="busca" placeholder="Buscar item" />
-        <TextField autoComplete="off" disabled name="busca-vazia" placeholder="Sem resultado" />
+        <TextField
+          aria-label="Buscar item"
+          autoComplete="off"
+          name="busca"
+          placeholder="Buscar item"
+        />
+        <TextField
+          aria-label="Sem resultado"
+          autoComplete="off"
+          disabled
+          name="busca-vazia"
+          placeholder="Sem resultado"
+        />
         <TextField
           aria-invalid="true"
+          aria-label="Valor inválido"
           autoComplete="off"
-          borderColor="blood.500"
+          borderColor="border.error"
           name="busca-erro"
           placeholder="Valor inválido"
         />
         <TextField
+          aria-label="Buscar item"
           autoComplete="off"
           clearable
           defaultValue="Poção de Cura"

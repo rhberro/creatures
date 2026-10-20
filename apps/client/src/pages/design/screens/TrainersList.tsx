@@ -32,7 +32,7 @@ const TRAINERS: Trainer[] = [
 ];
 
 export function TrainersList(): ReactElement {
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>('t1');
   const pendingName = findTrainerName(TRAINERS, pendingDeleteId);
   const isDialogOpen = pendingDeleteId !== null;
   const panel = (

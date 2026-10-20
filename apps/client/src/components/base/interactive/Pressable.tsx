@@ -1,7 +1,6 @@
 import type { ReactElement } from 'react';
 
 import { NativeButton } from '~/components/base/button/NativeButton';
-import { FOCUS_RING } from '~/theme/focus';
 
 import type { PressableProps } from './pressable.types';
 
@@ -14,7 +13,6 @@ export function Pressable(props: PressableProps): ReactElement {
 
   return (
     <NativeButton
-      _focusVisible={FOCUS_RING}
       _hover={PRESSABLE_HOVER}
       borderRadius={radius}
       cursor={cursor}

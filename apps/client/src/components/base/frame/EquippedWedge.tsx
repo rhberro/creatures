@@ -4,7 +4,7 @@ import type { ReactElement } from 'react';
 export function EquippedWedge(): ReactElement {
   return (
     <Box
-      bg="frost.500"
+      bg="state.equipped"
       bottom="0"
       clipPath="polygon(100% 0, 100% 100%, 0 100%)"
       height="12px"

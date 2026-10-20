@@ -12,6 +12,9 @@ export type NativeButtonProps = ComponentProps<typeof StyledButton>;
  * Enter nem a Espaço, não some do foco quando desabilitado, e o leitor de tela
  * anuncia uma div. Todo controle clicável do sistema passa por aqui, e o
  * comportamento de teclado vem de graça do elemento nativo.
+ *
+ * O anel de foco é o do sistema: `focusVisibleRing="outside"`, na cor de
+ * `focus.ring`. Ele nasce aqui, e nao e replicado em cada componente.
  */
 export function NativeButton(props: NativeButtonProps): ReactElement {
   const { children, ...rest } = props;
@@ -20,6 +23,7 @@ export function NativeButton(props: NativeButtonProps): ReactElement {
       bg="transparent"
       border="none"
       color="inherit"
+      focusVisibleRing="outside"
       font="inherit"
       padding="0"
       textAlign="start"

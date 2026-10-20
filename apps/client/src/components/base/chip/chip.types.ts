@@ -4,7 +4,7 @@ export type ChipProps = {
   active?: boolean;
   children?: ReactNode;
   disabled?: boolean;
-  label: string;
+  onClick?: () => void;
   tone?: ChipTone;
 };
 

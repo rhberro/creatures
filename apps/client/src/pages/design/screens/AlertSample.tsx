@@ -1,44 +1,62 @@
 import { Box } from '@chakra-ui/react';
-import type { ReactElement } from 'react';
+import { useEffect, useRef, type ReactElement } from 'react';
 
-import { Alert } from '~/components/base/alert/Alert';
-import type { AlertItem } from '~/components/base/alert/alert.types';
-import { IconBadge } from '~/components/base/badge/IconBadge';
+import { useAlerts } from '~/components/base/alert/useAlerts';
 import { IconPotion } from '~/components/base/icon';
 import { Text } from '~/components/base/text/Text';
 
 const ALERT_DURATION = 6000;
-const ALERT_REMAINING = 3700;
+const EMPTY_DEPS: ReadonlyArray<unknown> = [];
 
-const SAMPLE_ITEM: AlertItem = {
-  content: (
-    <Box>
-      <Text color="fg" variant="label">
-        Poção de Cura
-      </Text>
-      <Text color="fg.muted" variant="meta">
-        Adicionada à mochila
-      </Text>
-    </Box>
-  ),
-  duration: ALERT_DURATION,
-  icon: (
-    <IconBadge tone="arcane.300">
-      <IconPotion />
-    </IconBadge>
-  ),
-  id: 'sample',
-  remaining: ALERT_REMAINING,
-};
-
+/**
+ * O aviso de verdade.
+ *
+ * A galeria dispara o mesmo aviso que o jogo dispara — o `Toaster` do
+ * Chakra, com a regiao `aria-live` e a barra de tempo.
+ */
 export function AlertSample(): ReactElement {
+  const { show } = useAlerts();
+  const shown = useRef<boolean>(false);
+
+  function showSample(): void {
+    // O StrictMode executa o efeito duas vezes: o ref segura o aviso unico.
+    if (shown.current) {
+      return;
+    }
+    shown.current = true;
+    show(buildSample());
+  }
+
+  useEffect(showSample, EMPTY_DEPS);
+
   return (
     <Box width="320px">
-      <Alert item={SAMPLE_ITEM} onDismiss={noop} />
+      <Text color="fg.muted" variant="body">
+        O aviso aparece no canto superior direito, com regiao aria-live e barra de tempo.
+      </Text>
     </Box>
   );
 }
 
-function noop(): void {
-  void 0;
+function buildSample(): {
+  content: ReactElement;
+  duration: number;
+  icon: ReactElement;
+  tone: string;
+} {
+  return {
+    content: (
+      <Box>
+        <Text color="fg" variant="label">
+          Poção de Cura
+        </Text>
+        <Text color="fg.muted" variant="meta">
+          Adicionada à mochila
+        </Text>
+      </Box>
+    ),
+    duration: ALERT_DURATION,
+    icon: <IconPotion />,
+    tone: 'arcane.fg',
+  };
 }

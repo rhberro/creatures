@@ -1,5 +1,6 @@
-import { Dialog as ChakraDialog } from '@chakra-ui/react';
 import type { ReactElement, ReactNode } from 'react';
+
+import { LayerHeader } from '~/components/base/layer/LayerHeader';
 
 type DrawerHeaderProps = {
   children: ReactNode;
@@ -7,22 +8,5 @@ type DrawerHeaderProps = {
 
 export function DrawerHeader(props: DrawerHeaderProps): ReactElement {
   const { children } = props;
-  return (
-    <ChakraDialog.Title
-      borderBottom="1px solid"
-      borderColor="border"
-      color="fg"
-      fontFamily="display"
-      fontSize="xl"
-      fontWeight="700"
-      letterSpacing="0.04em"
-      lineHeight="1.15"
-      paddingBlock="3"
-      paddingInline="4"
-      textAlign="center"
-      textTransform="uppercase"
-    >
-      {children}
-    </ChakraDialog.Title>
-  );
+  return <LayerHeader weight="drawer">{children}</LayerHeader>;
 }

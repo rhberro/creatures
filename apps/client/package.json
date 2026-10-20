@@ -4,9 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "bun run typegen && vite build",
+    "postinstall": "bun run typegen",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun run check:tokens && tsc --noEmit",
+    "check:tokens": "bun run scripts/check-tokens.ts",
+    "typegen": "bun run scripts/typegen.ts"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.37.0",
@@ -20,6 +23,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@chakra-ui/cli": "^3.37.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^4.7.0",

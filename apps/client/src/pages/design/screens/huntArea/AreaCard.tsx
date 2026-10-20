@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 
 import { Pressable } from '~/components/base/interactive/Pressable';
 import { Text } from '~/components/base/text/Text';
+import { DIVIDER_BOTTOM } from '~/theme/divider';
 
 import { CreatureCircles } from './CreatureCircles';
 import type { Area } from './data';
@@ -31,7 +32,7 @@ export function AreaCard(props: AreaCardProps): ReactElement {
         borderWidth="1px"
         overflow="hidden"
       >
-        <Box borderBottom="1px solid" borderColor="border" paddingBlock="2" textAlign="center">
+        <Box css={DIVIDER_BOTTOM} paddingBlock="2" textAlign="center">
           <Text color="fg" variant="name">
             {area.name}
           </Text>

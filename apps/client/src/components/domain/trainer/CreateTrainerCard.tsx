@@ -2,7 +2,6 @@ import type { ReactElement } from 'react';
 
 import { NativeButton } from '~/components/base/button/NativeButton';
 import { Text } from '~/components/base/text/Text';
-import { FOCUS_RING } from '~/theme/focus';
 
 import { CARD_HOVER } from './createTrainerCard.constants';
 
@@ -14,7 +13,6 @@ export function CreateTrainerCard(props: CreateTrainerCardProps): ReactElement {
   const { onCreate } = props;
   return (
     <NativeButton
-      _focusVisible={FOCUS_RING}
       _hover={CARD_HOVER}
       alignItems="center"
       borderColor="border"

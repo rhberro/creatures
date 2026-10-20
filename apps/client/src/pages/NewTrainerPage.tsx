@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import type { AlertInput } from '~/components/base/alert/alert.types';
 import { useAlerts } from '~/components/base/alert/useAlerts';
 import { Text } from '~/components/base/text/Text';
-import { FieldLabel } from '~/components/domain/auth/FieldLabel';
 import { BrandLayout } from '~/components/domain/brand/BrandLayout';
 import { CreateTrainerPanel } from '~/components/domain/trainer/CreateTrainerPanel';
 import { GenderToggle } from '~/components/domain/trainer/GenderToggle';
@@ -57,7 +56,9 @@ export function NewTrainerPage(): ReactElement {
           <Stack gap={6}>
             <TrainerAvatar gender={form.gender} />
             <Box>
-              <FieldLabel>Gênero</FieldLabel>
+              <Text color="fg.muted" marginBlockEnd="1" variant="meta">
+                Gênero
+              </Text>
               <GenderToggle value={form.gender} onChange={form.handleGenderChange} />
             </Box>
             <NameField

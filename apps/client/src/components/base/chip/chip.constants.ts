@@ -12,54 +12,61 @@ export type ChipToneColors = {
   idleColor: string;
 };
 
+/**
+ * As cores do chip, por tom.
+ *
+ * O tom e o elemento do jogo — fogo, planta, gelo, ouro, perigo — e cada um
+ * tem um papel proprio na paleta. As cores sao tokens semanticos de paleta,
+ * nao passos crus: assim o chip continua certo se a escala mudar.
+ */
 export const CHIP_TONE_COLORS: Record<ChipTone, ChipToneColors> = {
   arcane: {
-    activeBackground: 'arcane.600',
-    activeBorder: 'arcane.300',
-    activeColor: 'arcane.50',
-    idleBorder: 'arcane.700',
-    idleColor: 'arcane.300',
+    activeBackground: 'arcane.strong',
+    activeBorder: 'arcane.border',
+    activeColor: 'arcane.contrast',
+    idleBorder: 'arcane.borderMuted',
+    idleColor: 'arcane.fg',
   },
   blood: {
-    activeBackground: 'blood.600',
-    activeBorder: 'blood.300',
-    activeColor: 'blood.50',
-    idleBorder: 'blood.700',
-    idleColor: 'blood.300',
+    activeBackground: 'blood.strong',
+    activeBorder: 'blood.border',
+    activeColor: 'blood.contrast',
+    idleBorder: 'blood.borderMuted',
+    idleColor: 'blood.fg',
   },
   ember: {
-    activeBackground: 'ember.600',
-    activeBorder: 'ember.300',
-    activeColor: 'ember.50',
-    idleBorder: 'ember.700',
-    idleColor: 'ember.300',
+    activeBackground: 'ember.strong',
+    activeBorder: 'ember.border',
+    activeColor: 'ember.contrast',
+    idleBorder: 'ember.borderMuted',
+    idleColor: 'ember.fg',
   },
   frost: {
-    activeBackground: 'frost.600',
-    activeBorder: 'frost.300',
-    activeColor: 'frost.50',
-    idleBorder: 'frost.700',
-    idleColor: 'frost.300',
+    activeBackground: 'frost.strong',
+    activeBorder: 'frost.border',
+    activeColor: 'frost.contrast',
+    idleBorder: 'frost.borderMuted',
+    idleColor: 'frost.fg',
   },
   gold: {
-    activeBackground: 'gold.600',
-    activeBorder: 'gold.300',
-    activeColor: 'gold.50',
-    idleBorder: 'gold.700',
-    idleColor: 'gold.300',
+    activeBackground: 'gold.strong',
+    activeBorder: 'gold.border',
+    activeColor: 'gold.contrast',
+    idleBorder: 'gold.borderMuted',
+    idleColor: 'gold.fg',
   },
   neutral: {
-    activeBackground: 'arcane.600',
-    activeBorder: 'arcane.300',
-    activeColor: 'arcane.50',
+    activeBackground: 'arcane.strong',
+    activeBorder: 'arcane.border',
+    activeColor: 'arcane.contrast',
     idleBorder: 'border',
     idleColor: 'fg.muted',
   },
   verdant: {
-    activeBackground: 'verdant.600',
-    activeBorder: 'verdant.300',
-    activeColor: 'verdant.50',
-    idleBorder: 'verdant.700',
-    idleColor: 'verdant.300',
+    activeBackground: 'verdant.strong',
+    activeBorder: 'verdant.border',
+    activeColor: 'verdant.contrast',
+    idleBorder: 'verdant.borderMuted',
+    idleColor: 'verdant.fg',
   },
 };

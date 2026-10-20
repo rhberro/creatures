@@ -4,7 +4,6 @@ import { useRef, type KeyboardEvent, type ReactElement, type RefObject } from 'r
 
 import { NativeButton } from '~/components/base/button/NativeButton';
 import { Text } from '~/components/base/text/Text';
-import { FOCUS_RING } from '~/theme/focus';
 
 import { GENDERS, GENDER_LABELS } from './genderToggle.constants';
 
@@ -112,7 +111,6 @@ function GenderButton(props: GenderButtonProps): ReactElement {
 
   return (
     <NativeButton
-      _focusVisible={FOCUS_RING}
       aria-checked={selected}
       bg={background}
       borderRadius="xs"

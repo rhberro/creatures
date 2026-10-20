@@ -4,6 +4,7 @@ import type { ReactElement, ReactNode } from 'react';
 import { Frame } from '~/components/base/frame/Frame';
 import { FrameFooter } from '~/components/base/frame/FrameFooter';
 import { Text } from '~/components/base/text/Text';
+import { DIVIDER_BOTTOM } from '~/theme/divider';
 
 const SHELL_WIDTH = '360px';
 
@@ -36,7 +37,7 @@ type AuthHeaderProps = {
 function AuthHeader(props: AuthHeaderProps): ReactElement {
   const { title } = props;
   return (
-    <Box borderBottom="1px solid" borderColor="border" padding="3" textAlign="center">
+    <Box css={DIVIDER_BOTTOM} padding="3" textAlign="center">
       <Text as="h2" color="fg" variant="section">
         {title}
       </Text>

@@ -9,7 +9,7 @@ const AVATAR_SYMBOLS = {
 
 const AVATAR_COLORS = {
   female: 'frost.400',
-  male: 'arcane.400',
+  male: 'arcane.emphasized',
 } as const;
 
 type TrainerAvatarProps = {

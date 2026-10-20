@@ -55,7 +55,7 @@ export const textStyles = {
     value: {
       fontFamily: 'display',
       fontSize: 'md',
-      fontWeight: '700',
+      fontWeight: '800',
       letterSpacing: '0.02em',
       lineHeight: '1.2',
       textTransform: 'none',
@@ -89,7 +89,7 @@ export const textStyles = {
     value: {
       fontFamily: 'display',
       fontSize: '2xl',
-      fontWeight: '700',
+      fontWeight: '800',
       letterSpacing: '0.04em',
       lineHeight: '1.15',
       textTransform: 'uppercase',

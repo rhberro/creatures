@@ -83,18 +83,30 @@ function ChipTonesBlock(): ReactElement {
         em filtro, em card e em lista, sempre com o mesmo matiz.
       </Text>
       <Box display="flex" flexWrap="wrap" gap="3">
-        <Chip label="Fogo" tone="ember" />
-        <Chip active label="Fogo" tone="ember" />
-        <Chip label="Planta" tone="verdant" />
-        <Chip active label="Planta" tone="verdant" />
-        <Chip label="Gelo" tone="frost" />
-        <Chip active label="Gelo" tone="frost" />
-        <Chip label="Sombrio" tone="arcane" />
-        <Chip active label="Sombrio" tone="arcane" />
-        <Chip label="Ouro" tone="gold" />
-        <Chip active label="Ouro" tone="gold" />
-        <Chip label="Perigo" tone="blood" />
-        <Chip active label="Perigo" tone="blood" />
+        <Chip tone="ember">Fogo</Chip>
+        <Chip active tone="ember">
+          Fogo
+        </Chip>
+        <Chip tone="verdant">Planta</Chip>
+        <Chip active tone="verdant">
+          Planta
+        </Chip>
+        <Chip tone="frost">Gelo</Chip>
+        <Chip active tone="frost">
+          Gelo
+        </Chip>
+        <Chip tone="arcane">Sombrio</Chip>
+        <Chip active tone="arcane">
+          Sombrio
+        </Chip>
+        <Chip tone="gold">Ouro</Chip>
+        <Chip active tone="gold">
+          Ouro
+        </Chip>
+        <Chip tone="blood">Perigo</Chip>
+        <Chip active tone="blood">
+          Perigo
+        </Chip>
       </Box>
     </Box>
   );
@@ -111,14 +123,16 @@ function ChipsBlock(): ReactElement {
         reto dentro da forma.
       </Text>
       <Box display="flex" flexWrap="wrap" gap="3">
-        <Chip label="Todos" />
-        <Chip active label="Fogo">
+        <Chip>Todos</Chip>
+        <Chip active>
           <IconCrosshair />
+          Fogo
         </Chip>
-        <Chip label="Planta">
+        <Chip>
           <IconPotion />
+          Planta
         </Chip>
-        <Chip disabled label="Vazio" />
+        <Chip disabled>Vazio</Chip>
       </Box>
       <ChipTonesBlock />
       <Box display="flex" gap="3" marginBlockStart="4">

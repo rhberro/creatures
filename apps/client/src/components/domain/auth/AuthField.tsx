@@ -1,9 +1,9 @@
-import { Box } from '@chakra-ui/react';
+import { Field } from '@chakra-ui/react';
 import type { ChangeEvent, ReactElement } from 'react';
 
 import { TextField } from '~/components/base/field/TextField';
-import { Text } from '~/components/base/text/Text';
 
+import { FieldError } from './FieldError';
 import { FieldLabel } from './FieldLabel';
 
 type AuthFieldProps = {
@@ -18,6 +18,13 @@ type AuthFieldProps = {
   value?: string;
 };
 
+/**
+ * Campo com rótulo, valor e erro.
+ *
+ * O `Field.Root` do Chakra amarra rotulo, controle e mensagem de erro: o
+ * `aria-invalid` e o `aria-describedby` sao preenchidos sozinhos. O rotulo
+ * aponta para o campo pelo `htmlFor`, e o erro entra na descricao do campo.
+ */
 export function AuthField(props: AuthFieldProps): ReactElement {
   const {
     autoComplete = 'off',
@@ -30,12 +37,15 @@ export function AuthField(props: AuthFieldProps): ReactElement {
     type,
     value,
   } = props;
-  const message = error ? <FieldErrorMessage message={error} /> : null;
+  const fieldId = `field-${name}`;
+  const message = error ? <FieldError message={error} /> : null;
+  const invalid = Boolean(error);
   return (
-    <Box>
-      <FieldLabel>{label}</FieldLabel>
+    <Field.Root invalid={invalid}>
+      <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
       <TextField
         autoComplete={autoComplete}
+        id={fieldId}
         name={name}
         onBlur={onBlur}
         onChange={onChange}
@@ -44,19 +54,6 @@ export function AuthField(props: AuthFieldProps): ReactElement {
         value={value}
       />
       {message}
-    </Box>
-  );
-}
-
-type FieldErrorMessageProps = {
-  message: string;
-};
-
-function FieldErrorMessage(props: FieldErrorMessageProps): ReactElement {
-  const { message } = props;
-  return (
-    <Text color="fg.error" role="alert" variant="body">
-      {message}
-    </Text>
+    </Field.Root>
   );
 }

@@ -30,7 +30,12 @@ export function HuntAreaSelect(): ReactElement {
             <Pagination current={1} total={AREA_PAGE_COUNT} />
           </Box>
           <Box position="absolute" right="0" top="0">
-            <TextField maxW="280px" name="buscar-area" placeholder="Buscar locais ou criaturas" />
+            <TextField
+              aria-label="Buscar locais ou criaturas"
+              maxW="280px"
+              name="buscar-area"
+              placeholder="Buscar locais ou criaturas"
+            />
           </Box>
         </Box>
       </ModalFooter>

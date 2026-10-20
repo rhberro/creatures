@@ -2,8 +2,8 @@ import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
 import { Button } from '~/components/base/button/Button';
-import { TextField } from '~/components/base/field/TextField';
-import { FieldLabel } from '~/components/domain/auth/FieldLabel';
+import { Text } from '~/components/base/text/Text';
+import { AuthField } from '~/components/domain/auth/AuthField';
 import { CreateTrainerPanel } from '~/components/domain/trainer/CreateTrainerPanel';
 import { GenderToggle } from '~/components/domain/trainer/GenderToggle';
 import { StarterGrid } from '~/components/domain/trainer/StarterGrid';
@@ -24,15 +24,21 @@ export function CreateTrainerScreen(): ReactElement {
     <CreateTrainerPanel>
       <TrainerAvatar gender="male" />
       <Box>
-        <FieldLabel>Gênero</FieldLabel>
+        <Text color="fg.muted" marginBlockEnd="1" variant="meta">
+          Gênero
+        </Text>
         <GenderToggle onChange={noop} value="male" />
       </Box>
+      <AuthField
+        autoComplete="name"
+        label="Nome"
+        name="name"
+        placeholder="Como você quer ser chamado"
+      />
       <Box>
-        <FieldLabel>Nome</FieldLabel>
-        <TextField autoComplete="name" name="name" placeholder="Como você quer ser chamado" />
-      </Box>
-      <Box>
-        <FieldLabel>Criatura inicial</FieldLabel>
+        <Text color="fg.muted" marginBlockEnd="1" variant="meta">
+          Criatura inicial
+        </Text>
         <StarterGrid onSelect={noop} selectedId="s1" starters={STARTERS} />
       </Box>
       <Box display="flex" flexDirection="column" gap="2">

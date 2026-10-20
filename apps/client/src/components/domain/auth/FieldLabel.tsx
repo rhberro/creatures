@@ -1,16 +1,24 @@
+import { chakra } from '@chakra-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 
-import { Text } from '~/components/base/text/Text';
+const Label = chakra.label;
 
 type FieldLabelProps = {
   children: ReactNode;
+  htmlFor?: string;
 };
 
+/**
+ * O rótulo de um campo.
+ *
+ * E um `<label>` de verdade: o leitor de tela anuncia o rótulo junto com o
+ * campo, e o clique no rótulo leva o foco para o campo.
+ */
 export function FieldLabel(props: FieldLabelProps): ReactElement {
-  const { children } = props;
+  const { children, htmlFor } = props;
   return (
-    <Text color="fg.muted" marginBlockEnd="1" variant="meta">
+    <Label color="fg.muted" htmlFor={htmlFor} marginBlockEnd="1" textStyle="meta">
       {children}
-    </Text>
+    </Label>
   );
 }

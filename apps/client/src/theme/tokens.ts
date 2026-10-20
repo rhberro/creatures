@@ -1,3 +1,5 @@
+import { defineTokens } from '@chakra-ui/react';
+
 type ScaleStep = 50 | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | 950;
 
 type ScaleValue = { value: string };
@@ -117,7 +119,17 @@ export const verdant = createScale([
 
 export { radii } from './radius';
 
-export const colors = {
+/**
+ * Tokens primitivos.
+ *
+ * A camada de baixo: valores brutos, sem significado de uso. Nenhum
+ * componente consome esta camada — ele consome os tokens semânticos, que
+ * apontam para cá.
+ *
+ * `scrim` e `sunken` vivem aqui porque são valores crus que os tokens
+ * semânticos `bg.overlay` e `bg.sunken` referenciam.
+ */
+export const colors = defineTokens.colors({
   arcane,
   base,
   black: { value: '#0A0E12' },
@@ -125,19 +137,23 @@ export const colors = {
   ember,
   frost,
   gold,
+  scrim: { value: 'rgba(4, 7, 10, 0.78)' },
+  sunken: { value: '#070A0D' },
   verdant,
   white: { value: '#F0F3F6' },
-};
+});
 
-export const fonts = {
+export const fonts = defineTokens.fonts({
   body: { value: "'Barlow', system-ui, sans-serif" },
   display: { value: "'Cinzel', 'Barlow Semi Condensed', Georgia, serif" },
   heading: { value: "'Barlow Semi Condensed', 'Barlow', system-ui, sans-serif" },
   mono: { value: "'JetBrains Mono', ui-monospace, monospace" },
-};
+});
 
-export const shadows = {
-  focus: { value: '0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 0 3px rgba(154, 123, 224, 0.45)' },
+export const shadows = defineTokens.shadows({
+  focus: {
+    value: '0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 0 3px rgba(154, 123, 224, 0.45)',
+  },
   inner: { value: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)' },
   lg: {
     value:
@@ -165,4 +181,4 @@ export const shadows = {
       '0 0 0 1px rgba(255, 255, 255, 0.12), 0 8px 20px -8px rgba(0, 0, 0, 0.6), 0 36px 80px -20px rgba(0, 0, 0, 0.7)',
   },
   xs: { value: '0 0 0 1px rgba(255, 255, 255, 0.06)' },
-};
+});

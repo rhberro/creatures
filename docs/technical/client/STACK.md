@@ -69,9 +69,15 @@ O Chakra é o design system dos elementos de interface, usado exatamente como fo
 
 A saída para customizar algo no Chakra é criar um **token semântico** no sistema de temas, e não alterar o estilo do componente. Assim a customização fica em um único lugar e é fácil de reverter.
 
-O design system em si, com as escalas, os tokens semânticos, o catálogo de componentes e as regras de uso, está em [Design System](DESIGN_SYSTEM.md). Ele é a fonte da verdade da interface: toda tela do cliente sai dos componentes de `apps/client/src/components/`, e nenhum componente do Chakra é reescrito.
+O design system em si, com as escalas, os tokens semânticos, as receitas, o catálogo de componentes e as regras de uso, está em [Design System](DESIGN_SYSTEM.md). Ele é a fonte da verdade da interface: toda tela do cliente sai dos componentes de `apps/client/src/components/`, e nenhum componente do Chakra é reescrito.
 
-O tema tem uma divisão em três camadas: `theme/tokens` traz os valores brutos, `theme.semanticTokens` diz para que cada um serve, e `theme.textStyles` traz os estilos de texto prontos. Nenhum componente do Chakra é reescrito, e a identidade visual vem inteira das três camadas.
+O tema tem uma divisão em quatro camadas: `theme/tokens` traz os valores brutos, `theme/semanticTokens` diz para que cada um serve, `theme/textStyles` traz os estilos de texto prontos, e `theme/recipes` traz as receitas — o estilo que **cruza** camadas, como a anatomia da camada e o anel de seleção. Nenhum componente do Chakra é reescrito, e a identidade visual vem inteira dessas camadas.
+
+Quando o Chakra já resolve um comportamento — *focus trap*, `aria-modal`, posicionamento, região `aria-live`, navegação por setas — o design system usa o Chakra. O que é nosso é a aparência.
+
+**Os tipos do tema são gerados.** O `@chakra-ui/cli` gera os tipos dos tokens, das receitas e das paletas a partir do tema, e o resultado é escrito no pacote do Chakra instalado. O comando roda no `postinstall` e antes do `build`, para que os tipos nunca fiquem velhos.
+
+**O guarda dos tokens roda no typecheck.** O Chakra aceita qualquer string em uma prop de cor: `bg="coin"` compila, passa no typecheck e vira `background: coin` — CSS inválido, que o navegador descarta em silêncio. `scripts/check-tokens.ts` resolve cada valor de cor pelo mesmo dicionário de tokens que a interface usa e falha o build quando o token não existe, quando a cor é crua, ou quando um componente de `base/` consome um passo cru de escala em vez de um token semântico.
 
 A fonte é servida pelo Google Fonts, com quatro famílias: Cinzel para o nome do jogo e os nomes de criatura, Barlow Semi Condensed para os rótulos de interface, Barlow para o texto corrido, e JetBrains Mono para números. A escolha de uma fonte por categoria vem da necessidade de caixa alta com entreletra aberta nos rótulos, de um serifa gravado nos títulos e de números tabulares nos valores.
 

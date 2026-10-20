@@ -7,7 +7,7 @@ export function LoadingScreen(): ReactElement {
   return (
     <Box
       alignItems="center"
-      bg="bg.DEFAULT"
+      bg="bg"
       display="flex"
       flexDirection="column"
       height="320px"

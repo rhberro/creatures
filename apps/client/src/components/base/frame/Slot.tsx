@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { SELECTED_RING } from '~/theme/selection';
+import { useSelectionRing } from '~/theme/recipes/useSelectionRing';
 
 import { CornerBracket } from './CornerBracket';
 import { EquippedWedge } from './EquippedWedge';
@@ -9,9 +9,10 @@ import type { SlotProps } from './slot.types';
 
 export function Slot(props: SlotProps): ReactElement {
   const { children, empty = false, equipped = false, selected = false } = props;
+  const selectionRing = useSelectionRing();
   const bracket = selected ? <CornerBracket /> : null;
   const content = empty ? null : children;
-  const ring = selected ? SELECTED_RING : undefined;
+  const ring = selected ? selectionRing : undefined;
   const wedge = equipped ? <EquippedWedge /> : null;
   return (
     <Box

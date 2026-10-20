@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 
 import { Button } from '~/components/base/button/Button';
 import { IconCoin } from '~/components/base/icon';
@@ -10,7 +10,10 @@ import { ModalHeader } from '~/components/base/modal/ModalHeader';
 import { ScrollArea } from '~/components/base/scroll/ScrollArea';
 import { Tab } from '~/components/base/tab/Tab';
 import { TabBar } from '~/components/base/tab/TabBar';
+import { TabPanel } from '~/components/base/tab/TabPanel';
+import { Tabs } from '~/components/base/tab/Tabs';
 import { Text } from '~/components/base/text/Text';
+import { DIVIDER_BOTTOM } from '~/theme/divider';
 
 import { StoreSection, type StoreItem } from './StoreGrid';
 
@@ -37,6 +40,8 @@ const BUY_LABEL = 'Comprar';
 const SELL_LABEL = 'Vender';
 const STORE_WIDTH = '720px';
 const STORE_HEIGHT = '620px';
+const BUY_TAB = 'comprar';
+const SELL_TAB = 'vender';
 
 type StoreModalProps = {
   contained?: boolean;
@@ -46,6 +51,8 @@ type StoreModalProps = {
 
 export function StoreModal(props: StoreModalProps): ReactElement {
   const { contained = false, isOpen, onClose } = props;
+  const [tab, setTab] = useState(BUY_TAB);
+  const isBuying = tab === BUY_TAB;
   return (
     <Modal
       contained={contained}
@@ -54,30 +61,45 @@ export function StoreModal(props: StoreModalProps): ReactElement {
       onClose={onClose}
       width={STORE_WIDTH}
     >
-      <ModalHeader>{TITLE}</ModalHeader>
-      <Box borderBottom="1px solid" borderColor="border" paddingBlock="2" paddingInline="4">
-        <TabBar>
-          <Tab active>{BUY_LABEL}</Tab>
-          <Tab>{SELL_LABEL}</Tab>
-        </TabBar>
-      </Box>
-      <ModalBody>
-        <ScrollArea height="full">
-          <Box display="flex" flexDirection="column" gap="5">
-            <StoreSection items={CONSUMABLES} title="Consumíveis" />
-            <StoreSection items={DEVICES} title="Dispositivos" />
-          </Box>
-        </ScrollArea>
-      </ModalBody>
+      <Tabs onValueChange={setTab} value={tab}>
+        <ModalHeader>{TITLE}</ModalHeader>
+        <Box css={DIVIDER_BOTTOM} paddingBlock="2" paddingInline="4">
+          <TabBar>
+            <Tab value={BUY_TAB}>{BUY_LABEL}</Tab>
+            <Tab value={SELL_TAB}>{SELL_LABEL}</Tab>
+          </TabBar>
+        </Box>
+        <ModalBody>
+          <TabPanel value={BUY_TAB}>
+            <StoreItems />
+          </TabPanel>
+          <TabPanel value={SELL_TAB}>
+            <StoreItems />
+          </TabPanel>
+        </ModalBody>
+      </Tabs>
       <ModalFooter>
-        <StoreFooter />
+        <StoreFooter isBuying={isBuying} />
       </ModalFooter>
     </Modal>
   );
 }
 
-function StoreFooter(): ReactElement {
+function StoreItems(): ReactElement {
+  return (
+    <ScrollArea height="full">
+      <Box display="flex" flexDirection="column" gap="5">
+        <StoreSection items={CONSUMABLES} title="Consumíveis" />
+        <StoreSection items={DEVICES} title="Dispositivos" />
+      </Box>
+    </ScrollArea>
+  );
+}
+
+function StoreFooter(props: { isBuying: boolean }): ReactElement {
+  const { isBuying } = props;
   const quantityButtons = QUANTITY_STEPS.map(renderQuantityButton);
+  const actionLabel = isBuying ? BUY_LABEL : SELL_LABEL;
   return (
     <>
       <Box
@@ -102,7 +124,7 @@ function StoreFooter(): ReactElement {
           {TOTAL}
         </Text>
       </Box>
-      <Button tone="primary">{BUY_LABEL}</Button>
+      <Button tone="primary">{actionLabel}</Button>
     </>
   );
 }

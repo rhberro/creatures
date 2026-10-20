@@ -2,6 +2,7 @@ import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
 import { Slot } from '~/components/base/frame/Slot';
+import { SlotGrid } from '~/components/base/frame/SlotGrid';
 import { Text } from '~/components/base/text/Text';
 
 export type StoreItem = {
@@ -24,9 +25,7 @@ export function StoreSection(props: StoreSectionProps): ReactElement {
       <Text color="fg.muted" marginBlockEnd="2" variant="label">
         {title}
       </Text>
-      <Box display="grid" gap="1" gridTemplateColumns="repeat(6, 56px)" justifyContent="start">
-        {cells}
-      </Box>
+      <SlotGrid>{cells}</SlotGrid>
     </Box>
   );
 }

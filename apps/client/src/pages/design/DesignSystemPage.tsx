@@ -4,6 +4,7 @@ import type { ReactElement } from 'react';
 import { IconCoin } from '~/components/base/icon';
 import { Text } from '~/components/base/text/Text';
 import { Toolbar } from '~/components/domain/game/Toolbar';
+import { DIVIDER_BOTTOM } from '~/theme/divider';
 
 import { ColorFoundations } from './ColorFoundations';
 import { ComponentsSection } from './ComponentsSection';
@@ -90,9 +91,7 @@ function TopBar(): ReactElement {
         trainerLevel={TRAINER_LEVEL}
         trainerName={TRAINER_NAME}
         onOpenBackpack={noop}
-        onOpenSettings={noop}
         onOpenStorage={noop}
-        onShowAlert={noop}
         onSignOut={noop}
       />
     </Box>
@@ -125,8 +124,7 @@ function BrandMark(): ReactElement {
   return (
     <Box
       alignItems="center"
-      borderBottom="1px solid"
-      borderColor="border"
+      css={DIVIDER_BOTTOM}
       display="flex"
       gap="3"
       marginBlockEnd="6"

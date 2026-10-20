@@ -1,56 +1,30 @@
-import { Dialog as ChakraDialog, Portal } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { Overlay } from '~/components/base/overlay/Overlay';
+import { LayerRoot } from '~/components/base/layer/LayerRoot';
 
 import type { DialogProps } from './dialog.types';
 
 const DIALOG_WIDTH = '420px';
 
+/**
+ * O dialogo de confirmacao.
+ *
+ * E a camada de peso curto: titulo a esquerda, largura apertada e sem botao
+ * no canto. Fecha pelo ESC ou pelos botoes — clicar fora **nao** fecha, para
+ * nao perder a decisao por um clique acidental.
+ */
 export function Dialog(props: DialogProps): ReactElement {
-  const { children, contained = false, isOpen, onClose, width = DIALOG_WIDTH } = props;
-  const handleOpenChange = buildOpenChange(onClose);
-  const closeOnOutside = false;
-  const isModalLayer = !contained;
-  const position = contained ? 'absolute' : 'fixed';
+  const { children, contained = false, isOpen, label, onClose, width = DIALOG_WIDTH } = props;
   return (
-    <ChakraDialog.Root
-      closeOnEscape
-      closeOnInteractOutside={closeOnOutside}
-      modal={isModalLayer}
-      onOpenChange={handleOpenChange}
-      open={isOpen}
-      size="sm"
+    <LayerRoot
+      contained={contained}
+      isOpen={isOpen}
+      label={label}
+      onClose={onClose}
+      weight="dialog"
+      width={width}
     >
-      <Portal disabled={contained}>
-        <Overlay contained={contained} />
-        <ChakraDialog.Positioner padding="4" position={position}>
-          <ChakraDialog.Content
-            bg="bg.panel"
-            borderColor="border"
-            borderRadius="lg"
-            borderWidth="1px"
-            boxShadow="overlay"
-            display="flex"
-            flexDirection="column"
-            maxH="calc(100dvh - 64px)"
-            maxW="calc(100% - 32px)"
-            overflow="hidden"
-            position="relative"
-            width={width}
-          >
-            {children}
-          </ChakraDialog.Content>
-        </ChakraDialog.Positioner>
-      </Portal>
-    </ChakraDialog.Root>
+      {children}
+    </LayerRoot>
   );
-}
-
-function buildOpenChange(onClose: () => void): (details: { open: boolean }) => void {
-  return function handleOpenChange(details: { open: boolean }): void {
-    if (!details.open) {
-      onClose();
-    }
-  };
 }

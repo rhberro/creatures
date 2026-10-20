@@ -1,7 +1,5 @@
 import type { ReactElement } from 'react';
 
-import { FOCUS_RING } from '~/theme/focus';
-
 import { ICON_BUTTON_TONE } from './iconButton.constants';
 import type { IconButtonProps } from './iconButton.types';
 import { NativeButton } from './NativeButton';
@@ -21,7 +19,6 @@ export function IconButton(props: IconButtonProps): ReactElement {
   const hover = { bg: colors.hoverBackground, color: colors.hoverColor };
   return (
     <NativeButton
-      _focusVisible={FOCUS_RING}
       _hover={hover}
       alignItems="center"
       aria-label={label}

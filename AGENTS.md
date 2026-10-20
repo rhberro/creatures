@@ -51,6 +51,14 @@ bun run dev
 
 Depois de usar `write` ou `edit` em arquivo de código (.js/.jsx/.ts/.tsx/.mjs/.cjs), rode `bun run format`, `bun run lint:fix` e por fim `bun run lint` nos arquivos alterados antes de declarar a tarefa pronta. Se ainda houver erro de lint, conserte. Não pule essa etapa mesmo que o pre-commit hook vá rodar no commit — o objetivo é evitar ciclos de retorno.
 
+Se você tocou no cliente, rode também `bun run --filter @creatures/client typecheck`: ele passa pelo **guarda de tokens**, que falha quando um componente usa uma cor que não existe no tema, uma cor crua, ou um passo cru de escala no lugar de um token semântico. O Chakra aceita qualquer string em uma prop de cor, então essa conferência é a única barreira contra um elemento que renderiza sem cor e sem erro.
+
+## Design System
+
+O Chakra v3 já resolve *focus trap*, `aria-modal`, rótulo acessível, restauração de foco, scroll lock, portal, posicionamento com *flip*, região `aria-live*` e navegação por setas. Quando o Chakra resolve, o design system usa o Chakra: reescrever é trocar acessibilidade por estética.
+
+A saída para customizar é sempre um **token semântico** no tema (`apps/client/src/theme/`), nunca um valor cru em um componente. As regras completas estão em `docs/technical/client/DESIGN_SYSTEM.md`.
+
 ## Respostas
 
 Ao final de cada execução, você obrigatoriamente deve informar o que foi utilizado, no formato abaixo. Liste apenas os itens que realmente foram usados e omita as categorias vazias.

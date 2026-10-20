@@ -3,7 +3,6 @@ import type { Starter } from '@creatures/contracts/trainer';
 import type { ReactElement } from 'react';
 
 import { Text } from '~/components/base/text/Text';
-import { FieldLabel } from '~/components/domain/auth/FieldLabel';
 import { StarterGrid } from '~/components/domain/trainer/StarterGrid';
 import type { StarterEntry } from '~/components/domain/trainer/trainer.types';
 
@@ -28,7 +27,9 @@ export function StarterSection(props: StarterSectionProps): ReactElement {
   const body = renderBody(error, entries, onSelect, selectedId);
   return (
     <Box>
-      <FieldLabel>{LABEL}</FieldLabel>
+      <Text color="fg.muted" marginBlockEnd="1" variant="meta">
+        {LABEL}
+      </Text>
       {body}
     </Box>
   );

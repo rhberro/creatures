@@ -12,7 +12,7 @@ export function Cooldown(props: CooldownProps): ReactElement {
   const height = `${progress * 100}%`;
   return (
     <Box
-      bg="base.950"
+      bg="bg.veil"
       height={height}
       left="0"
       opacity="0.78"

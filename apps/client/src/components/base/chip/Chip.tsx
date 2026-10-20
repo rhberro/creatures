@@ -3,13 +3,18 @@ import type { ReactElement } from 'react';
 
 import { NativeButton } from '~/components/base/button/NativeButton';
 import { Text } from '~/components/base/text/Text';
-import { FOCUS_RING } from '~/theme/focus';
 
 import { CHIP_TONE_COLORS, SKEW, SKEW_BACK } from './chip.constants';
 import type { ChipProps } from './chip.types';
 
+/**
+ * O filtro inclinado.
+ *
+ * Nao e aba: e um botao que alterna. Por isso ele carrega `aria-pressed`, e o
+ * texto entra como `children` — nunca como `label`.
+ */
 export function Chip(props: ChipProps): ReactElement {
-  const { active = false, children, disabled = false, label, tone = 'neutral' } = props;
+  const { active = false, children, disabled = false, onClick, tone = 'neutral' } = props;
   const colors = CHIP_TONE_COLORS[tone];
   const background = active ? colors.activeBackground : 'bg.raised';
   const borderColor = active ? colors.activeBorder : colors.idleBorder;
@@ -19,7 +24,7 @@ export function Chip(props: ChipProps): ReactElement {
   const shadow = active ? 'sm' : 'none';
   return (
     <NativeButton
-      _focusVisible={FOCUS_RING}
+      aria-pressed={active}
       bg={background}
       borderColor={borderColor}
       borderRadius="sm"
@@ -35,10 +40,10 @@ export function Chip(props: ChipProps): ReactElement {
       transitionDuration="150ms"
       transitionTimingFunction="ease-out"
       transform={SKEW}
+      onClick={onClick}
     >
       <Box alignItems="center" display="flex" gap="2" transform={SKEW_BACK}>
-        {children}
-        <Text variant="label">{label}</Text>
+        <Text variant="label">{children}</Text>
       </Box>
     </NativeButton>
   );

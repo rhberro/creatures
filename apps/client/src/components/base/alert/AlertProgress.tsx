@@ -1,17 +1,19 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
+import { useCountdown } from '~/components/base/alert/useCountdown';
+
 type AlertProgressProps = {
   duration: number;
-  remaining: number;
 };
 
 export function AlertProgress(props: AlertProgressProps): ReactElement {
-  const { duration, remaining } = props;
+  const { duration } = props;
+  const remaining = useCountdown(duration);
   const width = computeBarWidth(remaining, duration);
   return (
     <Box
-      bg="arcane.500"
+      bg="state.active"
       bottom="0"
       height="2px"
       left="0"

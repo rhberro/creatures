@@ -143,7 +143,7 @@ function AlertIcon(): ReactElement {
   return (
     <Box
       alignItems="center"
-      bg="bg.muted"
+      bg="bg.raised"
       borderRadius="full"
       color="fg.muted"
       display="flex"

@@ -5,6 +5,7 @@ export type DrawerProps = {
   contained?: boolean;
   height?: string;
   isOpen: boolean;
+  label?: string;
   onClose: () => void;
   width?: string;
 };

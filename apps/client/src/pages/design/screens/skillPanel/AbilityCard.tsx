@@ -4,7 +4,7 @@ import type { ReactElement } from 'react';
 import { IconBolt, IconPotion, IconPrism } from '~/components/base/icon';
 import { Pressable } from '~/components/base/interactive/Pressable';
 import { Text } from '~/components/base/text/Text';
-import { SELECTED_RING } from '~/theme/selection';
+import { useSelectionRing } from '~/theme/recipes/useSelectionRing';
 
 import type { Ability } from './data';
 
@@ -14,9 +14,10 @@ type AbilityCardProps = {
 
 export function AbilityCard(props: AbilityCardProps): ReactElement {
   const { ability } = props;
+  const selectionRing = useSelectionRing();
   const background = ability.equipped ? 'bg.raised' : 'transparent';
   const glyph = renderGlyph(ability.element);
-  const ring = ability.equipped ? SELECTED_RING : undefined;
+  const ring = ability.equipped ? selectionRing : undefined;
   return (
     <Pressable disabled={ability.disabled} onPress={noop}>
       <Box

@@ -32,9 +32,7 @@ export function PlayScreenPreview(): ReactElement {
           trainerLevel={1}
           trainerName="Jogador"
           onOpenBackpack={noop}
-          onOpenSettings={noop}
           onOpenStorage={noop}
-          onShowAlert={noop}
           onSignOut={noop}
         />
         <Box display="flex" flex="1" position="relative">

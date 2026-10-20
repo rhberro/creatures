@@ -14,7 +14,7 @@ export function Wordmark(props: WordmarkProps): ReactElement {
       <Text color="fg" variant="display">
         Creatures
       </Text>
-      <Box bg="coin" height="2px" marginBlockStart="2" marginInline="auto" width="56px" />
+      <Box bg="accent.gold" height="2px" marginBlockStart="2" marginInline="auto" width="56px" />
     </Box>
   );
 }

@@ -1,37 +1,35 @@
-import { Box, Stack } from '@chakra-ui/react';
-import type { ReactElement } from 'react';
+import { Toaster } from '@chakra-ui/react';
+import type { ReactElement, ReactNode } from 'react';
 
-import { Alert } from '~/components/base/alert/Alert';
-import { useAlerts } from '~/components/base/alert/useAlerts';
+import { AlertToast } from '~/components/base/alert/AlertToast';
+import { alertToaster } from '~/components/base/alert/alertToaster';
 
-import type { AlertItem } from './alert.types';
+type ToastPayload = {
+  duration?: number;
+  id?: string;
+  meta?: { icon?: ReactNode; tone?: string };
+  title?: ReactNode;
+};
 
-const VIEWPORT_MAX_WIDTH = '420px';
-const VIEWPORT_GUTTER = '16px';
-const VIEWPORT_WIDTH = `calc(100% - ${VIEWPORT_GUTTER} * 2)`;
-
+/**
+ * A regiao onde os avisos aparecem.
+ *
+ * E o `Toaster` do Chakra: `role="region"` com `aria-live="polite"`, para o
+ * leitor de tela anunciar o aviso quando ele entra.
+ */
 export function AlertsViewport(): ReactElement {
-  const { alerts, dismiss } = useAlerts();
-  const alertNodes = alerts.map(renderAlert(dismiss));
+  const inset = buildInset();
   return (
-    <Box
-      maxW={VIEWPORT_MAX_WIDTH}
-      pointerEvents="none"
-      position="fixed"
-      right={VIEWPORT_GUTTER}
-      top={VIEWPORT_GUTTER}
-      width={VIEWPORT_WIDTH}
-      zIndex="toast"
-    >
-      <Stack gap="2" pointerEvents="auto">
-        {alertNodes}
-      </Stack>
-    </Box>
+    <Toaster insetInline={inset} toaster={alertToaster}>
+      {renderToast}
+    </Toaster>
   );
 }
 
-function renderAlert(dismiss: (id: string) => void): (item: AlertItem) => ReactElement {
-  return function render(item: AlertItem): ReactElement {
-    return <Alert item={item} key={item.id} onDismiss={dismiss} />;
-  };
+function buildInset(): { mdDown: string } {
+  return { mdDown: '4' };
+}
+
+function renderToast(toast: ToastPayload): ReactElement {
+  return <AlertToast toast={toast} />;
 }

@@ -6,7 +6,7 @@ import { IconButton } from '~/components/base/button/IconButton';
 import { IconClose, IconTeam } from '~/components/base/icon';
 import { Pressable } from '~/components/base/interactive/Pressable';
 import { Text } from '~/components/base/text/Text';
-import { SELECTED_RING } from '~/theme/selection';
+import { useSelectionRing } from '~/theme/recipes/useSelectionRing';
 
 import { DELETE_BUTTON_SIZE, DELETE_ICON_SIZE } from './trainerCard.constants';
 
@@ -68,7 +68,8 @@ type TrainerCardBodyProps = {
 
 function TrainerCardBody(props: TrainerCardBodyProps): ReactElement {
   const { isSelected, name, subtitle } = props;
-  const ring = isSelected ? SELECTED_RING : undefined;
+  const selectionRing = useSelectionRing();
+  const ring = isSelected ? selectionRing : undefined;
   return (
     <Box
       _before={ring}
