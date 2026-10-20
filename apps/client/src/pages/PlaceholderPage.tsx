@@ -1,20 +1,23 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
 
-import { AuthCard } from '~/pages/AuthCard';
+import { Link } from '~/components/base/link/Link';
+import { Text } from '~/components/base/text/Text';
+import { AuthPage } from '~/components/domain/auth/AuthPage';
 
 export function PlaceholderPage(props: PlaceholderPageProps): ReactElement {
   const { backTo, title } = props;
   return (
-    <AuthCard title={title}>
+    <AuthPage title={title}>
       <Text color="fg.muted" textAlign="center">
         Em breve.
       </Text>
-      <Box display="flex" justifyContent="center" mt={4}>
-        <Link to={backTo}>Voltar</Link>
+      <Box marginBlockStart="4">
+        <Link to={backTo} tone="secondary" width="full">
+          Voltar
+        </Link>
       </Box>
-    </AuthCard>
+    </AuthPage>
   );
 }
 

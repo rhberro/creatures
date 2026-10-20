@@ -48,6 +48,9 @@ export class MockAuthAdapter implements AuthAdapter {
 
   public subscribe(handler: AuthEventHandler): () => void {
     this.handlers.add(handler);
+    if (this.session !== null) {
+      emitInitialSession(handler, this.session);
+    }
     return buildUnsubscribe(this.handlers, handler);
   }
 
@@ -153,4 +156,13 @@ function buildUnsubscribe(handlers: Set<AuthEventHandler>, handler: AuthEventHan
 
 function buildSession(user: AuthUser): AuthSession {
   return { access_token: globalThis.crypto.randomUUID(), user };
+}
+
+// O Supabase entrega o primeiro INITIAL_SESSION de forma assíncrona. O mock faz
+// o mesmo: emitir na hora sobrescreveria o estado inicial da store, que ainda
+// nem existe quando o initializer roda.
+function emitInitialSession(handler: AuthEventHandler, session: AuthSession): void {
+  setTimeout(function deliver(): void {
+    handler('INITIAL_SESSION', session);
+  }, 0);
 }

@@ -1,9 +1,10 @@
-import { Box, Center, Heading, Spinner, Text } from '@chakra-ui/react';
+import { Box, Center, Spinner } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
-import { Link } from 'react-router-dom';
 
 import { useAuth } from '~/auth/useAuth';
-import { AuthCard } from '~/pages/AuthCard';
+import { Link } from '~/components/base/link/Link';
+import { Text } from '~/components/base/text/Text';
+import { AuthPage } from '~/components/domain/auth/AuthPage';
 import { ResetPasswordForm } from '~/pages/ResetPasswordForm';
 
 const FORGOT_PASSWORD_PATH = '/forgot-password';
@@ -26,25 +27,7 @@ export function ResetPasswordPage(): ReactElement {
 
 function PageShell(props: PageShellProps): ReactElement {
   const { children, title } = props;
-  return (
-    <Box
-      alignItems="center"
-      as="main"
-      bg="bg"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      minH="100dvh"
-      p={6}
-    >
-      <Box mb={8}>
-        <Heading color="fg" size="3xl">
-          Creatures
-        </Heading>
-      </Box>
-      <AuthCard title={title}>{children}</AuthCard>
-    </Box>
-  );
+  return <AuthPage title={title}>{children}</AuthPage>;
 }
 
 type PageShellProps = {
@@ -62,29 +45,15 @@ function LoadingState(): ReactElement {
 
 function InvalidLinkState(): ReactElement {
   return (
-    <Box
-      alignItems="center"
-      as="main"
-      bg="bg"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      minH="100dvh"
-      p={6}
-    >
-      <Box mb={8}>
-        <Heading color="fg" size="3xl">
-          Creatures
-        </Heading>
+    <AuthPage title="Link inválido">
+      <Text color="fg.muted" textAlign="center" variant="body">
+        Este link de recuperação é inválido, expirou ou já foi utilizado.
+      </Text>
+      <Box display="flex" justifyContent="center">
+        <Link to={FORGOT_PASSWORD_PATH} variant="label">
+          Solicite um novo link.
+        </Link>
       </Box>
-      <AuthCard title="Link inválido">
-        <Text color="fg" textAlign="center">
-          Este link de recuperação é inválido, expirou ou já foi utilizado.
-        </Text>
-        <Box display="flex" justifyContent="center" mt={4}>
-          <Link to={FORGOT_PASSWORD_PATH}>Solicite um novo link.</Link>
-        </Box>
-      </AuthCard>
-    </Box>
+    </AuthPage>
   );
 }

@@ -1,10 +1,13 @@
-import { Box, Button, Input, Stack, Text } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import { useState, type FormEvent, type ReactElement } from 'react';
-import { Link } from 'react-router-dom';
 
 import type { AuthErrorCode, AuthResult } from '~/auth/store/types';
 import { useAuth } from '~/auth/useAuth';
-import { useAlerts } from '~/components/alert/AlertStack';
+import { useAlerts } from '~/components/base/alert/useAlerts';
+import { Button } from '~/components/base/button/Button';
+import { Link } from '~/components/base/link/Link';
+import { Text } from '~/components/base/text/Text';
+import { AuthField } from '~/components/domain/auth/AuthField';
 
 const GENERIC_MESSAGE =
   'Se o e-mail existir em nossa base de dados, enviamos um link de recuperação.';
@@ -65,28 +68,22 @@ function ForgotPasswordFormView(props: ForgotPasswordFormViewProps): ReactElemen
   return (
     <form aria-label={FORM_LABEL} noValidate onSubmit={onSubmit}>
       <Stack gap={4}>
-        <Input
+        <AuthField
           autoComplete="email"
+          label="E-mail"
           name="email"
           onChange={onEmailChange}
-          placeholder="E-mail"
+          placeholder="treinador@exemplo.com"
           type="email"
           value={email}
         />
         {errorNode}
-        <Button
-          colorPalette="gray"
-          disabled={isSubmitting}
-          loading={isSubmitting}
-          type="submit"
-          variant="solid"
-          w="full"
-        >
+        <Button tone="primary" disabled={isSubmitting} loading={isSubmitting} type="submit">
           Enviar
         </Button>
-        <Box display="flex" justifyContent="center">
-          <Link to={SIGNIN_PATH}>Voltar</Link>
-        </Box>
+        <Link to={SIGNIN_PATH} tone="secondary" width="full">
+          Voltar
+        </Link>
       </Stack>
     </form>
   );
@@ -97,7 +94,7 @@ function renderError(message: string): ReactElement | null {
     return null;
   }
   return (
-    <Text color="fg.error" fontSize="sm" role="alert">
+    <Text color="fg.error" role="alert">
       {message}
     </Text>
   );

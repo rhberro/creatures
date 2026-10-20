@@ -1,4 +1,4 @@
-import { Stack, Text } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 import type { Gender, NewTrainerInput } from '@creatures/contracts/trainer';
 import type { FormEvent } from 'react';
 import { createElement, useEffect, useState } from 'react';
@@ -7,16 +7,16 @@ import type { ReactElement } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { useAlerts } from '~/components/alert/AlertStack';
-import type { AlertInput } from '~/components/alert/AlertStack';
-import { AuthCard } from '~/pages/AuthCard';
-import {
-  GenderToggle,
-  NameField,
-  NewTrainerActions,
-  StarterSection,
-  TrainerAvatar,
-} from '~/pages/NewTrainerFields';
+import type { AlertInput } from '~/components/base/alert/alert.types';
+import { useAlerts } from '~/components/base/alert/useAlerts';
+import { Text } from '~/components/base/text/Text';
+import { BrandLayout } from '~/components/domain/brand/BrandLayout';
+import { CreateTrainerPanel } from '~/components/domain/trainer/CreateTrainerPanel';
+import { GenderToggle } from '~/components/domain/trainer/GenderToggle';
+import { TrainerAvatar } from '~/components/domain/trainer/TrainerAvatar';
+import { NameField } from '~/pages/trainer/NameField';
+import { NewTrainerActions } from '~/pages/trainer/NewTrainerActions';
+import { StarterSection } from '~/pages/trainer/StarterSection';
 import type { TrainerClientErrorCode, TrainerCreateResult } from '~/trainers/trainersClient';
 import { useStarters } from '~/trainers/useStarters';
 import { useTrainers } from '~/trainers/useTrainers';
@@ -50,31 +50,33 @@ export function NewTrainerPage(): ReactElement {
   useTrainerLimitRedirect(trainers.isLoading, trainers.trainers.length, navigate, alerts.show);
 
   return (
-    <AuthCard title="Criar Treinador">
-      <form noValidate onSubmit={form.handleSubmit}>
-        <Stack gap={6}>
-          <TrainerAvatar gender={form.gender} />
-          <GenderToggle value={form.gender} onChange={form.handleGenderChange} />
-          <NameField
-            error={form.nameError}
-            name={form.name}
-            onBlur={form.handleNameBlur}
-            onChange={form.handleNameChange}
-          />
-          <StarterSection
-            isLoading={starters.isLoading}
-            selectedId={form.starterId}
-            starters={starters.starters}
-            onSelect={form.handleStarterSelect}
-          />
-          <NewTrainerActions
-            isCreatable={form.isCreatable}
-            isSubmitting={form.isSubmitting}
-            onBack={form.handleBack}
-          />
-        </Stack>
-      </form>
-    </AuthCard>
+    <BrandLayout>
+      <CreateTrainerPanel>
+        <form noValidate onSubmit={form.handleSubmit}>
+          <Stack gap={6}>
+            <TrainerAvatar gender={form.gender} />
+            <GenderToggle value={form.gender} onChange={form.handleGenderChange} />
+            <NameField
+              error={form.nameError}
+              name={form.name}
+              onBlur={form.handleNameBlur}
+              onChange={form.handleNameChange}
+            />
+            <StarterSection
+              isLoading={starters.isLoading}
+              selectedId={form.starterId}
+              starters={starters.starters}
+              onSelect={form.handleStarterSelect}
+            />
+            <NewTrainerActions
+              isCreatable={form.isCreatable}
+              isSubmitting={form.isSubmitting}
+              onBack={form.handleBack}
+            />
+          </Stack>
+        </form>
+      </CreateTrainerPanel>
+    </BrandLayout>
   );
 }
 

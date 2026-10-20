@@ -15,7 +15,8 @@ function applyScale(): void {
     reference: INTERFACE_REFERENCE_WIDTH,
     viewportWidth: window.innerWidth,
   };
-  const scale = computeScale(inputs);
+  const ratio = computeScale(inputs);
+  const scale = INTERFACE_MIN_SCALE + (INTERFACE_MAX_SCALE - INTERFACE_MIN_SCALE) * ratio;
   const size = INTERFACE_BASE_FONT_SIZE * scale;
   document.documentElement.style.fontSize = `${size}px`;
 }

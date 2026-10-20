@@ -1,4 +1,4 @@
-import type { CreatureSlot } from '~/pages/play/types';
+import type { CreatureSlot } from '~/components/domain/game/game.types';
 
 export const TEAM_SLOTS: CreatureSlot[] = [
   { id: 'c1', level: 33, name: 'Criatura 1' },
@@ -8,4 +8,4 @@ export const TEAM_SLOTS: CreatureSlot[] = [
   null,
 ];
 
-export const ACTIVE_CREATURE_INDEX = 0;
+export const ACTIVE_CREATURE_ID = 'c1';

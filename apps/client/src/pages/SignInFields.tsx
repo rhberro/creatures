@@ -1,6 +1,8 @@
-import { Box, Input } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import type { ChangeEvent, ReactElement } from 'react';
-import { Link } from 'react-router-dom';
+
+import { Link } from '~/components/base/link/Link';
+import { AuthField } from '~/components/domain/auth/AuthField';
 
 const FORGOT_PASSWORD_PATH = '/forgot-password';
 
@@ -8,24 +10,28 @@ export function SignInFields(props: SignInFieldsProps): ReactElement {
   const { email, onEmailChange, onPasswordChange, password } = props;
   return (
     <>
-      <Input
+      <AuthField
         autoComplete="email"
+        label="E-mail"
         name="email"
         onChange={onEmailChange}
-        placeholder="E-mail"
+        placeholder="treinador@exemplo.com"
         type="email"
         value={email}
       />
-      <Input
+      <AuthField
         autoComplete="current-password"
+        label="Senha"
         name="password"
         onChange={onPasswordChange}
-        placeholder="Senha"
+        placeholder="Sua senha"
         type="password"
         value={password}
       />
       <Box display="flex" justifyContent="flex-end">
-        <Link to={FORGOT_PASSWORD_PATH}>Esqueci a senha</Link>
+        <Link to={FORGOT_PASSWORD_PATH} variant="label">
+          Esqueci a senha
+        </Link>
       </Box>
     </>
   );

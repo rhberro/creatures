@@ -1,5 +1,6 @@
-import { Input } from '@chakra-ui/react';
 import type { ChangeEvent, ReactElement } from 'react';
+
+import { AuthField } from '~/components/domain/auth/AuthField';
 
 export function SignUpFields(props: SignUpFieldsProps): ReactElement {
   const {
@@ -12,27 +13,38 @@ export function SignUpFields(props: SignUpFieldsProps): ReactElement {
   } = props;
   return (
     <>
-      <Input
+      <AuthField
+        autoComplete="name"
+        label="Nome"
+        name="name"
+        onChange={onEmailChange}
+        placeholder="Como você quer ser chamado"
+        value={email}
+      />
+      <AuthField
         autoComplete="email"
+        label="E-mail"
         name="email"
         onChange={onEmailChange}
-        placeholder="E-mail"
+        placeholder="treinador@exemplo.com"
         type="email"
         value={email}
       />
-      <Input
+      <AuthField
         autoComplete="new-password"
+        label="Senha"
         name="password"
         onChange={onPasswordChange}
-        placeholder="Senha"
+        placeholder="Sua senha"
         type="password"
         value={password}
       />
-      <Input
+      <AuthField
         autoComplete="new-password"
+        label="Confirmar senha"
         name="confirmPassword"
         onChange={onConfirmPasswordChange}
-        placeholder="Confirmar senha"
+        placeholder="Repita a senha"
         type="password"
         value={confirmPassword}
       />

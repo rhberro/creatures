@@ -1,16 +1,13 @@
-import { Text } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
+
+import { FieldError } from '~/components/domain/auth/FieldError';
 
 export function SignInError(props: SignInErrorProps): ReactElement | null {
   const { message } = props;
   if (message === '') {
     return null;
   }
-  return (
-    <Text color="fg.error" fontSize="sm" role="alert">
-      {message}
-    </Text>
-  );
+  return <FieldError message={message} />;
 }
 
 export type SignInErrorProps = {

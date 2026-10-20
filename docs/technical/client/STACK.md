@@ -69,6 +69,14 @@ O Chakra é o design system dos elementos de interface, usado exatamente como fo
 
 A saída para customizar algo no Chakra é criar um **token semântico** no sistema de temas, e não alterar o estilo do componente. Assim a customização fica em um único lugar e é fácil de reverter.
 
+O design system em si, com as escalas, os tokens semânticos, o catálogo de componentes e as regras de uso, está em [Design System](DESIGN_SYSTEM.md). Ele é a fonte da verdade da interface: toda tela do cliente sai dos componentes de `apps/client/src/components/`, e nenhum componente do Chakra é reescrito.
+
+O tema tem uma divisão em três camadas: `theme/tokens` traz os valores brutos, `theme.semanticTokens` diz para que cada um serve, e `theme.textStyles` traz os estilos de texto prontos. Nenhum componente do Chakra é reescrito, e a identidade visual vem inteira das três camadas.
+
+A fonte é servida pelo Google Fonts, com quatro famílias: Cinzel para o nome do jogo e os nomes de criatura, Barlow Semi Condensed para os rótulos de interface, Barlow para o texto corrido, e JetBrains Mono para números. A escolha de uma fonte por categoria vem da necessidade de caixa alta com entreletra aberta nos rótulos, de um serifa gravado nos títulos e de números tabulares nos valores.
+
+> O Dota 2 usa Reaver na interface e Radiance nos títulos. As duas não estão no Google Fonts, e o Cinzel é a aproximação mais próxima da Radiance dentro do que está disponível.
+
 ## PixiJS
 
 O mundo do jogo é renderizado com o PixiJS, em um canvas separado dos elementos de interface.

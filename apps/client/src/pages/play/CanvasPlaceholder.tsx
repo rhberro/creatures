@@ -1,12 +1,22 @@
-import { Box, Center, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
+
+import { Text } from '~/components/base/text/Text';
 
 export function CanvasPlaceholder(): ReactElement {
   return (
-    <Box bg="bg.subtle" flex="1" position="relative">
-      <Center h="full">
-        <Text color="fg.muted">Canvas</Text>
-      </Center>
+    <Box bg="bg.sunken" flex="1" position="relative">
+      <Box
+        bgImage="linear-gradient(color-mix(in srgb, var(--chakra-colors-frost-700) 9%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--chakra-colors-frost-700) 9%, transparent) 1px, transparent 1px)"
+        bgSize="32px 32px"
+        height="100%"
+        width="100%"
+      />
+      <Box bottom={3} left={3} position="absolute">
+        <Text color="fg.subtle" variant="meta">
+          Canvas do PixiJS
+        </Text>
+      </Box>
     </Box>
   );
 }

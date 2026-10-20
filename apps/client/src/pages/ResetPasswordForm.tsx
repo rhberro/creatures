@@ -1,4 +1,4 @@
-import { Box, Button, Input, Stack, Text } from '@chakra-ui/react';
+import { Box, Stack } from '@chakra-ui/react';
 import type { FormEvent, ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,12 @@ import {
   PASSWORD_MIN,
 } from '~/auth/store/types';
 import { useAuth } from '~/auth/useAuth';
-import { useAlerts } from '~/components/alert/AlertStack';
+import { useAlerts } from '~/components/base/alert/useAlerts';
+import { Button } from '~/components/base/button/Button';
+import { Link } from '~/components/base/link/Link';
+import { Text } from '~/components/base/text/Text';
+import { AuthField } from '~/components/domain/auth/AuthField';
+import { FieldError } from '~/components/domain/auth/FieldError';
 import { usePasswordResetForm } from '~/pages/usePasswordResetForm';
 
 const WEAK_PASSWORD_ERROR = `A senha deve ter no mínimo ${PASSWORD_MIN} caracteres.`;
@@ -84,36 +89,31 @@ function ResetPasswordFormView(props: ResetPasswordFormViewProps): ReactElement 
   return (
     <form aria-label={FORM_LABEL} noValidate onSubmit={onSubmit}>
       <Stack gap={4}>
-        <Input
+        <AuthField
           autoComplete="new-password"
+          label="Nova senha"
           name="password"
           onChange={onPasswordChange}
-          placeholder="Nova senha"
+          placeholder="Sua nova senha"
           type="password"
           value={password}
         />
-        <Input
+        <AuthField
           autoComplete="new-password"
+          label="Confirmar senha"
           name="confirmPassword"
           onChange={onConfirmPasswordChange}
-          placeholder="Confirmar senha"
+          placeholder="Repita a senha"
           type="password"
           value={confirmPassword}
         />
         {errorNode}
-        <Button
-          colorPalette="gray"
-          disabled={isSubmitting}
-          loading={isSubmitting}
-          type="submit"
-          variant="solid"
-          w="full"
-        >
+        <Button tone="primary" disabled={isSubmitting} loading={isSubmitting} type="submit">
           Redefinir senha
         </Button>
-        <Box display="flex" justifyContent="center">
-          <a href={FORGOT_PASSWORD_PATH}>Voltar</a>
-        </Box>
+        <Link to={FORGOT_PASSWORD_PATH} tone="secondary" width="full">
+          Voltar
+        </Link>
       </Stack>
     </form>
   );
@@ -123,11 +123,7 @@ function renderError(message: string): ReactElement | null {
   if (message === '') {
     return null;
   }
-  return (
-    <Text color="fg.error" fontSize="sm" role="alert">
-      {message}
-    </Text>
-  );
+  return <FieldError message={message} />;
 }
 
 function validate(password: string, confirmPassword: string): string | null {

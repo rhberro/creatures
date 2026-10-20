@@ -2,12 +2,10 @@ import { createElement, type ReactElement } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import type { AuthErrorCode, AuthResult } from '~/auth/store/types';
-import {
-  ForgotAlertIcon,
-  ForgotAlertMessage,
-  SuccessIcon,
-  SuccessMessage,
-} from '~/pages/AuthAlertElements';
+import { ForgotAlertIcon } from '~/pages/auth/ForgotAlertIcon';
+import { ForgotAlertMessage } from '~/pages/auth/ForgotAlertMessage';
+import { SuccessIcon } from '~/pages/auth/SuccessIcon';
+import { SuccessMessage } from '~/pages/auth/SuccessMessage';
 import { decideDestinationAfterAuth } from '~/trainers/postAuthRedirect';
 
 export type SignInMessages = {

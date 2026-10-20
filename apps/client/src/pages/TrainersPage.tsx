@@ -1,4 +1,3 @@
-import { Box, Button, Heading, Spinner, Stack } from '@chakra-ui/react';
 import type { Trainer } from '@creatures/contracts/trainer';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
@@ -6,18 +5,16 @@ import type { NavigateFunction } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '~/auth/useAuth';
-import { AuthCard } from '~/pages/AuthCard';
-import { CreateTrainerCard, PageError, TrainerList } from '~/pages/TrainerCard';
-import { TrainerDeleteDialog } from '~/pages/TrainerDeleteDialog';
+import { BrandLayout } from '~/components/domain/brand/BrandLayout';
+import { TrainerDeleteDialog } from '~/components/domain/trainer/TrainerDeleteDialog';
+import { TrainersPanel } from '~/components/domain/trainer/TrainersPanel';
+import { PageError } from '~/pages/TrainerCard';
 import type { DeleteTrainerResult, TrainerClientErrorCode } from '~/trainers/trainersClient';
 import { useTrainers } from '~/trainers/useTrainers';
 
 const SIGNIN_PATH = '/signin';
 const GAME_PATH = '/game';
 const NEW_TRAINER_PATH = '/trainers/new';
-const MAX_TRAINERS = 5;
-const ENTER_LABEL = 'Entrar';
-const SIGN_OUT_LABEL = 'Sair da conta';
 
 export function TrainersPage(): ReactElement {
   const auth = useAuth();
@@ -39,77 +36,78 @@ export function TrainersPage(): ReactElement {
   const isDeleteOpen = pendingDeleteId !== null;
 
   return (
-    <Box
-      alignItems="center"
-      as="main"
-      bg="bg"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      minH="100dvh"
-      p={6}
-    >
-      <Box mb={8}>
-        <Heading color="fg" size="3xl">
-          Creatures
-        </Heading>
-      </Box>
-      <AuthCard title="Treinadores">
-        <TrainersCard
-          error={error}
-          handlers={handlers}
-          isDeleting={isDeleting}
-          isDeleteOpen={isDeleteOpen}
-          isLoading={isLoading}
-          selectedId={selectedId}
-          trainers={trainers}
-        />
-      </AuthCard>
-    </Box>
+    <BrandLayout>
+      <TrainersCard
+        error={error}
+        handlers={handlers}
+        isDeleting={isDeleting}
+        isDeleteOpen={isDeleteOpen}
+        isLoading={isLoading}
+        pendingDeleteId={pendingDeleteId}
+        selectedId={selectedId}
+        trainers={trainers}
+      />
+    </BrandLayout>
   );
 }
 
 function TrainersCard(props: TrainersCardProps): ReactElement {
-  const { error, handlers, isDeleting, isDeleteOpen, isLoading, selectedId, trainers } = props;
-  const isEnterDisabled = selectedId === null || isLoading;
-  const content = isLoading ? (
-    <Spinner alignSelf="center" color="fg.muted" />
-  ) : (
-    <TrainerList
-      selectedId={selectedId}
-      trainers={trainers}
-      onDelete={handlers.handleRequestDelete}
-      onSelect={handlers.handleSelect}
-    />
-  );
-  const createCard =
-    trainers.length < MAX_TRAINERS ? <CreateTrainerCard onCreate={handlers.handleCreate} /> : null;
+  const {
+    error,
+    handlers,
+    isDeleting,
+    isDeleteOpen,
+    isLoading,
+    pendingDeleteId,
+    selectedId,
+    trainers,
+  } = props;
+  const pendingTrainerName = findTrainerName(trainers, pendingDeleteId);
+
   const errorMessage = error === null ? null : <PageError code={error} />;
 
   return (
-    <Stack align="stretch" gap={4}>
-      {content}
-      {createCard}
-      {errorMessage}
-      <Button
-        colorPalette="blue"
-        disabled={isEnterDisabled}
-        variant="solid"
-        w="full"
-        onClick={handlers.handleEnter}
-      >
-        {ENTER_LABEL}
-      </Button>
-      <Button colorPalette="gray" variant="solid" w="full" onClick={handlers.handleSignOut}>
-        {SIGN_OUT_LABEL}
-      </Button>
-      <TrainerDeleteDialog
+    <>
+      <TrainersPanel
+        error={errorMessage}
+        isLoading={isLoading}
+        selectedId={selectedId}
+        trainers={trainers}
+        onCreate={handlers.handleCreate}
+        onDelete={handlers.handleRequestDelete}
+        onEnter={handlers.handleEnter}
+        onSelect={handlers.handleSelect}
+        onSignOut={handlers.handleSignOut}
+      />
+      <TrainerDeleteSection
         isDeleting={isDeleting}
         isOpen={isDeleteOpen}
+        trainerName={pendingTrainerName}
         onCancel={handlers.handleCancelDelete}
         onConfirm={handlers.handleConfirmDelete}
       />
-    </Stack>
+    </>
+  );
+}
+
+type TrainerDeleteSectionProps = {
+  isDeleting: boolean;
+  isOpen: boolean;
+  trainerName: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+};
+
+function TrainerDeleteSection(props: TrainerDeleteSectionProps): ReactElement {
+  const { isDeleting, isOpen, trainerName, onCancel, onConfirm } = props;
+  return (
+    <TrainerDeleteDialog
+      isDeleting={isDeleting}
+      isOpen={isOpen}
+      trainerName={trainerName}
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+    />
   );
 }
 
@@ -119,6 +117,7 @@ type TrainersCardProps = {
   isDeleting: boolean;
   isDeleteOpen: boolean;
   isLoading: boolean;
+  pendingDeleteId: string | null;
   selectedId: string | null;
   trainers: Trainer[];
 };
@@ -229,4 +228,18 @@ function buildSigninRedirect(navigate: NavigateFunction): () => void {
 
 function noop(): void {
   void 0;
+}
+
+function findTrainerName(trainers: Trainer[], pendingDeleteId: string | null): string {
+  if (pendingDeleteId === null) {
+    return '';
+  }
+  const trainer = trainers.find(matchesId(pendingDeleteId));
+  return trainer?.name ?? '';
+}
+
+function matchesId(id: string): (trainer: Trainer) => boolean {
+  return function matches(trainer: Trainer): boolean {
+    return trainer.id === id;
+  };
 }

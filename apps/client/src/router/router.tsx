@@ -1,6 +1,7 @@
 import type { RouteObject } from 'react-router-dom';
 import { createBrowserRouter } from 'react-router-dom';
 
+import { DesignSystemPage } from '~/pages/design/DesignSystemPage';
 import { ForgotPasswordPage } from '~/pages/ForgotPasswordPage';
 import { NewTrainerPage } from '~/pages/NewTrainerPage';
 import { PlayScreenPage } from '~/pages/play/PlayScreenPage';
@@ -30,6 +31,7 @@ const ROUTES: RouteObject[] = [
   { Component: ResetPasswordPage, loader: resetPasswordLoader, path: '/reset-password' },
   { Component: TermsPage, path: '/terms' },
   { Component: PrivacyPage, path: '/privacy' },
+  { Component: DesignSystemPage, path: '/design-system' },
   {
     Component: ProtectedShell,
     children: [
