@@ -1,0 +1,32 @@
+import { Box } from '@chakra-ui/react';
+import type { ReactElement } from 'react';
+
+import { IconButton } from '~/shared/ui/button';
+import { IconBag, IconChest } from '~/shared/ui/icon';
+
+import { ToolbarIdentity } from './ToolbarIdentity';
+
+type ToolbarLeftProps = {
+  onOpenBackpack: () => void;
+  onOpenStorage: () => void;
+  trainerLevel: number;
+  trainerName: string;
+};
+
+export function ToolbarLeft(props: ToolbarLeftProps): ReactElement {
+  const { onOpenBackpack, onOpenStorage, trainerLevel, trainerName } = props;
+  return (
+    <Box alignItems="center" display="flex" gap="4">
+      <ToolbarIdentity level={trainerLevel} name={trainerName} />
+      <Box bg="border" height="28px" width="1px" />
+      <Box alignItems="center" display="flex" gap="1">
+        <IconButton label="Mochila" onClick={onOpenBackpack}>
+          <IconBag size="20px" />
+        </IconButton>
+        <IconButton label="Armazenamento" onClick={onOpenStorage}>
+          <IconChest size="20px" />
+        </IconButton>
+      </Box>
+    </Box>
+  );
+}

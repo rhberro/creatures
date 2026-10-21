@@ -13,7 +13,7 @@ import path from 'node:path';
 const require = createRequire(import.meta.url);
 
 const PACKAGE_NAME = '@chakra-ui/react';
-const SOURCE = './src/theme/system.ts';
+const SOURCE = './src/shared/theme/system.ts';
 const TSCONFIG = './tsconfig.json';
 
 function main(): void {

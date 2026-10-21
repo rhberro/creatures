@@ -19,7 +19,7 @@ Este documento descreve a arquitetura de autenticação no cliente: como a sess�
 
 ## Princípios
 
-1. **Uma única fonte da verdade.** A sessão do usuário mora em uma store Zustand. Nenhum outro lugar do cliente lê `supabase.auth.getSession()` nem mantém uma cópia paralela da sessão.
+1. **Uma única fonte da verdade.** A sessão do usuário mora em uma store Zustand. Nenhum outro lugar do cliente lê `supabase.auth.getSession()` fora do `shared/auth`, nem mantém uma cópia paralela da sessão.
 2. **`onAuthStateChange` é o único caminho.** A store nunca chama `getSession()` para hidratar. O evento `INITIAL_SESSION` do listener cobre isso. Isso elimina a corrida entre `getSession()` e o primeiro `onAuthStateChange`, que era parte do loop original.
 3. **Identidade, não referência.** A comparação de sessão é por `user.id` (e `access_token` quando relevante), nunca por referência de objeto `Session`. Supabase cria um objeto `Session` novo a cada evento, mesmo quando nada mudou.
 4. **Roteamento por loader, não por componente de guard.** As rotas protegidas usam `loader` + `throw redirect()`. O componente da rota nunca é renderizado sem sessão válida. Isso evita o padrão que dispara o [bug conhecido do `react-router-dom@7.18.4`](https://github.com/remix-run/react-router/issues/15501) (freeze ao clicar múltiplos `<Link>` em sequência rápida com guard aninhado).
@@ -112,7 +112,9 @@ interface AuthAdapter {
 - Assina `onAuthStateChange` e traduz os eventos (`INITIAL_SESSION`, `SIGNED_IN`, etc.) para a forma da store.
 - Encapsula `signInWithPassword`, `signUp`, etc. e traduz `AuthError` para `AuthErrorCode` usando o mapper de erros.
 
-O `supabase` global que existia em `apps/client/src/supabase/client.ts` continua sendo a fábrica do cliente, mas é importado apenas por `SupabaseAuthAdapter`.
+A fábrica do cliente é `shared/auth/supabase/client.ts`, e ela cria o `SupabaseClient` **na primeira uso** — importar o módulo não exige as variáveis de ambiente do Supabase. Quem consome a fábrica são só os dois arquivos do próprio `shared/auth`: o `SupabaseAuthAdapter` e o `shared/auth/token.ts`.
+
+O token de acesso é lido em `shared/auth/token.ts` e exposto pelo `shared/auth` como `getAccessToken()`. Ele chega ao cliente HTTP por injeção: o `ApiDeps` do `shared/api` recebe a função `getAccessToken` de quem monta as dependências, e o `shared/api` nunca sabe onde o token vem.
 
 ## Roteamento Protegido
 
@@ -280,4 +282,3 @@ Mock adapter implementa a interface `AuthAdapter` e mantém fila de eventos cont
 - **`react-router-dom@7.18.4` e o bug #15501.** Não há fix na linha v7. A arquitetura atual mitiga o padrão que dispara o bug (sem `<Navigate>` em guard, sem `<RequireAuth>` envolvendo layout). Se um padrão diferente reproduzir o freeze, a saída é migrar para v8 — mas isso é decisão de produto, não de auth.
 - **Migração de `BrowserRouter` + `Routes` para `createBrowserRouter` + `RouterProvider`.** É parte do escopo desta arquitetura. Após a migração, `<BrowserRouter>` sai do `App.tsx`.
 - **Reativar `<StrictMode>`.** Após o refactor, `main.tsx` religa `<StrictMode>`. O comentário que justificava manter desligado deixa de existir.
-- **Renomeação de `apps/client/src/supabase/`.** O diretório continua existindo, mas a única exportação passa a ser o factory do cliente, consumido apenas por `SupabaseAuthAdapter`.

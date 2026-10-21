@@ -58,7 +58,7 @@ export function readTrainerErrorMessage(code: TrainerErrorCode): string {
 }
 
 export function normalizeTrainerName(name: string): string {
-  return name.normalize('NFD').replace(DIACRITICS_PATTERN, '').toLowerCase();
+  return name.normalize('NFD').replaceAll(DIACRITICS_PATTERN, '').toLowerCase();
 }
 
 function readIssueCode(issue: z.ZodIssue): TrainerErrorCode {

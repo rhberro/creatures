@@ -160,7 +160,7 @@ function buildSegmentPattern(paramNames: string[]): (segment: string) => string 
 }
 
 function escapeRegExp(value: string): string {
-  return value.replace(REGEXP_SPECIAL_CHARS, '\\$&');
+  return value.replaceAll(REGEXP_SPECIAL_CHARS, '\\$&');
 }
 
 function findRoutesByPath(routes: Route[], pathname: string): Route[] {

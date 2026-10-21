@@ -2,7 +2,7 @@
 
 Este documento é a fonte da verdade da interface do cliente. Ele descreve a direção visual, a arquitetura em camadas, os tokens, o catálogo de componentes reutilizáveis e as regras para montar uma tela nova.
 
-> O código vive em `apps/client/src/theme/` e `apps/client/src/components/`. Este documento explica **como usar**; o código é a referência dos valores exatos.
+> O código vive em `apps/client/src/shared/ui/` e `apps/client/src/shared/theme/`. Este documento explica **como usar**; o código é a referência dos valores exatos.
 
 ---
 
@@ -39,46 +39,9 @@ O âmbar e o verde saturados da paleta do Dota 2 funcionam dentro do jogo, mas n
 
 ## 3. Arquitetura
 
-### 3.1 As quatro camadas
+O cliente segue o **Feature-Sliced Design** (FSD v2.1). As camadas, a regra de dependência, a API pública de uma fatia e a pergunta que decide onde o código mora estão em [Estrutura](STRUCTURE.md).
 
-O cliente tem quatro camadas, e a dependência só aponta para baixo. Nunca para cima, nunca para o lado.
-
-```
-apps/client/src/
-  theme/                 a linguagem do design — não sabe o que é um componente
-  components/base/       primitivas — não sabem regra de jogo
-  components/domain/     componentes que conhecem o jogo
-  pages/                 rotas — juntam base e domínio
-```
-
-| Camada | O que é | Regra |
-| --- | --- | --- |
-| `theme/` | Tokens, estilos de texto, e as receitas que **cruzam** camadas (a anatomia da camada, o anel de seleção). | Não importa nada de `components/`. |
-| `components/base/` | O vocabulário visual. Botão, texto, campo, moldura, slot, modal, ícone, aba, chip, popup, alerta. | Não sabe o que é trainer, criatura ou caçada. Só importa de `theme/`. |
-| `components/domain/` | Componentes que carregam regra de jogo: `auth/`, `trainer/`, `brand/`. | Importa de `base/` e de `theme/`. Nunca é importado por `base/`. |
-| `pages/` | Rotas. | Compõe `base/` e `domain/`. |
-
-### 3.2 Base ou domínio?
-
-A pergunta que decide onde o componente mora:
-
-> **O componente conhece uma regra do jogo?**
-
-`TrainerCard` conhece o conceito de treinador: ele mostra gênero e nível, e o `TrainerAvatar` desenha o símbolo do gênero. Isso é regra de jogo — é `domain/trainer/`.
-
-`Button` não conhece nada: ele é um botão. Isso é `base/button/`.
-
-O teste practical: se o componente continuaria existindo se o jogo fosse outro jogo, ele é base. Se ele só faz sentido neste jogo, é domínio.
-
-**Erro comum:** enfiar tudo em `base/` e chamar de design system. O design system é a parte **reutilizável**; o resto é domínio, e fingir o contrário só deixa a base grande e sem dono.
-
-### 3.3 Regra de dependência
-
-```
-pages  →  domain  →  base  →  theme
-```
-
-Um `base/` que importa de `domain/` está invertido: não há como testar a base sem o jogo. Um `theme/` que importa de `components/` é circular por definição.
+> Este documento é o do **design system**: os tokens, os componentes e as regras de construção da interface. Onde o código mora é assunto da estrutura.
 
 ---
 
@@ -86,11 +49,11 @@ Um `base/` que importa de `domain/` está invertido: não há como testar a base
 
 Três camadas. A interface consome a última.
 
-### 4.1 Base — `theme/tokens.ts`
+### 4.1 Base — `shared/theme/tokens.ts`
 
 Valores brutos, sem significado de uso. Sete escalas de cor (`base`, `arcane`, `frost`, `gold`, `blood`, `ember`, `verdant`), mais fontes, raios e sombras.
 
-### 4.2 Semântico — `theme/semanticTokens.ts`
+### 4.2 Semântico — `shared/theme/semanticTokens.ts`
 
 Diz para que cada cor serve. É a camada que a interface consome.
 
@@ -116,7 +79,7 @@ Cada paleta tem **papéis**, não passos. `arcane.strong` (600) é o fundo de a�
 
 **Os raios de camada** (`radii.l1`, `radii.l2`, `radii.l3`) decidem o quanto fica reto o botão, o campo e o menu. É o token `radii.l2` que resolve o raio do botão.
 
-### 4.3 Estilo de texto — `theme/textStyles.ts`
+### 4.3 Estilo de texto — `shared/theme/textStyles.ts`
 
 | Variante | Uso |
 | --- | --- |
@@ -131,9 +94,9 @@ Cada paleta tem **papéis**, não passos. `arcane.strong` (600) é o fundo de a�
 
 **O `textStyle` ganha do `fontSize`.** Quem aplica um estilo de texto não consegue diminuir o tamanho com `fontSize` por prop — o estilo vence, e a prop vira código morto. Por isso o tamanho mora **dentro** do estilo, e não na prop.
 
-**A família display é sempre 800.** `display`, `title` e `name` usam o Cinzel, e o Cinzel a 700 fica fino demais para o jogo. O peso mora na família, e não em cada estilo.
+**A família display é sempre 900.** `display`, `title` e `name` usam o Cinzel, e o Cinzel é um serifa de contraste alto: no peso 800 a haste fina ainda competia com o fundo escuro da interface, e no 900 o título tem presença sem perder o desenho gravado. O peso mora na família, e não em cada estilo.
 
-### 4.4 Receitas — `theme/recipes/`
+### 4.4 Receitas — `shared/theme/recipes/`
 
 Estilos que **cruzam** camadas e por isso não pertencem a nenhum componente. Uma receita é a forma do Chakra de dizer: "este estilo é o mesmo aqui e ali, e tem variantes".
 
@@ -145,7 +108,7 @@ Estilos que **cruzam** camadas e por isso não pertencem a nenhum componente. Um
 ```ts
 import { useSlotRecipe } from '@chakra-ui/react';
 
-import { layerRecipe } from '~/theme/recipes/layer';
+import { layerRecipe } from '~/shared/theme';
 
 const recipe = useSlotRecipe({ recipe: layerRecipe });
 const styles = recipe({ weight: 'modal' });
@@ -154,20 +117,20 @@ const styles = recipe({ weight: 'modal' });
 **O anel de seleção, por recipe:**
 
 ```tsx
-import { useSelectionRing } from '~/theme/recipes/useSelectionRing';
+import { useSelectionRing } from '~/shared/theme';
 
 const ring = useSelectionRing();
 
 <Box _before={isSelected ? ring : undefined} />
 ```
 
-Se um valor é usado por `base/` e por `domain/`, ele é da linguagem do design e vai para `theme/`. Se é usado só por um componente, ele é dele e fica no arquivo dele.
+Se um valor é usado por `shared/ui/` e por `entities/`, ele é da linguagem do design e vai para `shared/theme/`. Se é usado só por um componente, ele é dele e fica no arquivo dele.
 
 ---
 
 ## 5. As regras de construção
 
-Estas cinco regras definem a forma do código. Elas valem para `base/`, para `domain/` e para a galeria.
+Estas sete regras definem a forma do código. Elas valem para `shared/ui/`, para as fatias de `entities/` e `features/` e para a galeria.
 
 ### R1 — Um componente por arquivo, e uma pasta por componente
 
@@ -190,16 +153,16 @@ Dentro da pasta de um componente, os arquivos auxiliares têm o prefixo do compo
 Exemplos reais:
 
 ```
-base/frame/Frame.tsx          base/frame/frame.types.ts      base/frame/frame.constants.ts
-base/frame/Slot.tsx           base/frame/slot.types.ts
-base/modal/Modal.tsx          base/modal/modal.types.ts
-base/alert/useAlerts.ts       base/alert/alert.types.ts       base/alert/alert.context.ts
-domain/trainer/StarterGrid.tsx  domain/trainer/trainer.types.ts
+shared/ui/frame/Frame.tsx      shared/ui/frame/frame.types.ts      shared/ui/frame/frame.constants.ts
+shared/ui/frame/Slot.tsx           shared/ui/frame/slot.types.ts
+shared/ui/modal/Modal.tsx          shared/ui/modal/modal.types.ts
+shared/ui/alert/useAlerts.ts       shared/ui/alert/alert.types.ts       shared/ui/alert/alert.context.ts
+entities/trainer/ui/StarterGrid.tsx  entities/trainer/model/trainer.types.ts
 ```
 
 **O prefixo responde "de quem é este arquivo".** `types.ts` solto não responde; `trainer.types.ts` responde.
 
-**E a `theme/`?** Para o que cruza camadas. O anel de seleção é usado pelo `Slot` (base) e pelo `TrainerCard` (domínio), então mora em `theme/recipes/selectionRing.ts` — não em `base/frame/ring.ts`, que fingia ser do frame e na verdade era de todo mundo.
+**E a `theme/`?** Para o que cruza camadas. O anel de seleção é usado pelo `Slot` (`shared/ui/`) e pelo `TrainerCard` (`entities/trainer/`), então mora em `shared/theme/recipes/selectionRing.ts` — não em `shared/ui/frame/ring.ts`, que fingia ser do frame e na verdade era de todo mundo.
 
 ### R3 — Composição, não configuração
 
@@ -232,12 +195,12 @@ O caminho certo é trocar a prop pela parte:
 Um componente que tem estado e comportamento vira **dois arquivos**: um hook com a lógica, e o componente com a view.
 
 ```ts
-// base/popup/usePopupState.ts — a lógica, sem DOM
+// shared/ui/popup/usePopupState.ts — a lógica, sem DOM
 export function usePopupState(): PopupState
 ```
 
 ```tsx
-// base/popup/Popup.tsx — a view
+// shared/ui/popup/Popup.tsx — a view
 export function Popup(props: PopupProps): ReactElement
 ```
 
@@ -246,10 +209,10 @@ O hook é testável sem renderizar nada, e a mesma lógica serve a visuais difer
 **Quando a lógica precisa ser compartilhada com as partes do componente**, ela vai para um context, e o hook vira `useXContext`:
 
 ```ts
-// base/alert/alert.context.ts
+// shared/ui/alert/alert.context.ts
 export const AlertsContext = createContext<AlertStackValue>(STUB_STACK);
 
-// base/alert/useAlerts.ts
+// shared/ui/alert/useAlerts.ts
 export function useAlerts(): AlertStackValue
 ```
 
@@ -259,7 +222,7 @@ Assim quem mostra um aviso não sabe que existe uma fila de avisos, e quem fecha
 
 ### R5 — Base não conhece o domínio
 
-`components/base/` não importa nada de `components/domain/`. Se precisa, é sinal de que o componente não é base.
+`shared/ui/` não importa nada de `shared/` além de `shared/theme/`. Se precisa de mais que isso, é sinal de que o componente não é base.
 
 O que o base **pode** fazer é expor os ganchos: o `Slot` sabe o que é selecionado e equipado, mas não sabe o que é uma habilidade. Quem sabe é o domínio.
 
@@ -267,7 +230,7 @@ O que o base **pode** fazer é expor os ganchos: o `Slot` sabe o que é selecion
 
 Nenhum componente consome um passo cru de escala (`arcane.400`) nem uma cor crua (`#B8A4EF`). Ele consome o token semântico que diz o **papel** daquela cor (`state.selected`, `accent.arcane`, `bg.panel`).
 
-A regra não é só documentação: `scripts/check-tokens.ts` resolve cada valor de cor pelo mesmo dicionário de tokens que a interface usa e falha o typecheck quando o token não existe, quando a cor é crua, ou quando um componente de `base/` consome um passo cru de escala.
+A regra não é só documentação: `scripts/check-tokens.ts` resolve cada valor de cor pelo mesmo dicionário de tokens que a interface usa e falha o typecheck quando o token não existe, quando a cor é crua, ou quando um componente de `shared/ui/` consome um passo cru de escala.
 
 > Sem essa conferência, `bg="coin"` — um token que não existe — compila, passa no typecheck e vira `background: coin`: CSS inválido, que o navegador descarta em silêncio. O elemento fica sem cor e ninguém é avisado. Foi exatamente assim que a régua da wordmark e a linha do topo do painel sumiram da tela.
 
@@ -281,25 +244,25 @@ O que é nosso é a **aparência** e, quando o comportamento é autoral, a **int
 
 ## 6. Catálogo de componentes
 
-### 6.1 Base — ação e texto
+### 6.1 Shared — ação e texto
 
 | Componente | Import | Quando usar |
 | --- | --- | --- |
-| `Button` | `~/components/base/button/Button` | Qualquer ação. `tone`: `primary` (a ação da tela), `secondary` (alternativa), `ghost` (terceira opção), `danger` (destrutivo). `palette` escolhe a paleta do jogo quando `tone` não basta. Nunca `colorPalette` direto. |
-| `Text` | `~/components/base/text/Text` | Qualquer texto. `variant` vem da tabela 4.3. Nunca `fontSize` ad hoc. |
-| `TextField` | `~/components/base/field/TextField` | Campo de texto e de senha. Já vem em 16px. `clearable` mostra o **X** dentro do campo, à direita, que limpa o valor. O X é um `<button>` de verdade, com `aria-label`. Campo sem rótulo visível recebe `aria-label`. |
-| `IconButton` | `~/components/base/button/IconButton` | Botão só de ícone. `tone`: `neutral`, `primary`, `secondary`, `danger`. Sempre 44px de alvo. |
-| `IconBadge` | `~/components/base/badge/IconBadge` | O quadrado arredondado que segura um ícone dentro de um alerta ou de um item. |
-| `Pressable` | `~/components/base/interactive/Pressable` | Torna qualquer coisa clicável **e** acessível: é um `<button>` de verdade, com Enter e Espaço, disabled nativo, anel de foco e hover. Todo card que se clica usa este. |
-| `NativeButton` | `~/components/base/button/NativeButton` | O botão sem estilo. É a base de `Pressable`, `IconButton`, `Tab` e `Chip`. |
-| `Link` | `~/components/base/link/Link` | Link de navegação. Sem `tone`, é link de texto: cor primária, sublinhado, hover mais claro, e o peso vem do `textStyle`. Com `tone`, é um link **com cara de botão** — o mesmo `as="button"` do shadcn, e o sublinhado some. Aceita `width`, para o botão de link ocupar a largura do card. Nenhum link de texto usa o `Link` cru do router. **Desabilitado é de verdade:** o `<a>` continua sendo clicável, então o desabilitado ganha `aria-disabled`, sai da tabulação e tem o clique cancelado — nos dois ramos. |
-| `Icon` | `~/components/base/icon/Icon` | A primitiva do svg: `size`, traço de 2px, grade de 24. Todo ícone é composed dela. |
-| Ícones | `~/components/base/icon` | `IconBag`, `IconBell`, `IconBolt`, `IconChest`, `IconClose`, `IconCoin`, `IconCrosshair`, `IconGem`, `IconGear`, `IconHeart`, `IconMap`, `IconPlay`, `IconPotion`, `IconPrism`, `IconSearch`, `IconStore`, `IconTeam`, `IconUsers`. |
+| `Button` | `~/shared/ui/button` | Qualquer ação. `tone`: `primary` (a ação da tela), `secondary` (alternativa), `ghost` (terceira opção), `danger` (destrutivo). `palette` escolhe a paleta do jogo quando `tone` não basta. Nunca `colorPalette` direto. |
+| `Text` | `~/shared/ui/text` | Qualquer texto. `variant` vem da tabela 4.3. Nunca `fontSize` ad hoc. |
+| `TextField` | `~/shared/ui/field` | Campo de texto e de senha. Já vem em 16px. `clearable` mostra o **X** dentro do campo, à direita, que limpa o valor. O X é um `<button>` de verdade, com `aria-label`. `invalid` troca a borda pela borda de erro. Campo sem rótulo visível recebe `aria-label`. |
+| `IconButton` | `~/shared/ui/button` | Botão só de ícone. `tone`: `neutral`, `primary`, `secondary`, `danger`. Sempre 44px de alvo. |
+| `IconBadge` | `~/shared/ui/badge` | O quadrado arredondado que segura um ícone dentro de um alerta ou de um item. |
+| `Pressable` | `~/shared/ui/interactive` | Torna qualquer coisa clicável **e** acessível: é um `<button>` de verdade, com Enter e Espaço, disabled nativo, anel de foco e hover. Todo card que se clica usa este. |
+| `NativeButton` | `~/shared/ui/button` | O botão sem estilo. É a base de `Pressable`, `IconButton`, `Tab` e `Chip`. |
+| `Link` | `~/shared/ui/link` | Link de navegação. Sem `tone`, é link de texto: cor primária, sublinhado, hover mais claro, e o peso vem do `textStyle`. Com `tone`, é um link **com cara de botão** — o mesmo `as="button"` do shadcn, e o sublinhado some. Aceita `width`, para o botão de link ocupar a largura do card. Nenhum link de texto usa o `Link` cru do router. **Desabilitado é de verdade:** o `<a>` continua sendo clicável, então o desabilitado ganha `aria-disabled`, sai da tabulação e tem o clique cancelado — nos dois ramos. |
+| `Icon` | `~/shared/ui/icon` | A primitiva do svg: `size`, traço de 2px, grade de 24. Todo ícone é composed dela. |
+| Ícones | `~/shared/ui/icon` | `IconBag`, `IconBell`, `IconBolt`, `IconChest`, `IconClose`, `IconCoin`, `IconCrosshair`, `IconGem`, `IconGear`, `IconHeart`, `IconMap`, `IconPlay`, `IconPotion`, `IconPrism`, `IconSearch`, `IconStore`, `IconTeam`, `IconUsers`. |
 
 **Um ícone novo é só o caminho:**
 
 ```tsx
-// base/icon/IconSpark.tsx
+// shared/ui/icon/IconSpark.tsx
 import type { ReactElement } from 'react';
 
 import { Icon } from './Icon';
@@ -316,22 +279,22 @@ export function IconSpark(props: IconProps): ReactElement {
 
 Nenhum svg inteiro, nenhum `DEFAULT_SIZE` repetido, nenhum `strokeWidth` reescrito. O tamanho e o traço são da primitiva.
 
-### 6.2 Base — superfície
+### 6.2 Shared — superfície
 
 | Componente | Import | Quando usar |
 | --- | --- | --- |
-| `Frame` | `~/components/base/frame/Frame` | O painel. `tone`: `panel` (padrão), `recessed` (rebaixo), `overlay` (modal), `transparent`. `accent` a linha violeta no topo. O cabeçalho e o rodapé são **partes**, não props. |
-| `FrameHeader` | `~/components/base/frame/FrameHeader` | O cabeçalho com divisória. Recebe `children`. |
-| `FrameFooter` | `~/components/base/frame/FrameFooter` | O rodapé com divisória. Recebe `children`. |
-| `FrameAccent` | `~/components/base/frame/FrameAccent` | A linha violeta no topo do painel. |
-| `Slot` | `~/components/base/frame/Slot` | O slot de item, de criatura e de habilidade. `selected` (anel violeta + marcador de canto), `equipped` (cunha no canto), `empty`. |
-| `SlotGrid` | `~/components/base/frame/SlotGrid` | A grade de slots. As colunas se ajustam à largura (`auto-fill`) e o `rows` completa a grade com slots vazios. É a grade de inventário da mochila, do armazenamento e da loja — as três têm a mesma anatomia. |
-| `CornerBracket` | `~/components/base/frame/CornerBracket` | O marcador de canto do slot selecionado. |
-| `EquippedWedge` | `~/components/base/frame/EquippedWedge` | A cunha de equipado. |
-| `Cooldown` | `~/components/base/frame/Cooldown` | A sombra de cooldown que desce sobre o slot. |
-| `useSelectionRing` | `~/theme/recipes/useSelectionRing` | A borda de seleção, 2px em `state.selected`, desenhada por um pseudo-elemento por cima do elemento. Use quando precisar marcar a seleção em um elemento que não é `Slot`. |
+| `Frame` | `~/shared/ui/frame` | O painel. `tone`: `panel` (padrão), `recessed` (rebaixo), `overlay` (modal), `transparent`. `accent` a linha violeta no topo. O cabeçalho e o rodapé são **partes**, não props. |
+| `FrameHeader` | `~/shared/ui/frame` | O cabeçalho com divisória. Recebe `children`. |
+| `FrameFooter` | `~/shared/ui/frame` | O rodapé com divisória. Recebe `children`. |
+| `FrameAccent` | `~/shared/ui/frame` | A linha violeta no topo do painel. |
+| `Slot` | `~/shared/ui/frame` | O slot de item, de criatura e de habilidade. `selected` (anel violeta + marcador de canto), `equipped` (cunha no canto), `empty`. |
+| `SlotGrid` | `~/shared/ui/frame` | A grade de slots. As colunas se ajustam à largura (`auto-fill`) e o `rows` completa a grade com slots vazios. É a grade de inventário da mochila, do armazenamento e da loja — as três têm a mesma anatomia. |
+| `CornerBracket` | `~/shared/ui/frame` | O marcador de canto do slot selecionado. |
+| `EquippedWedge` | `~/shared/ui/frame` | A cunha de equipado. |
+| `Cooldown` | `~/shared/ui/frame` | A sombra de cooldown que desce sobre o slot. |
+| `useSelectionRing` | `~/shared/theme` | A borda de seleção, 2px em `state.selected`, desenhada por um pseudo-elemento por cima do elemento. Use quando precisar marcar a seleção em um elemento que não é `Slot`. |
 
-### 6.3 Base — a camada
+### 6.3 Shared — a camada
 
 São **três pesos da mesma camada**, com anatomia idêntica.
 
@@ -345,16 +308,16 @@ São **três pesos da mesma camada**, com anatomia idêntica.
 
 | Componente | Import |
 | --- | --- |
-| `Dialog` / `DialogHeader` / `DialogBody` / `DialogFooter` | `~/components/base/dialog/*` |
-| `Modal` / `ModalHeader` / `ModalBody` / `ModalFooter` | `~/components/base/modal/*` |
-| `Drawer` / `DrawerHeader` / `DrawerBody` / `DrawerFooter` | `~/components/base/drawer/*` |
-| `Overlay` | `~/components/base/overlay/Overlay` | O fundo escurecido da camada. |
+| `Dialog` / `DialogHeader` / `DialogBody` / `DialogFooter` | `~/shared/ui/dialog` |
+| `Modal` / `ModalHeader` / `ModalBody` / `ModalFooter` | `~/shared/ui/modal` |
+| `Drawer` / `DrawerHeader` / `DrawerBody` / `DrawerFooter` | `~/shared/ui/drawer` |
+| `Overlay` | `~/shared/ui/overlay` | O fundo escurecido da camada. |
 
 **As três camadas são o `Dialog` do Chakra.** `Dialog`, `Modal` e `Drawer` são o mesmo componente Ark UI com pesos diferentes: o `Dialog` é a confirmação, o `Modal` é a tela com conteúdo, o `Drawer` é a lateral. O que o Chakra já resolve — *focus trap*, `aria-modal`, `aria-labelledby`, restauração do foco no gatilho, scroll lock, portal e inércia do fundo — vem de graça, e **não se reimplementa**.
 
 **Uma camada sem cabeçalho precisa de nome.** A camada que não usa a parte de cabeçalho — um drawer com imagem no lugar do título — recebe `label`, que vira o nome acessível do diálogo. Sem ele, o leitor de tela anuncia um diálogo sem nome.
 
-**A anatomia vive em uma receita, e os três componentes são o mesmo peso.** `base/layer/` tem a raiz, o título, o corpo e o rodapé; `Dialog`, `Modal` e `Drawer` escolhem a variante `weight` da receita `layer` e nada mais. Antes da receita, a mesma anatomia estava escrita três vezes, uma por camada — e as três cópias divergiam.
+**A anatomia vive em uma receita, e os três componentes são o mesmo peso.** `shared/ui/layer/` tem a raiz, o título, o corpo e o rodapé; `Dialog`, `Modal` e `Drawer` escolhem a variante `weight` da receita `layer` e nada mais. Antes da receita, a mesma anatomia estava escrita três vezes, uma por camada — e as três cópias divergiam.
 
 O que é nosso é a aparência: o `Dialog.Content` do Chakra com o nosso fundo, borda e sombra.
 
@@ -380,20 +343,20 @@ useEffect(subscribeRef.current, DEPS);
 
 **Um diálogo é um `Dialog`, nunca um `Modal` encolhido.** E nunca dois: um diálogo que existe no app existe na galeria **como o mesmo componente**, com o mesmo texto.
 
-### 6.4 Base — sobreposição
+### 6.4 Shared — sobreposição
 
-`Modal` e `Drawer` são **compostos**: a raiz entrega a estrutura e o contexto, e as partes desenham. As partes vêm de `base/layer/`, e cada camada pública escolhe o seu peso.
+`Modal` e `Drawer` são **compostos**: a raiz entrega a estrutura e o contexto, e as partes desenham. As partes vêm de `shared/ui/layer/`, e cada camada pública escolhe o seu peso.
 
 | Componente | Import | Quando usar |
 | --- | --- | --- |
-| `Modal` | `~/components/base/modal/Modal` | Modal composto. Fecha por ESC ou pelo botão; clicar fora **não** fecha. |
-| `ModalHeader` | `~/components/base/modal/ModalHeader` | Cabeçalho do modal. Recebe `children`. |
-| `ModalBody` | `~/components/base/modal/ModalBody` | O corpo do modal. Recebe `children`. |
-| `ModalFooter` | `~/components/base/modal/ModalFooter` | O rodapé do modal. Recebe `children`. |
-| `Drawer` | `~/components/base/drawer/Drawer` | Drawer lateral. Fecha por ESC e pelo clique no fundo. |
-| `DrawerHeader` / `DrawerBody` / `DrawerFooter` | `~/components/base/drawer/*` | As partes do drawer. |
-| `LayerRoot` / `LayerHeader` / `LayerBody` / `LayerFooter` | `~/components/base/layer/*` | A camada em si. Não se usa direto: `Dialog`, `Modal` e `Drawer` são as portas. |
-| `Overlay` | `~/components/base/overlay/Overlay` | O fundo escurecido. |
+| `Modal` | `~/shared/ui/modal` | Modal composto. Fecha por ESC ou pelo botão; clicar fora **não** fecha. |
+| `ModalHeader` | `~/shared/ui/modal` | Cabeçalho do modal. Recebe `children`. |
+| `ModalBody` | `~/shared/ui/modal` | O corpo do modal. Recebe `children`. |
+| `ModalFooter` | `~/shared/ui/modal` | O rodapé do modal. Recebe `children`. |
+| `Drawer` | `~/shared/ui/drawer` | Drawer lateral. Fecha por ESC e pelo clique no fundo. |
+| `DrawerHeader` / `DrawerBody` / `DrawerFooter` | `~/shared/ui/drawer` | As partes do drawer. |
+| `LayerRoot` / `LayerHeader` / `LayerBody` / `LayerFooter` | `~/shared/ui/layer` | A camada em si. Não se usa direto: `Dialog`, `Modal` e `Drawer` são as portas. |
+| `Overlay` | `~/shared/ui/overlay` | O fundo escurecido. |
 
 ```tsx
 <Modal onClose={onClose}>
@@ -409,45 +372,48 @@ useEffect(subscribeRef.current, DEPS);
 
 O `ModalHeader` não recebe `onClose`: ele lê do contexto do overlay. Isso é R4 aplicado — a lógica fica em um lugar e as partes se conectam a ela.
 
-### 6.5 Base — navegação, filtro e aviso
+### 6.5 Shared — navegação, filtro e aviso
 
 | Componente | Import | Quando usar |
 | --- | --- | --- |
-| `Tabs` / `TabBar` / `Tab` / `TabPanel` | `~/components/base/tab/*` | Navegação dentro de um modal. São as `Tabs` do Chakra (Ark UI): `role="tablist"`, `aria-selected` e navegação por setas. A aba ativa ganha o sublinhado violeta e o fundo rebaixado — o estado vem do `data-selected` do Ark, nunca de uma prop. O `Tab` recebe `children` e `value`; **toda aba vem com o seu painel** — uma aba sem painel é um botão, e usa `Chip`. O painel não tem anel de foco: um contorno em volta de metade do modal é pior do que nenhum. |
-| `Chip` | `~/components/base/chip/Chip` | Filtro inclinado. Não é aba: é um botão que alterna, com `aria-pressed`. O texto entra como `children`. `tone`: `arcane`, `blood`, `ember`, `frost`, `gold`, `neutral`, `verdant` — uma variante por elemento, para o elemento da criatura aparecer igual em filtro, em card e em lista. O filtro que **troca de painel** — os da mochila — é uma `Tab`, e usa o mesmo componente da loja. |
-| `Popup` | `~/components/base/popup/Popup` | O `Popover` do Chakra (Ark UI) com a nossa interação: abre no hover e fixa no clique. O conteúdo é posicionado com *flip*, fecha pelo ESC e devolve o foco ao gatilho. |
-| `PopupCard` | `~/components/base/popup/PopupCard` | A superfície do popup. |
-| `ScrollArea` | `~/components/base/scroll/ScrollArea` | Área rolável, com barra sempre visível. |
-| `AlertsProvider` / `useAlerts` / `AlertToast` / `AlertClose` / `AlertProgress` / `AlertsViewport` | `~/components/base/alert/*` | O aviso do canto superior direito, com barra de tempo. É o `Toaster` do Chakra: a região tem `role="region"` e `aria-live="polite"`, então o leitor de tela anuncia o aviso. Ele **entra** deslizando e sai com fade; quem fecha, seja o tempo ou o botão, sempre sai animado. |
+| `Tabs` / `TabBar` / `Tab` / `TabPanel` | `~/shared/ui/tab` | Navegação dentro de um modal. São as `Tabs` do Chakra (Ark UI): `role="tablist"`, `aria-selected` e navegação por setas. A aba ativa ganha o sublinhado violeta e o fundo rebaixado — o estado vem do `data-selected` do Ark, nunca de uma prop. O `Tab` recebe `children` e `value`; **toda aba vem com o seu painel** — uma aba sem painel é um botão, e usa `Chip`. O painel não tem anel de foco: um contorno em volta de metade do modal é pior do que nenhum. |
+| `Chip` | `~/shared/ui/chip` | Filtro inclinado. Não é aba: é um botão que alterna, com `aria-pressed`. O texto entra como `children`. `tone`: `arcane`, `blood`, `ember`, `frost`, `gold`, `neutral`, `verdant` — uma variante por elemento, para o elemento da criatura aparecer igual em filtro, em card e em lista. O filtro que **troca de painel** — os da mochila — é uma `Tab`, e usa o mesmo componente da loja. |
+| `Popup` | `~/shared/ui/popup` | O `Popover` do Chakra (Ark UI) com a nossa interação: abre no hover e fixa no clique. O conteúdo é posicionado com *flip*, fecha pelo ESC e devolve o foco ao gatilho. |
+| `PopupCard` | `~/shared/ui/popup` | A superfície do popup. |
+| `ScrollArea` | `~/shared/ui/scroll` | Área rolável, com barra sempre visível. |
+| `AlertsProvider` / `useAlerts` / `AlertToast` / `AlertClose` / `AlertProgress` / `AlertsViewport` | `~/shared/ui/alert` | O aviso do canto superior direito, com barra de tempo. É o `Toaster` do Chakra: a região tem `role="region"` e `aria-live="polite"`, então o leitor de tela anuncia o aviso. Ele **entra** deslizando e sai com fade; quem fecha, seja o tempo ou o botão, sempre sai animado. |
 
-### 6.6 Domínio
+### 6.6 Brand, form, features, entities e widgets
 
 | Componente | Import | Quando usar |
 | --- | --- | --- |
-| `AuthPage` | `~/components/domain/auth/AuthPage` | Página de autenticação completa, com a wordmark. |
-| `AuthShell` | `~/components/domain/auth/AuthShell` | O shell do formulário. |
-| `AuthField` | `~/components/domain/auth/AuthField` | Campo com rótulo, valor e erro. |
-| `AuthActions` | `~/components/domain/auth/AuthActions` | A coluna de ações do formulário. |
-| `AuthDivider` | `~/components/domain/auth/AuthDivider` | O separador "ou". |
-| `AuthForm` | `~/components/domain/auth/AuthForm` | O `<form>` com o campo de usuário oculto. |
-| `Wordmark` | `~/components/domain/brand/Wordmark` | A marca `CREATURES` com a régua dourada. |
-| `TrainerList` / `TrainerCard` / `CreateTrainerCard` | `~/components/domain/trainer/*` | A lista de treinadores e o card de criar. |
-| `TrainerAvatar` / `GenderToggle` / `StarterGrid` | `~/components/domain/trainer/*` | A criação de trainer. |
-| `TrainerDeleteDialog` | `~/components/domain/trainer/TrainerDeleteDialog` | O diálogo de exclusão. É o **mesmo** no app e na galeria. Sem caixa de alerta: a caixa repetia o que a descrição já dizia. O perigo fica no texto, na frase de irreversibilidade e no botão destrutivo. |
-| `TrainersPanel` | `~/components/domain/trainer/TrainersPanel` | O painel da lista de treinadores: moldura, cabeçalho, lista, card de criar e as ações. É o **mesmo** no app e na galeria. |
-| `CreateTrainerPanel` | `~/components/domain/trainer/CreateTrainerPanel` | A moldura da criação de trainer. O formulário entra como `children`. |
-| `BrandLayout` | `~/components/domain/brand/BrandLayout` | A wordmark + o conteúdo, centrado na tela. |
-| `StoreModal` | `~/components/domain/game/StoreModal` | A loja: abas Comprar/Vender, grade de slots e rodapé com quantidade e total. |
-| `StorageModal` | `~/components/domain/game/StorageModal` | O armazenamento: seção Time e seção Criaturas, com a busca no rodapé. |
-| `StarterCard` | `~/components/domain/trainer/StarterCard` | O card de criatura inicial, focusável pelo teclado. |
-| `FieldError` | `~/components/domain/auth/FieldError` | A mensagem de erro de um campo. |
-| `FieldLabel` | `~/components/domain/auth/FieldLabel` | O rótulo de um campo. Todo campo com rótulo usa este, para o mesmo estilo em toda parte. |
-| `LegalNotice` | `~/components/domain/auth/LegalNotice` | O aviso de termos e privacidade, variando a ação que o precede. |
-| `Toolbar` / `ToolbarLeft` / `ToolbarRight` / `ToolbarIdentity` / `CurrencyBadge` | `~/components/domain/game/*` | A barra superior do jogo. É a **mesma** no app e na galeria — nunca duas cópias. |
-| `TeamStrip` / `CreatureTab` / `CreaturePortrait` / `EmptyCreatureTab` | `~/components/domain/game/*` | As linguetas do time, logo abaixo da toolbar. Slot preenchido é maior e mostra retrato, nível e nome; slot vazio é menor e não mostra nada. |
-| `PlayButton` | `~/components/domain/game/PlayButton` | O botão de play: uma barra horizontal encostada na borda esquerda, acima da barra de habilidades, com o chevron e o rótulo. |
-| `ShopButton` | `~/components/domain/game/ShopButton` | O botão da loja: um botão de texto flutuante logo acima da barra de habilidades. Flutua — nunca empurra o canvas. |
-| `SkillBar` | `~/components/domain/game/SkillBar` | A barra de habilidades. É a **mesma** no app e na galeria. |
+| `BrandPage` | `~/shared/ui/brand` | Página de autenticação completa, com a wordmark. |
+| `FormShell` | `~/shared/ui/form` | O shell do formulário. |
+| `LoadingScreen` | `~/shared/ui/loading` | A tela de carregamento: a marca do jogo, o anel que gira e o "Carregando". Cobre o intervalo entre abrir o jogo e a rota entrar. |
+| `FormField` | `~/shared/ui/form` | O campo do formulário, ligado ao React Hook Form: valor, `onChange`, `onBlur` e erro saem do `useController` e chegam no `TextField`. O erro **do campo** sai de dentro do `Field.Root`, e é o que amarra o `aria-invalid` e o `aria-errormessage` ao controle. O campo com erro também tem a **borda de erro**, e não só a mensagem. Recebe o `control` do formulário de forma explícita, e é por ele que o nome do campo é verificado na compilação. |
+| `FormActions` | `~/shared/ui/form` | A coluna de ações do formulário. |
+| `FormDivider` | `~/shared/ui/form` | O separador "ou". |
+| `useZodForm` | `~/shared/ui/form` | Cria o formulário com o `zodResolver`, o schema e a política de validação do projeto. Todo formulário nasce aqui. As regras estão em [Formulários](FORMS.md). |
+| `AuthUsernameField` | `~/features/authentication` | O campo de usuário **oculto**, que os gerenciadores de senha precisam para oferecer a conta salva. |
+| `Wordmark` | `~/shared/ui/brand` | A marca `CREATURES` com a régua dourada. |
+| `TrainerList` / `TrainerCard` / `CreateTrainerCard` | `~/entities/trainer` | A lista de treinadores e o card de criar. |
+| `TrainerAvatar` / `GenderToggle` / `StarterGrid` | `~/entities/trainer` | A criação de trainer. |
+| `TrainerDeleteDialog` | `~/features/delete-trainer` | O diálogo de exclusão. É o **mesmo** no app e na galeria. Sem caixa de alerta: a caixa repetia o que a descrição já dizia. O perigo fica no texto, na frase de irreversibilidade e no botão destrutivo. |
+| `TrainersPanel` | `~/entities/trainer` | O painel da lista de treinadores: moldura, cabeçalho, lista, card de criar e as ações. É o **mesmo** no app e na galeria. |
+| `CreateTrainerPanel` | `~/entities/trainer` | A moldura da criação de trainer. O formulário entra como `children`. |
+| `BrandLayout` | `~/shared/ui/brand` | A wordmark + o conteúdo, centrado na tela. |
+| `StoreModal` | `~/features/store` | A loja: abas Comprar/Vender, grade de slots e rodapé com quantidade e total. |
+| `StorageModal` | `~/features/storage` | O armazenamento: seção Time e seção Criaturas, com a busca no rodapé. |
+| `BackpackModal` | `~/features/backpack` | A mochila: a grade de slots do inventário. |
+| `StarterCard` | `~/entities/trainer` | O card de criatura inicial, focusável pelo teclado. |
+| `FormError` | `~/shared/ui/form` | A mensagem de erro do **formulário** — o erro que não pertence a um campo ("e-mail ou senha inválidos"). Não usa `Field.ErrorText`, porque aquele componente do Chakra só existe dentro de um `Field.Root` e estoura o contexto quando é renderizado sozinho. |
+| `FormLabel` | `~/shared/ui/form` | O rótulo de um campo. Todo campo com rótulo usa este, para o mesmo estilo em toda parte. |
+| `LegalNotice` | `~/features/authentication` | O aviso de termos e privacidade, variando a ação que o precede. |
+| `Toolbar` / `ToolbarLeft` / `ToolbarRight` / `ToolbarIdentity` / `CurrencyBadge` | `~/widgets/game-hud` | A barra superior do jogo. É a **mesma** no app e na galeria — nunca duas cópias. |
+| `TeamStrip` / `CreatureTab` / `CreaturePortrait` / `EmptyCreatureTab` | `~/widgets/game-hud` | As linguetas do time, logo abaixo da toolbar. Slot preenchido é maior e mostra retrato, nível e nome; slot vazio é menor e não mostra nada. |
+| `PlayButton` | `~/widgets/game-hud` | O botão de play: uma barra horizontal encostada na borda esquerda, acima da barra de habilidades, com o chevron e o rótulo. |
+| `ShopButton` | `~/widgets/game-hud` | O botão da loja: um botão de texto flutuante logo acima da barra de habilidades. Flutua — nunca empurra o canvas. |
+| `SkillBar` | `~/widgets/game-hud` | A barra de habilidades. É a **mesma** no app e na galeria. |
 
 ---
 
@@ -455,7 +421,7 @@ O `ModalHeader` não recebe `onClose`: ele lê do contexto do overlay. Isso é R
 
 ### 7.1 A regra de ouro
 
-**Toda a interface sai dos componentes acima.** Se uma tela precisa de um elemento que não existe, ele é um componente novo — no `base/` se serve a qualquer tela, no `domain/` se carrega regra de jogo. Nunca um `Box` com estilo solto.
+**Toda a interface sai dos componentes acima.** Se uma tela precisa de um elemento que não existe, ele é um componente novo — em `shared/ui/` se serve a qualquer tela, em `entities/` ou `features/` se carrega regra de jogo. Nunca um `Box` com estilo solto.
 
 Duas implementações — uma para a galeria e outra para o app — é o que faz as duas divergirem. A galeria mostra o componente real.
 
@@ -465,13 +431,13 @@ Duas implementações — uma para a galeria e outra para o app — é o que faz
 Precisa de cor, borda, sombra ou raio?
   ├─ não → Box. Box serve para ARRUMAR, nunca para DECORAR.
   └─ sim → É um componente.
-              ├─ serve a qualquer tela?        → components/base/
-              └─ conhece regra do jogo?        → components/domain/
+              ├─ serve a qualquer tela?        → shared/ui/
+              └─ conhece regra do jogo?        → entities/ ou features/
 ```
 
 ### 7.3 Ordem de montagem
 
-1. **Escolha a moldura.** `Frame` para painel, `Modal` para modal, `Drawer` para lateral, `AuthPage` para autenticação.
+1. **Escolha a moldura.** `Frame` para painel, `Modal` para modal, `Drawer` para lateral, `BrandPage` para autenticação.
 2. **Monte as partes da moldura** (`FrameHeader`, `FrameFooter`, `ModalBody`…) como `children`.
 3. **Monte a hierarquia** com `Box` de layout: `display`, `gap`, `padding`, `alignItems`.
 4. **Encha com conteúdo** usando `Text`, `Button`, `TextField`, `Slot`, `Tab`, `Chip`.
@@ -483,11 +449,11 @@ Precisa de cor, borda, sombra ou raio?
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { Button } from '~/components/base/button/Button';
-import { Frame } from '~/components/base/frame/Frame';
-import { FrameFooter } from '~/components/base/frame/FrameFooter';
-import { FrameHeader } from '~/components/base/frame/FrameHeader';
-import { Text } from '~/components/base/text/Text';
+import { Button } from '~/shared/ui/button';
+import { Frame } from '~/shared/ui/frame';
+import { FrameFooter } from '~/shared/ui/frame';
+import { FrameHeader } from '~/shared/ui/frame';
+import { Text } from '~/shared/ui/text';
 
 export function CityPanel(): ReactElement {
   return (
@@ -511,15 +477,16 @@ export function CityPanel(): ReactElement {
 - [ ] Nenhum `Box` com cor, borda, sombra ou raio: isso é componente.
 - [ ] Um componente por arquivo, e uma pasta por componente.
 - [ ] Os arquivos irmãos seguem o prefixo do componente (`x.types.ts`, `x.constants.ts`, `useX.ts`).
-- [ ] `base/` não importa de `domain/`.
+- [ ] `shared/` não importa de `entities/`, `features/` ou `pages/`.
 - [ ] Nenhuma prop que desenha: estrutura vem de `children` e de partes.
 - [ ] A lógica com estado está em um hook, não no corpo do componente.
 - [ ] Todo card clicável usa `Pressable`, e não um `onClick` solto em um `Box`.
 - [ ] Todo controle clicável é `<button>` ou `<a>` de verdade — Enter e Espaço funcionam de graça.
 - [ ] Nenhum botão dentro de outro botão.
 - [ ] Todo link de texto usa o `Link` do design system, e não o `Link` cru do router.
-- [ ] Nenhuma tela do app tem cópia de um componente que já existe em `base/` ou `domain/`.
+- [ ] Nenhuma tela do app tem cópia de um componente que já existe em `shared/ui/`, `entities/` ou `features/`.
 - [ ] Todo botão tem `tone`, não `variant` solto.
+- [ ] Todo campo de formulário usa o `FormField`, e todo formulário nasce no `useZodForm`.
 - [ ] Todo estado de seleção usa a borda de seleção; todo foco usa o outline externo.
 - [ ] Alvo de toque de no mínimo 44px.
 - [ ] Cor nunca é a única informação: sempre com ícone ou rótulo.
@@ -528,6 +495,8 @@ export function CityPanel(): ReactElement {
 ---
 
 ## 8. Regras de uso
+
+**O campo com erro tem borda de erro.** A mensagem embaixo do campo diz o que aconteceu; a borda vermelha diz que o campo está errado antes de a mensagem ser lida. As duas juntas, e não uma no lugar da outra.
 
 **Cor nunca sozinha.** Vida, stamina e elemento vêm com cor **e** com ícone ou rótulo. Oito por cento dos homens tem alguma deficiência de visão de cores, e cor sozinha torna o jogo injogável para eles.
 
@@ -547,7 +516,7 @@ export function CityPanel(): ReactElement {
 
 **A grade não inventa linha.** A última linha é completada com slots vazios, mas a grade não cria linha nova: três itens fazem uma linha, não três linhas de onze. O scroll aparece quando o conteúdo realmente não cabe — e não antes.
 
-**O divisor é um divisor.** A linha que separa o corpo do rodapé é a cor `border`. O atalho `borderTop` zera a cor da borda — a linha sai branca, fora do tema. Por isso o divisor vive em `theme/divider.ts`, nas três formas longas, e é usado em todas as partes que dividem.
+**O divisor é um divisor.** A linha que separa o corpo do rodapé é a cor `border`. O atalho `borderTop` zera a cor da borda — a linha sai branca, fora do tema. Por isso o divisor vive em `shared/theme/divider.ts`, nas três formas longas, e é usado em todas as partes que dividem.
 
 **Campo de texto com 16px.** O Chakra define o input em 14px, e 14px no campo mais o placeholder apagado dá leitura ruim. O `TextField` sobe para 16px, o que também evita o zoom automático do iOS ao focar.
 
@@ -569,7 +538,7 @@ A rota `/design-system` mostra o sistema funcionando. Ela é pública e serve de
 
 A galeria é a **referência viva** do que vai para a tela. Onde ela mostra um componente, é o componente real do app — nunca um mock paralelo.
 
-A barra superior da galeria é a `Toolbar` de `components/domain/game/`, a mesma do jogo. É por isso que dá para ver, na própria galeria, se a interface do jogo está certa.
+A barra superior da galeria é a `Toolbar` de `widgets/game-hud/`, a mesma do jogo. É por isso que dá para ver, na própria galeria, se a interface do jogo está certa.
 
 | Ordem | Seção | O que mostra |
 | --- | --- | --- |

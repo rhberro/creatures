@@ -13,6 +13,8 @@ Este documento lista as tecnologias escolhidas para o cliente, o motivo de cada 
 | Vite | Build e servidor de desenvolvimento |
 | React | Renderização da interface e componentes sobrepostos ao canvas |
 | React Router | Roteamento entre as telas do cliente |
+| React Hook Form | Estado dos formulários: valor, erro e envio |
+| Zod | Schema de validação dos formulários e dos dados do cliente |
 | Chakra UI | Design system dos elementos de interface |
 | PixiJS | Renderização do mundo do jogo no canvas |
 | Zustand | Armazenamento do estado do cliente |
@@ -37,11 +39,13 @@ A tipagem também serve de documentação nos pontos onde o cliente e o servidor
 
 ## Vite
 
-O build e o servidor de desenvolvimento do cliente são feitos pelo Vite.
+O build e o servidor de desenvolvimento do cliente são feitos pelo Vite, na versão 8.
 
 > Escolhido por ser enxuto e por não exigir configuração para começar. O bundle sai rápido e o servidor de desenvolvimento sobe na hora.
 
 O Vite serve o cliente em `http://localhost:5173` durante o desenvolvimento.
+
+A versão 8 usa o **Rolldown** no lugar do Rollup, e o bundle sai em menos de meio segundo. O `vite.config.ts` continua o mesmo: o Rolldown converte as opções do `esbuild` e do Rollup sozinho.
 
 ## React
 
@@ -59,7 +63,42 @@ O roteamento entre as telas é feito pelo React Router.
 
 O TanStack Router foi considerado e descartado. Os diferenciais dele são search params tipado e code splitting automático por rota, e nenhum dos dois se aplica: o estado do jogo chega pelo WebSocket e não por busca de dados na rota.
 
-> O code splitting também existe no React Router, com carregamento preguiçoso por rota. O que não se quer é o roteamento por arquivo, que dita a estrutura de pastas do cliente a partir da biblioteca, e para um número estável de telas isso é mais peso do que resolve.
+> O code splitting existe, com carregamento preguiçoso por rota: a tela de criar treinador e a tela do jogo só são baixadas quando alguém chega nelas.
+
+> O `lazy` é o do React, e não o do roteador. O `lazy` do roteador descobre a página depois que ela entra, e essa espera acontece no meio do commit — o React avisa que o `flushSync` do Ark UI caiu dentro de um ciclo de vida. Com o `lazy` do React, quem espera é a própria tela, e a `LoadingScreen` cobre a espera.
+
+A galeria do design system é a exceção: ela fica no bundle inicial. É a tela com todos os componentes do Chakra ao mesmo tempo, e montar tudo isso em um commit separado é o que dispara o aviso. Doze quilobytes de gzip é um preço menor que um erro no console.
+
+## React Hook Form
+
+Os formulários do cliente usam o **React Hook Form**, com o **Zod** como validador.
+
+> Escolhido porque o formulário é a parte do cliente que mais precisa de estado: o valor de cada campo, o erro de cada campo, o que já foi tocado, o que está sendo enviado. O React Hook Form guarda esse estado fora do React, revalida só o campo que mudou, e devolve o `isSubmitting` que o botão de enviar precisa para não aceitar dois cliques.
+
+**Todo formulário usa o React Hook Form.** Não há `useState` para o valor de um campo, não há validação escrita à mão dentro do componente, e não há biblioteca de formulário fora desta. A regra de um campo mora em um **schema do Zod**, e o `zodResolver` conecta o schema ao formulário.
+
+Dois pontos do design system fazem a liaison com o RHF:
+
+| Peça | Import | O que faz |
+| --- | --- | --- |
+| `useZodForm` | `~/shared/ui/form` | Cria o formulário com o `zodResolver`, o schema e a política de validação do projeto. |
+| `FormField` | `~/shared/ui/form` | Liga o `useController` ao `TextField`: valor, `onChange`, `onBlur` e o erro do campo saem do hook e chegam no controle. |
+
+**O schema é a fonte da verdade, e é o mesmo do servidor.** O schema que valida o formulário é o que valida o pedido que sai para a API: o que o jogador vê no campo é o que o servidor vai exigir. O `zodResolver` é o único lugar onde o schema entra em cena; o resto do formulário só conversa com o RHF.
+
+> O `FormField` exige o `control` de forma explícita, em vez de lê-lo de um context. É o `control` que segura o tipo dos valores do formulário, e é ele que faz o nome do campo ser verificado na compilação: um nome errado não compila.
+
+As regras de uso — quando o erro aparece, o que é erro de campo e o que é erro de formulário, o que acontece quando o jogador clica em enviar — estão em [Formulários](FORMS.md).
+
+## Zod
+
+O Zod valida os dados do cliente: os formulários e os pedidos que saem para a API.
+
+> Escolhido porque o schema é código, e código se tipa: o tipo dos valores do formulário vem do schema, e o mesmo schema valida o que sai para o servidor. Com o `zodResolver`, o formulário e a API passam a conferir a mesma regra.
+
+O `zodResolver` do `@hookform/resolvers` é a ponte entre o Zod e o React Hook Form.
+
+> O Zod é o mesmo no cliente e no servidor: a versão 4. A migração do cliente aproveitou que o `@hookform/resolvers` já falava com as duas versões, e o que mudou no código foi o uso das APIs novas — `z.email()` e `z.uuid()` no lugar dos métodos da string, e `error` no lugar de `message` nos parâmetros do `refine`.
 
 ## Chakra UI
 
@@ -69,17 +108,19 @@ O Chakra é o design system dos elementos de interface, usado exatamente como fo
 
 A saída para customizar algo no Chakra é criar um **token semântico** no sistema de temas, e não alterar o estilo do componente. Assim a customização fica em um único lugar e é fácil de reverter.
 
-O design system em si, com as escalas, os tokens semânticos, as receitas, o catálogo de componentes e as regras de uso, está em [Design System](DESIGN_SYSTEM.md). Ele é a fonte da verdade da interface: toda tela do cliente sai dos componentes de `apps/client/src/components/`, e nenhum componente do Chakra é reescrito.
+O design system em si, com as escalas, os tokens semânticos, as receitas, o catálogo de componentes e as regras de uso, está em [Design System](DESIGN_SYSTEM.md). Ele é a fonte da verdade da interface: toda tela do cliente sai dos componentes de `apps/client/src/shared/ui/`, e nenhum componente do Chakra é reescrito.
 
-O tema tem uma divisão em quatro camadas: `theme/tokens` traz os valores brutos, `theme/semanticTokens` diz para que cada um serve, `theme/textStyles` traz os estilos de texto prontos, e `theme/recipes` traz as receitas — o estilo que **cruza** camadas, como a anatomia da camada e o anel de seleção. Nenhum componente do Chakra é reescrito, e a identidade visual vem inteira dessas camadas.
+O tema tem uma divisão em quatro camadas: `shared/theme/tokens` traz os valores brutos, `shared/theme/semanticTokens` diz para que cada um serve, `shared/theme/textStyles` traz os estilos de texto prontos, e `shared/theme/recipes` traz as receitas — o estilo que **cruza** camadas, como a anatomia da camada e o anel de seleção. Nenhum componente do Chakra é reescrito, e a identidade visual vem inteira dessas camadas.
 
 Quando o Chakra já resolve um comportamento — *focus trap*, `aria-modal`, posicionamento, região `aria-live`, navegação por setas — o design system usa o Chakra. O que é nosso é a aparência.
 
 **Os tipos do tema são gerados.** O `@chakra-ui/cli` gera os tipos dos tokens, das receitas e das paletas a partir do tema, e o resultado é escrito no pacote do Chakra instalado. O comando roda no `postinstall` e antes do `build`, para que os tipos nunca fiquem velhos.
 
-**O guarda dos tokens roda no typecheck.** O Chakra aceita qualquer string em uma prop de cor: `bg="coin"` compila, passa no typecheck e vira `background: coin` — CSS inválido, que o navegador descarta em silêncio. `scripts/check-tokens.ts` resolve cada valor de cor pelo mesmo dicionário de tokens que a interface usa e falha o build quando o token não existe, quando a cor é crua, ou quando um componente de `base/` consome um passo cru de escala em vez de um token semântico.
+**O guarda dos tokens roda no typecheck.** O Chakra aceita qualquer string em uma prop de cor: `bg="coin"` compila, passa no typecheck e vira `background: coin` — CSS inválido, que o navegador descarta em silêncio. `scripts/check-tokens.ts` resolve cada valor de cor pelo mesmo dicionário de tokens que a interface usa e falha o build quando o token não existe, quando a cor é crua, ou quando um componente de `shared/ui/` consome um passo cru de escala em vez de um token semântico.
 
 A fonte é servida pelo Google Fonts, com quatro famílias: Cinzel para o nome do jogo e os nomes de criatura, Barlow Semi Condensed para os rótulos de interface, Barlow para o texto corrido, e JetBrains Mono para números. A escolha de uma fonte por categoria vem da necessidade de caixa alta com entreletra aberta nos rótulos, de um serifa gravado nos títulos e de números tabulares nos valores.
+
+O Cinzel entra no **peso 900** nos títulos e nos nomes de criatura. O Cinzel é um serifa de contraste alto, e no peso 800 a haste fina ainda competia com o fundo escuro da interface; no 900 o título tem presença sem perder o desenho gravado.
 
 > O Dota 2 usa Reaver na interface e Radiance nos títulos. As duas não estão no Google Fonts, e o Cinzel é a aproximação mais próxima da Radiance dentro do que está disponível.
 
@@ -153,6 +194,6 @@ O cliente usa o runner de testes do Bun, o mesmo do servidor.
 
 Os pontos abaixo dizem respeito à stack e ainda estão em aberto:
 
-- O `@supabase/supabase-js`, o React Router e o Zustand estão escolhidos mas ainda não instalados.
+- O bundle inicial ainda carrega o Chakra inteiro e o conjunto de ícones. A divisão por rota já existe, mas o que é comum a todas as telas continua indo junto.
 
 O formato dos assets, o tamanho do tile e o tamanho da janela de visão não são pendências de stack: são decisões de design do jogo, e pertencem a [Game Design](../../game/GAME.md).

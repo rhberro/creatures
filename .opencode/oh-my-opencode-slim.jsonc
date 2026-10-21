@@ -1,0 +1,9 @@
+{
+  "presets": {
+    "free-tier": {
+      "marketplace": {
+        "agents_add": ["alvin/documenter"],
+      },
+    },
+  },
+}

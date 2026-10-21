@@ -16,10 +16,10 @@ import path from 'node:path';
 
 import ts from 'typescript';
 
-import { system } from '~/theme/system';
+import { system } from '~/shared/theme';
 
 const SOURCE_DIR = 'src';
-const BASE_DIR = 'src/components/base';
+const BASE_DIR = 'src/shared/ui';
 
 /**
  * As props que recebem cor. O valor delas precisa existir no tema.
