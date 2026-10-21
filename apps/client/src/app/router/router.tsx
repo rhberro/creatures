@@ -7,6 +7,7 @@ import { DesignSystemPage } from '~/pages/design-system';
 
 import {
   notFoundLoader,
+  postAuthLoader,
   redirectIfAuthenticatedLoader,
   redirectIfAuthenticatedOrRecoveringLoader,
   requireAuthLoader,
@@ -40,6 +41,10 @@ const ROUTES: RouteObject[] = [
   },
   { Component: lazyPage(loadTermsPage, 'TermsPage'), path: '/terms' },
   { Component: lazyPage(loadPrivacyPage, 'PrivacyPage'), path: '/privacy' },
+  // Onde o jogador cai depois de uma autenticação que veio de fora: o OAuth e
+  // o link de confirmação de e-mail. A rota só decide o destino, então nunca
+  // desenha: o loader sempre redireciona.
+  { Component: null, loader: postAuthLoader, path: '/post-auth' },
   // A galeria fica no bundle inicial: ela e a tela com todos os componentes do
   // Chakra ao mesmo tempo, e montar tudo isso em um commit separado faz o
   // React avisar que o `flushSync` do Ark UI caiu dentro de um ciclo de vida.

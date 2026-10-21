@@ -11,7 +11,7 @@ const TRAINERS: Trainer[] = [
     id: 't1',
     level: 12,
     name: 'Rafael',
-    starterCreatureId: 'c1',
+    starterSpeciesId: 'c1',
   },
   {
     createdAt: '2026-01-01',
@@ -19,7 +19,7 @@ const TRAINERS: Trainer[] = [
     id: 't2',
     level: 4,
     name: 'Kael',
-    starterCreatureId: 'c2',
+    starterSpeciesId: 'c2',
   },
   {
     createdAt: '2026-01-01',
@@ -27,7 +27,7 @@ const TRAINERS: Trainer[] = [
     id: 't3',
     level: 7,
     name: 'Mira',
-    starterCreatureId: 'c3',
+    starterSpeciesId: 'c3',
   },
 ];
 

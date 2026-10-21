@@ -20,7 +20,9 @@ A stamina é o tempo de caça do treinador. Ela é medida em horas, e o máximo 
 
 A stamina máxima é sempre 12 horas. Nenhum item, habilidade ou situação aumenta ou diminui esse valor.
 
-> A stamina é exibida na [barra de habilidades](SKILL_BAR.md), em uma barra com a porcentagem restante e, do lado, o tempo ainda disponível em horas e minutos.
+> A stamina é exibida na [barra de habilidades](SKILL_BAR.md): a barra mostra o percentual restante de forma visual, e o rótulo da barra mostra o tempo ainda disponível, em horas e minutos.
+
+> A barra e o rótulo não repetem a mesma informação. A porcentagem já está na barra, e o que o jogador planeja é o tempo: mostrar os dois números obriga a ler duas vezes para responder à mesma pergunta, "quanto tempo de caça ainda tenho?". Por isso o rótulo mostra só o tempo.
 
 > Um número único e imutável existe para o jogo ter uma regra só. Enquanto o treinador tem stamina, ele pode caçar; quando ela acaba, ele para. Nenhum jogador tem tempo de caça extra por item ou por construção de personagem.
 

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 import type { Control } from 'react-hook-form';
 
@@ -28,11 +28,11 @@ export function SignInFields(props: SignInFieldsProps): ReactElement {
         placeholder="Sua senha"
         type="password"
       />
-      <Box display="flex" justifyContent="flex-end">
+      <Flex justify="flex-end">
         <Link to={FORGOT_PASSWORD_PATH} variant="label">
           Esqueci a senha
         </Link>
-      </Box>
+      </Flex>
     </>
   );
 }

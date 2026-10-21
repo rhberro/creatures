@@ -9,8 +9,16 @@ import { ToolbarRight } from './ToolbarRight';
 const TOOLBAR_HEIGHT = '56px';
 
 export function Toolbar(props: ToolbarProps): ReactElement {
-  const { diamonds, gold, onOpenBackpack, onOpenStorage, onSignOut, trainerLevel, trainerName } =
-    props;
+  const {
+    diamonds,
+    gold,
+    onOpenBackpack,
+    onOpenStorage,
+    onSignOut,
+    onSwitchTrainer,
+    trainerLevel,
+    trainerName,
+  } = props;
   return (
     <Box
       alignItems="center"
@@ -29,7 +37,12 @@ export function Toolbar(props: ToolbarProps): ReactElement {
         onOpenBackpack={onOpenBackpack}
         onOpenStorage={onOpenStorage}
       />
-      <ToolbarRight diamonds={diamonds} gold={gold} onSignOut={onSignOut} />
+      <ToolbarRight
+        diamonds={diamonds}
+        gold={gold}
+        onSignOut={onSignOut}
+        onSwitchTrainer={onSwitchTrainer}
+      />
     </Box>
   );
 }

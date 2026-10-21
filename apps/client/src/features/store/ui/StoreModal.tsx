@@ -1,133 +1,126 @@
 import { Box } from '@chakra-ui/react';
-import { type ReactElement, useState } from 'react';
+import type { StoreCatalog } from '@creatures/contracts/store';
+import type { ReactElement } from 'react';
 
+import type { StoreTab, StoreView } from '~/features/store/model/store.types';
+import { useStore } from '~/features/store/model/useStore';
+import { StoreBuyFooter } from '~/features/store/ui/StoreBuyFooter';
+import { StoreBuyPanel } from '~/features/store/ui/StoreBuyPanel';
+import { StoreSellFooter } from '~/features/store/ui/StoreSellFooter';
+import { StoreSellPanel } from '~/features/store/ui/StoreSellPanel';
 import { DIVIDER_BOTTOM } from '~/shared/theme';
-import { Button } from '~/shared/ui/button';
-import { IconCoin } from '~/shared/ui/icon';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '~/shared/ui/modal';
-import { ScrollArea } from '~/shared/ui/scroll';
+import { PopupGroup } from '~/shared/ui/popup';
 import { Tab, TabBar, TabPanel, Tabs } from '~/shared/ui/tab';
 import { Text } from '~/shared/ui/text';
 
-import { StoreSection } from './StoreSection';
-import type { StoreItem } from './StoreSection';
-
-const CONSUMABLES: StoreItem[] = [
-  { glyph: '✚', name: 'Poção de Cura', price: 120, tone: 'arcane.500' },
-  { glyph: '✦', name: 'Elixir de Stamina', price: 340, tone: 'frost.500' },
-  { glyph: '✹', name: 'Frasco Antídoto', price: 260, tone: 'ember.500' },
-  { glyph: '◈', name: 'Isca de Caça', price: 90, tone: 'gold.500' },
-  { glyph: '❖', name: 'Bálsamo de Prata', price: 410, tone: 'base.500' },
-];
-
-const DEVICES: StoreItem[] = [
-  { glyph: '⬢', name: 'Prisma de Captura', price: 1800, tone: 'frost.500' },
-  { glyph: '⬣', name: 'Isca Prisma', price: 1200, tone: 'gold.500' },
-  { glyph: '⬡', name: 'Cristal Bruto', price: 2400, tone: 'base.500' },
-  { glyph: '✜', name: 'Frasco de Vidro', price: 1500, tone: 'verdant.500' },
-  { glyph: '✥', name: 'Núcleo Vazio', price: 3200, tone: 'ember.500' },
-];
-
-const QUANTITY_STEPS: string[] = ['+10', '+100', '+1000'];
-const TOTAL = '120';
 const TITLE = 'Loja';
 const BUY_LABEL = 'Comprar';
 const SELL_LABEL = 'Vender';
 const STORE_WIDTH = '720px';
 const STORE_HEIGHT = '620px';
-const BUY_TAB = 'comprar';
-const SELL_TAB = 'vender';
+const BUY_TAB = 'buy';
+const SELL_TAB = 'sell';
 
-type StoreModalProps = {
+export type StoreModalProps = {
   contained?: boolean;
   isOpen: boolean;
   onClose: () => void;
+  /** The catalog of samples, when the store is shown outside the game. */
+  snapshot?: StoreCatalog | null;
 };
 
+/**
+ * The store of the city.
+ *
+ * The modal has two tabs: the buy, which is the one that opens, and the sell.
+ * The modal does not pause the game: the simulation keeps running with it
+ * open.
+ */
 export function StoreModal(props: StoreModalProps): ReactElement {
-  const { contained = false, isOpen, onClose } = props;
-  const [tab, setTab] = useState(BUY_TAB);
-  const isBuying = tab === BUY_TAB;
+  const { contained = false, isOpen, onClose, snapshot = null } = props;
+  const store = useStore(isOpen, onClose, snapshot);
+  const tabs = buildTabs(store);
+  const footer = buildFooter(store);
   return (
     <Modal
       contained={contained}
-      isOpen={isOpen}
       height={STORE_HEIGHT}
-      onClose={onClose}
+      isOpen={isOpen}
+      onClose={store.close}
       width={STORE_WIDTH}
     >
-      <Tabs onValueChange={setTab} value={tab}>
-        <ModalHeader>{TITLE}</ModalHeader>
-        <Box css={DIVIDER_BOTTOM} paddingBlock="2" paddingInline="4">
-          <TabBar>
-            <Tab value={BUY_TAB}>{BUY_LABEL}</Tab>
-            <Tab value={SELL_TAB}>{SELL_LABEL}</Tab>
-          </TabBar>
-        </Box>
-        <ModalBody>
-          <TabPanel value={BUY_TAB}>
-            <StoreItems />
-          </TabPanel>
-          <TabPanel value={SELL_TAB}>
-            <StoreItems />
-          </TabPanel>
-        </ModalBody>
-      </Tabs>
-      <ModalFooter>
-        <StoreFooter isBuying={isBuying} />
-      </ModalFooter>
+      {tabs}
+      <ModalFooter>{footer}</ModalFooter>
     </Modal>
   );
 }
 
-function StoreItems(): ReactElement {
+/**
+ * The tabs of the modal, with the panel of the one that is active.
+ */
+function buildTabs(store: StoreView): ReactElement {
+  const tabChange = buildTabChange(store.setTab);
+  const error = buildErrorMessage(store.error);
+  const buyPanel = (
+    <TabPanel value={BUY_TAB}>
+      <StoreBuyPanel store={store} />
+    </TabPanel>
+  );
+  const sellPanel = (
+    <TabPanel value={SELL_TAB}>
+      <StoreSellPanel store={store} />
+    </TabPanel>
+  );
   return (
-    <ScrollArea height="full">
-      <Box display="flex" flexDirection="column" gap="5">
-        <StoreSection items={CONSUMABLES} title="Consumíveis" />
-        <StoreSection items={DEVICES} title="Dispositivos" />
+    <Tabs onValueChange={tabChange} value={store.tab}>
+      <ModalHeader>{TITLE}</ModalHeader>
+      <Box css={DIVIDER_BOTTOM} paddingBlock="2" paddingInline="4">
+        <TabBar>
+          <Tab value={BUY_TAB}>{BUY_LABEL}</Tab>
+          <Tab value={SELL_TAB}>{SELL_LABEL}</Tab>
+        </TabBar>
       </Box>
-    </ScrollArea>
+      <ModalBody>
+        <PopupGroup>
+          {error}
+          {buyPanel}
+          {sellPanel}
+        </PopupGroup>
+      </ModalBody>
+    </Tabs>
   );
 }
 
-function StoreFooter(props: { isBuying: boolean }): ReactElement {
-  const { isBuying } = props;
-  const quantityButtons = QUANTITY_STEPS.map(renderQuantityButton);
-  const actionLabel = isBuying ? BUY_LABEL : SELL_LABEL;
+/**
+ * The footer of the tab the modal is showing.
+ */
+function buildFooter(store: StoreView): ReactElement {
+  if (store.tab === 'sell') {
+    return <StoreSellFooter store={store} />;
+  }
+  return <StoreBuyFooter store={store} />;
+}
+
+/**
+ * The message of the last refusal of the server.
+ */
+function buildErrorMessage(message: string | null): ReactElement | null {
+  if (message === null) {
+    return null;
+  }
   return (
-    <>
-      <Box
-        alignItems="center"
-        bg="bg.sunken"
-        borderRadius="sm"
-        boxShadow="recessed"
-        color="fg.subtle"
-        display="flex"
-        height="32px"
-        justifyContent="center"
-        width="48px"
-      >
-        <Text variant="numeric">1</Text>
-      </Box>
-      {quantityButtons}
-      <Box alignItems="center" display="flex" gap="2" marginInlineStart="auto">
-        <Box color="currency.gold" display="flex">
-          <IconCoin />
-        </Box>
-        <Text color="currency.gold" variant="numeric">
-          {TOTAL}
-        </Text>
-      </Box>
-      <Button tone="primary">{actionLabel}</Button>
-    </>
+    <Text color="fg.error" marginBlockEnd="3" variant="meta">
+      {message}
+    </Text>
   );
 }
 
-function renderQuantityButton(label: string): ReactElement {
-  return (
-    <Button key={label} size="sm" tone="secondary">
-      {label}
-    </Button>
-  );
+/**
+ * The change of the tab: the modal resets itself when the tab changes.
+ */
+function buildTabChange(setTab: (tab: StoreTab) => void): (value: string) => void {
+  return function changeTab(value: string): void {
+    setTab(value === SELL_TAB ? 'sell' : 'buy');
+  };
 }

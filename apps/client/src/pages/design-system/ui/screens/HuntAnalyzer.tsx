@@ -5,10 +5,10 @@ import { Frame, FrameFooter, FrameHeader } from '~/shared/ui/frame';
 import { Text } from '~/shared/ui/text';
 
 const METRICS = [
-  { label: 'Capturas', value: '3' },
-  { label: 'Dano', value: '1.240' },
-  { label: 'Drops', value: '7' },
-  { label: 'Perdido', value: '180' },
+  { label: 'Experiência / hora', value: '26.571' },
+  { label: 'Experiência total', value: '18.600' },
+  { label: 'Abates / hora', value: '7' },
+  { label: 'Abates totais', value: '5' },
 ];
 
 export function HuntAnalyzer(): ReactElement {
@@ -19,7 +19,7 @@ export function HuntAnalyzer(): ReactElement {
       <Frame>
         <Box padding="3">
           <Text color="fg.muted" marginBlockEnd="3" variant="section">
-            Análise
+            Análise da Sessão
           </Text>
           <Box display="grid" gap="3" gridTemplateColumns="repeat(2, 1fr)">
             {metrics}

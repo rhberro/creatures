@@ -94,12 +94,15 @@ No cliente, a conversa com o servidor sobre treinador está assim:
 
 | Pedido | Onde mora | Por quê |
 | --- | --- | --- |
-| Listar, criar e deletar treinador | `shared/api/endpoints/trainer.ts` | Acesso puro a recurso, sem regra de domínio. |
+| Listar, criar, editar e deletar treinador | `shared/api/endpoints/trainer.ts` | Acesso puro a recurso, sem regra de domínio. |
 | Listar as criaturas iniciais | `shared/api/endpoints/starter.ts` | Idem. |
+| Ler o estado do jogador e abrir a sessão de um treinador | `shared/api/endpoints/player.ts` | Idem. |
 | Validar os dados do novo treinador | `entities/trainer/model/trainer.schema.ts` | É a regra do domínio: é o schema que define o que é um treinador válido. |
-| A lista de treinadores que a tela usa | `entities/trainer/model/trainersController.ts` | É estado do domínio, com mais de um consumidor. |
+| A lista de treinadores que a tela usa | `entities/trainer/model/trainersController.ts` + `entities/trainer/model/trainersStore.ts` | É estado do domínio, com mais de um consumidor: o controller tem a regra, a store publica o retrato para as telas. |
 
 O `shared/api/` guarda a base e os endereços (`client.ts`), o transporte (`http.ts`) e os endpoints (`endpoints/`). O `shared/` nunca importa de `entities/`, `features/`, `pages/` ou `widgets/`.
+
+A base da API vem da variável `VITE_API_BASE_URL`. Em desenvolvimento, a ausência da variável aponta para `http://localhost:3001`; em um build, a ausência é um erro — o cliente não sobe apontando para a máquina de quem compilou.
 
 ## O widget do jogo
 

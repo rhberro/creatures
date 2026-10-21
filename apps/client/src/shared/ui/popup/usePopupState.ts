@@ -1,39 +1,41 @@
-import { useState } from 'react';
+import { useReducer } from 'react';
 
-import { useHasHoverCapability } from './useHasHoverCapability';
-
-export type PopupState = {
-  handleMouseEnter: () => void;
-  handleMouseLeave: () => void;
-  handleOpenChange: (details: { open: boolean }) => void;
-  isOpen: boolean;
-};
+import type { PopupController } from './popup.types';
+import { CLOSED_POPUP_STATE, reducePopupState } from './popupState';
 
 /**
- * O estado do popup: abre no hover, fixa no clique.
+ * The state of a popup alone: it opens on hover and is pinned by the click.
  *
- * O hover so existe em ponteiro fino. No toque, o popup abre pelo clique.
+ * The hover only exists on a thin pointer. On touch, the popup opens by the
+ * click.
  */
-export function usePopupState(): PopupState {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
-  const [isPinned, setIsPinned] = useState<boolean>(false);
-  const hasHover = useHasHoverCapability();
-  const isOpen = hasHover ? isHovered || isPinned : isPinned;
+export function usePopupState(id: string, hasHover: boolean): PopupController {
+  const [state, dispatch] = useReducer(reducePopupState, CLOSED_POPUP_STATE);
+  const isOpen = state.openId === id;
+
+  function handleClick(): void {
+    dispatch({ id, type: 'click' });
+  }
 
   function handleMouseEnter(): void {
-    setIsHovered(true);
-  }
-
-  function handleMouseLeave(): void {
-    setIsHovered(false);
-  }
-
-  function handleOpenChange(details: { open: boolean }): void {
-    setIsPinned(details.open);
-    if (!details.open) {
-      setIsHovered(false);
+    if (hasHover) {
+      dispatch({ id, type: 'enter' });
     }
   }
 
-  return { handleMouseEnter, handleMouseLeave, handleOpenChange, isOpen };
+  function handleMouseLeave(): void {
+    if (hasHover) {
+      dispatch({ id, type: 'leave' });
+    }
+  }
+
+  function handleOpenChange(details: { open: boolean }): void {
+    if (details.open) {
+      dispatch({ id, type: 'open' });
+      return;
+    }
+    dispatch({ id, type: 'dismiss' });
+  }
+
+  return { handleClick, handleMouseEnter, handleMouseLeave, handleOpenChange, isOpen };
 }

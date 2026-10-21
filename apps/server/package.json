@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "start": "bun run src/index.ts",
+    "seed:test-account": "bun run scripts/seedTestAccount.ts",
+    "test:integration": "bun test src/__tests__/integration",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

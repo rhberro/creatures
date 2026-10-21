@@ -1,5 +1,5 @@
 import { Box, Spinner } from '@chakra-ui/react';
-import type { Starter } from '@creatures/contracts/trainer';
+import type { StarterSpecies } from '@creatures/contracts/species';
 import type { ReactElement } from 'react';
 
 import { StarterGrid } from '~/entities/trainer';
@@ -16,7 +16,7 @@ type StarterSectionProps = {
   onSelect: (id: string) => void;
   selectedId: string | null;
   selectionError: string | null;
-  starters: Starter[];
+  starters: StarterSpecies[];
 };
 
 export function StarterSection(props: StarterSectionProps): ReactElement {
@@ -66,6 +66,6 @@ function renderBody(
   return <StarterGrid onSelect={onSelect} selectedId={selectedId} starters={entries} />;
 }
 
-function toStarterEntry(starter: Starter): StarterEntry {
+function toStarterEntry(starter: StarterSpecies): StarterEntry {
   return { id: starter.id, name: starter.name };
 }

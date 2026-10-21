@@ -20,10 +20,17 @@ export const layerRecipe = defineSlotRecipe({
       overflowY: 'auto',
       padding: '4',
     },
+    close: {
+      position: 'absolute',
+      right: '-16px',
+      top: '-16px',
+      zIndex: '1',
+    },
     footer: {
       ...DIVIDER_TOP,
       alignItems: 'center',
       display: 'flex',
+      flexShrink: '0',
       gap: '2',
       paddingBlock: '3',
       paddingInline: '4',
@@ -48,6 +55,7 @@ export const layerRecipe = defineSlotRecipe({
     title: {
       ...DIVIDER_BOTTOM,
       color: 'fg',
+      flexShrink: '0',
       fontFamily: 'display',
       fontWeight: '700',
       letterSpacing: '0.04em',
@@ -58,17 +66,31 @@ export const layerRecipe = defineSlotRecipe({
     },
   },
   defaultVariants: { weight: 'modal' },
-  slots: ['root', 'positioner', 'title', 'body', 'footer'],
+  slots: ['root', 'positioner', 'title', 'body', 'footer', 'close'],
   variants: {
     weight: {
       // Confirmacao: titulo a esquerda, largura curta, sem botao no canto.
       dialog: {
         title: { fontSize: 'lg', textAlign: 'start' },
       },
-      // Lateral: encostada na borda, so a borda esquerda a separa.
+      // Lateral: encostada na borda, so a borda esquerda a separa. A lateral
+      // ocupa a altura inteira do positioner e o cabecalho e o rodape ficam
+      // fixos enquanto o corpo rola. O botao de fechar mora dentro da area
+      // visivel, porque a lateral nao tem folga ao redor como o modal.
       drawer: {
+        close: { right: '2', top: '2' },
         positioner: { alignItems: 'stretch', justifyContent: 'flex-end', padding: '0' },
-        root: { borderRadius: '0', borderWidth: '0 0 0 1px' },
+        // A margem do `Content` do Chakra e `auto` no `Dialog` — ela centraliza
+        // a camada no positioner e vence o `justify-content: flex-end`. Zerando
+        // a margem inteira, a lateral encosta na borda direita, com ou sem a
+        // receita do `Dialog` por baixo.
+        root: {
+          borderRadius: '0',
+          borderWidth: '0 0 0 1px',
+          height: '100%',
+          margin: '0',
+          maxW: '100%',
+        },
         title: { fontSize: 'xl', textAlign: 'center' },
       },
       // Tela com conteudo interno: titulo centralizado, corpo rolando.

@@ -1,4 +1,11 @@
+import type { Logger } from 'pino';
+
 export type RequestContext = {
+  /** The address the request came from, when the server can tell it. */
+  clientIp: string | null;
+  /** The e-mail of the signed in identity, read from the validated token. */
+  email: string | null;
+  requestId: string;
   responseHeaders: Headers;
   startedAt: number;
   userId: string | null;
@@ -25,6 +32,8 @@ const NOT_FOUND_ERROR = 'not_found';
 const NOT_FOUND_MESSAGE = 'Rota não encontrada.';
 const METHOD_NOT_ALLOWED_ERROR = 'method_not_allowed';
 const METHOD_NOT_ALLOWED_MESSAGE = 'Método não permitido.';
+const INTERNAL_ERROR_CODE = 'internal_error';
+const INTERNAL_ERROR_MESSAGE = 'Erro interno do servidor.';
 const PARAM_SEGMENT_PATTERN = /^:(\w+)$/u;
 const REGEXP_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/gu;
 
@@ -85,6 +94,9 @@ export function buildHttpHandler(routes: Route[], observer?: ResponseObserver): 
 
 export function createRequestContext(): RequestContext {
   return {
+    clientIp: null,
+    email: null,
+    requestId: globalThis.crypto.randomUUID(),
     responseHeaders: new globalThis.Headers(),
     startedAt: globalThis.performance.now(),
     userId: null,
@@ -99,6 +111,31 @@ export function jsonResponse(body: unknown, status: number): Response {
 export function errorResponse(status: number, error: string, message: string): Response {
   const body = { error, message };
   return jsonResponse(body, status);
+}
+
+export function isResponse(value: unknown): value is Response {
+  return value instanceof globalThis.Response;
+}
+
+/**
+ * A handler that throws must not leak a stack trace to the client: the error is
+ * logged with its request id and the client receives a generic JSON body.
+ */
+export function createErrorBoundary(logger: Logger, handler: RouteHandler): RouteHandler {
+  return function guardedHandler(
+    req: Request,
+    params: Record<string, string>,
+    ctx: RequestContext,
+  ): Promise<Response> {
+    return handler(req, params, ctx).catch(buildFailureHandler(logger, ctx));
+  };
+}
+
+function buildFailureHandler(logger: Logger, ctx: RequestContext): (error: unknown) => Response {
+  return function handleFailure(error: unknown): Response {
+    logger.error({ err: error, requestId: ctx.requestId }, 'unhandled request failure');
+    return errorResponse(500, INTERNAL_ERROR_CODE, INTERNAL_ERROR_MESSAGE);
+  };
 }
 
 function runMiddlewares(

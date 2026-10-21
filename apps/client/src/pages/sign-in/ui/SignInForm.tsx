@@ -10,7 +10,6 @@ import { SignInFields } from './SignInFields';
 
 export function SignInForm(): ReactElement {
   const form = useSignInForm();
-
   return (
     <form noValidate onSubmit={form.handleSubmit}>
       <Stack gap={4}>

@@ -14,7 +14,7 @@ export function CanvasPlaceholder(): ReactElement {
       />
       <Box bottom={3} left={3} position="absolute">
         <Text color="fg.subtle" variant="meta">
-          Canvas do PixiJS
+          Canvas do jogo · marco de gameplay
         </Text>
       </Box>
     </Box>

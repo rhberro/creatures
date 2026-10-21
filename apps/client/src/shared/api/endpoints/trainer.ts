@@ -1,4 +1,4 @@
-import type { NewTrainerInput, Trainer } from '@creatures/contracts/trainer';
+import type { Gender, NewTrainerInput, Trainer } from '@creatures/contracts/trainer';
 
 import type { ApiDeps } from '~/shared/api/client';
 import { buildHeaders, isSuccessStatus, resolveErrorCode } from '~/shared/api/http';
@@ -7,11 +7,24 @@ import type { TrainerClientErrorCode } from '~/shared/api/http';
 const TRAINERS_PATH = '/api/trainers';
 const UNAUTHENTICATED: TrainerClientErrorCode = 'unauthenticated';
 
+/**
+ * The fields a trainer can have changed. Both are optional: the answer of the
+ * server carries the whole trainer.
+ */
+export type TrainerUpdateInput = {
+  gender?: Gender;
+  name?: string;
+};
+
 export type TrainerListResult =
   | { ok: true; trainers: Trainer[] }
   | { ok: false; code: TrainerClientErrorCode };
 
 export type TrainerCreateResult =
+  | { ok: true; trainer: Trainer }
+  | { ok: false; code: TrainerClientErrorCode };
+
+export type TrainerUpdateResult =
   | { ok: true; trainer: Trainer }
   | { ok: false; code: TrainerClientErrorCode };
 
@@ -26,6 +39,14 @@ export function requestCreateTrainer(
   input: NewTrainerInput,
 ): Promise<TrainerCreateResult> {
   return deps.getAccessToken().then(buildCreateRequester(deps, input));
+}
+
+export function requestUpdateTrainer(
+  deps: ApiDeps,
+  trainerId: string,
+  input: TrainerUpdateInput,
+): Promise<TrainerUpdateResult> {
+  return deps.getAccessToken().then(buildUpdateRequester(deps, trainerId, input));
 }
 
 export function requestDeleteTrainer(
@@ -55,6 +76,21 @@ function buildCreateRequester(
     return sendCreateRequest(deps, token, input)
       .then(readCreateResponse)
       .catch(readCreateNetworkFailure);
+  };
+}
+
+function buildUpdateRequester(
+  deps: ApiDeps,
+  trainerId: string,
+  input: TrainerUpdateInput,
+): (token: string | null) => Promise<TrainerUpdateResult> {
+  return function updateWithToken(token: string | null): Promise<TrainerUpdateResult> {
+    if (token === null) {
+      return Promise.resolve({ code: UNAUTHENTICATED, ok: false });
+    }
+    return sendUpdateRequest(deps, token, trainerId, input)
+      .then(readUpdateResponse)
+      .catch(readUpdateNetworkFailure);
   };
 }
 
@@ -88,6 +124,17 @@ function sendCreateRequest(
   return globalThis.fetch(buildTrainersUrl(deps.baseUrl), init);
 }
 
+function sendUpdateRequest(
+  deps: ApiDeps,
+  token: string,
+  trainerId: string,
+  input: TrainerUpdateInput,
+): Promise<Response> {
+  const headers = buildHeaders(token);
+  const init = { body: JSON.stringify(input), headers, method: 'PATCH' };
+  return globalThis.fetch(buildTrainerUrl(deps.baseUrl, trainerId), init);
+}
+
 function sendDeleteRequest(deps: ApiDeps, token: string, trainerId: string): Promise<Response> {
   const headers = buildHeaders(token);
   const init = { headers, method: 'DELETE' };
@@ -100,6 +147,10 @@ function readListResponse(response: Response): Promise<TrainerListResult> {
 
 function readCreateResponse(response: Response): Promise<TrainerCreateResult> {
   return safeJson(response).then(buildCreateResult(response.status));
+}
+
+function readUpdateResponse(response: Response): Promise<TrainerUpdateResult> {
+  return safeJson(response).then(buildUpdateResult(response.status));
 }
 
 function readDeleteResponse(response: Response): Promise<DeleteTrainerResult> {
@@ -136,6 +187,16 @@ function buildCreateResult(status: number): (body: unknown) => TrainerCreateResu
   };
 }
 
+function buildUpdateResult(status: number): (body: unknown) => TrainerUpdateResult {
+  return function toUpdateResult(body: unknown): TrainerUpdateResult {
+    if (!isSuccessStatus(status)) {
+      return { code: resolveErrorCode(status, body), ok: false };
+    }
+    const trainer = readTrainer(body);
+    return trainer === null ? { code: 'unknown', ok: false } : { ok: true, trainer };
+  };
+}
+
 function buildDeleteResult(status: number): (body: unknown) => DeleteTrainerResult {
   return function toDeleteResult(body: unknown): DeleteTrainerResult {
     return { code: resolveErrorCode(status, body), ok: false };
@@ -147,6 +208,10 @@ function readListNetworkFailure(): TrainerListResult {
 }
 
 function readCreateNetworkFailure(): TrainerCreateResult {
+  return { code: 'unknown', ok: false };
+}
+
+function readUpdateNetworkFailure(): TrainerUpdateResult {
   return { code: 'unknown', ok: false };
 }
 
@@ -166,12 +231,36 @@ function readTrainer(body: unknown): Trainer | null {
   return isTrainer(body) ? body : null;
 }
 
+/**
+ * The shape of a trainer the client accepts.
+ *
+ * The wallet and the stamina came with the persistence of the trainer, so they
+ * are numbers when they are there. The rest is what the contract requires.
+ */
 function isTrainer(value: unknown): value is Trainer {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
   const trainer = value as Partial<Trainer>;
-  return typeof trainer.id === 'string' && typeof trainer.name === 'string';
+  return (
+    typeof trainer.id === 'string' &&
+    typeof trainer.name === 'string' &&
+    isGender(trainer.gender) &&
+    typeof trainer.level === 'number' &&
+    typeof trainer.starterSpeciesId === 'string' &&
+    typeof trainer.createdAt === 'string' &&
+    isOptionalNumber(trainer.gold) &&
+    isOptionalNumber(trainer.diamonds) &&
+    isOptionalNumber(trainer.staminaMinutes)
+  );
+}
+
+function isGender(value: unknown): value is Gender {
+  return value === 'male' || value === 'female';
+}
+
+function isOptionalNumber(value: unknown): boolean {
+  return value === undefined || typeof value === 'number';
 }
 
 function buildTrainersUrl(baseUrl: string): string {

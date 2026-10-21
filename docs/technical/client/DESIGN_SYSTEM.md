@@ -67,7 +67,7 @@ Diz para que cada cor serve. É a camada que a interface consome.
 | `state` | `state.selected`, `state.active`, `state.equipped`, `state.disabled` |
 | `currency` | `currency.gold`, `currency.diamond` |
 | `hp` / `stamina` | A vida da criatura e a stamina do treinador |
-| `element` | `element.fire`, `element.plant`, `element.neutral` |
+| `element` | `element.fire`, `element.water`, `element.plant`, `element.neutral` |
 
 **Um namespace com chave `DEFAULT` se acessa pelo nome, sem sufixo.** `currency.gold` resolve `currency.gold.DEFAULT`; `currency.gold.DEFAULT` não existe. O mesmo vale para `bg` e `border`: `bg` é o canvas, `border` é a borda padrão.
 
@@ -378,7 +378,7 @@ O `ModalHeader` não recebe `onClose`: ele lê do contexto do overlay. Isso é R
 | --- | --- | --- |
 | `Tabs` / `TabBar` / `Tab` / `TabPanel` | `~/shared/ui/tab` | Navegação dentro de um modal. São as `Tabs` do Chakra (Ark UI): `role="tablist"`, `aria-selected` e navegação por setas. A aba ativa ganha o sublinhado violeta e o fundo rebaixado — o estado vem do `data-selected` do Ark, nunca de uma prop. O `Tab` recebe `children` e `value`; **toda aba vem com o seu painel** — uma aba sem painel é um botão, e usa `Chip`. O painel não tem anel de foco: um contorno em volta de metade do modal é pior do que nenhum. |
 | `Chip` | `~/shared/ui/chip` | Filtro inclinado. Não é aba: é um botão que alterna, com `aria-pressed`. O texto entra como `children`. `tone`: `arcane`, `blood`, `ember`, `frost`, `gold`, `neutral`, `verdant` — uma variante por elemento, para o elemento da criatura aparecer igual em filtro, em card e em lista. O filtro que **troca de painel** — os da mochila — é uma `Tab`, e usa o mesmo componente da loja. |
-| `Popup` | `~/shared/ui/popup` | O `Popover` do Chakra (Ark UI) com a nossa interação: abre no hover e fixa no clique. O conteúdo é posicionado com *flip*, fecha pelo ESC e devolve o foco ao gatilho. |
+| `Popup` | `~/shared/ui/popup` | O `Popover` do Chakra (Ark UI) com a nossa interação: abre no hover e fixa no clique. O conteúdo é posicionado com *flip*, fecha pelo ESC e devolve o foco ao gatilho. É o menu de configurações da tela do jogo. |
 | `PopupCard` | `~/shared/ui/popup` | A superfície do popup. |
 | `ScrollArea` | `~/shared/ui/scroll` | Área rolável, com barra sempre visível. |
 | `AlertsProvider` / `useAlerts` / `AlertToast` / `AlertClose` / `AlertProgress` / `AlertsViewport` | `~/shared/ui/alert` | O aviso do canto superior direito, com barra de tempo. É o `Toaster` do Chakra: a região tem `role="region"` e `aria-live="polite"`, então o leitor de tela anuncia o aviso. Ele **entra** deslizando e sai com fade; quem fecha, seja o tempo ou o botão, sempre sai animado. |
@@ -402,7 +402,7 @@ O `ModalHeader` não recebe `onClose`: ele lê do contexto do overlay. Isso é R
 | `TrainersPanel` | `~/entities/trainer` | O painel da lista de treinadores: moldura, cabeçalho, lista, card de criar e as ações. É o **mesmo** no app e na galeria. |
 | `CreateTrainerPanel` | `~/entities/trainer` | A moldura da criação de trainer. O formulário entra como `children`. |
 | `BrandLayout` | `~/shared/ui/brand` | A wordmark + o conteúdo, centrado na tela. |
-| `StoreModal` | `~/features/store` | A loja: abas Comprar/Vender, grade de slots e rodapé com quantidade e total. |
+| `StoreModal` | `~/features/store` | A loja: abas Comprar/Vender, grade de slots, campo de quantidade com botões de soma no rodapé e total em gold coins. O `snapshot` é o catálogo de amostras da galeria. |
 | `StorageModal` | `~/features/storage` | O armazenamento: seção Time e seção Criaturas, com a busca no rodapé. |
 | `BackpackModal` | `~/features/backpack` | A mochila: a grade de slots do inventário. |
 | `StarterCard` | `~/entities/trainer` | O card de criatura inicial, focusável pelo teclado. |
@@ -410,7 +410,8 @@ O `ModalHeader` não recebe `onClose`: ele lê do contexto do overlay. Isso é R
 | `FormLabel` | `~/shared/ui/form` | O rótulo de um campo. Todo campo com rótulo usa este, para o mesmo estilo em toda parte. |
 | `LegalNotice` | `~/features/authentication` | O aviso de termos e privacidade, variando a ação que o precede. |
 | `Toolbar` / `ToolbarLeft` / `ToolbarRight` / `ToolbarIdentity` / `CurrencyBadge` | `~/widgets/game-hud` | A barra superior do jogo. É a **mesma** no app e na galeria — nunca duas cópias. |
-| `TeamStrip` / `CreatureTab` / `CreaturePortrait` / `EmptyCreatureTab` | `~/widgets/game-hud` | As linguetas do time, logo abaixo da toolbar. Slot preenchido é maior e mostra retrato, nível e nome; slot vazio é menor e não mostra nada. |
+| `SettingsMenu` | `~/widgets/game-hud` | O menu de configurações da tela do jogo: o botão da extrema direita da toolbar é o gatilho, e o menu tem as duas ações da sessão — "Trocar treinador" e "Sair da conta". É o `Popup` do design system. |
+| `TeamStrip` / `CreatureTab` / `CreaturePortrait` / `EmptyCreatureTab` | `~/widgets/game-hud` | As linguetas do time, logo abaixo da toolbar. Slot preenchido é maior e mostra o retrato com o nível e o nome da espécie; slot vazio é menor e não mostra nada. |
 | `PlayButton` | `~/widgets/game-hud` | O botão de play: uma barra horizontal encostada na borda esquerda, acima da barra de habilidades, com o chevron e o rótulo. |
 | `ShopButton` | `~/widgets/game-hud` | O botão da loja: um botão de texto flutuante logo acima da barra de habilidades. Flutua — nunca empurra o canvas. |
 | `SkillBar` | `~/widgets/game-hud` | A barra de habilidades. É a **mesma** no app e na galeria. |
@@ -566,6 +567,6 @@ A barra superior da galeria é a `Toolbar` de `widgets/game-hud/`, a mesma do jo
 - Os valores de tamanho mínimo e máximo da escala da interface.
 - A escala acima de 1,0, para telas grandes.
 - A arte final de criatura e de item, que hoje são círculos e quadrados de cor.
-- A loja, o armazenamento e a mochila ainda são mock na galeria: os dados são de mentira e a arte é um glifo. A área de caça e o drawer de detalhe já seguem os mockups de `docs/assets/`.
-- O `Popup` ainda não é usado pelo jogo — só pela galeria. Quando entrar, ele precisa de um caso real para provar que o hover-e-fixa funciona bem no teclado e no toque.
+- O armazenamento e a mochila ainda são mock na galeria: os dados são de mentira e a arte é um glifo. A loja já é real, com o catálogo de amostras do `SAMPLE_STORE_CATALOG`: a galeria não tem sessão, e a loja do jogo lê o catálogo do servidor. A área de caça e o drawer de detalhe já seguem os mockups de `docs/assets/`.
+- O `Popup` já tem um caso real no jogo: é o menu de configurações da tela do jogo, aberto pelo botão da extrema direita da toolbar. O que falta é provar que o hover-e-fixa funciona bem no teclado e no toque.
 - A `Tabs` do Chakra tem `aria-controls` só na aba ativa, porque o painel inativo é montado sob demanda. Se o conteúdo ficar pesado, a variante sem `lazyMount` resolve.

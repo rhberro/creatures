@@ -1,11 +1,12 @@
 import {
   Box,
   Dialog as ChakraDialog,
+  Drawer as ChakraDrawer,
   Portal,
   type SystemStyleObject,
   useSlotRecipe,
 } from '@chakra-ui/react';
-import type { ReactElement, ReactNode } from 'react';
+import type { ElementType, ReactElement, ReactNode } from 'react';
 
 import { layerRecipe, type LayerWeight } from '~/shared/theme';
 import { IconButton } from '~/shared/ui/button';
@@ -15,18 +16,18 @@ import { Overlay } from '~/shared/ui/overlay';
 import type { LayerRootProps } from './layer.types';
 
 const CLOSE_ICON_SIZE = '16px';
-const CLOSE_OFFSET = '-16px';
-const CLOSE_SIZE = '32px';
+const CLOSE_SIZE = '44px';
 
 /**
  * A camada: a raiz de todo dialogo, modal e drawer.
  *
  * O comportamento vem do `Dialog` do Chakra — *focus trap*, `aria-modal`,
  * rotulo acessivel, restauracao do foco no gatilho, scroll lock, portal e
- * inercia do fundo. Nao se reimplementa nada disso.
+ * inercia do fundo. O que e nosso e o **peso**, que vive na receita `layer`.
  *
- * O que e nosso e o **peso**: tamanho, alinhamento e como a camada fecha. O
- * peso vive na receita `layer`, e nao em tres copies do mesmo componente.
+ * A lateral usa o `Drawer` do Chakra — o mesmo `Dialog` com a receita `drawer`,
+ * que e quem traz o deslize pela borda e a saida animada. O modal e o
+ * dialogo usam o `Dialog` e a animacao nativa de escala.
  */
 export function LayerRoot(props: LayerRootProps): ReactElement {
   const {
@@ -43,8 +44,54 @@ export function LayerRoot(props: LayerRootProps): ReactElement {
   const recipe = useSlotRecipe({ recipe: layerRecipe });
   const styles = recipe({ weight });
   const layer = describeLayer(contained, weight, onClose);
-  const maxHeight = contained ? '100%' : 'calc(100dvh - 64px)';
+  const content = resolveContent(weight);
+  const contentHeight = computeContentHeight(weight, height);
+  const maxHeight = computeMaxHeight(contained, weight);
+  const positioner = resolvePositioner(weight);
+  const surface = (
+    <Portal disabled={contained}>
+      <Overlay contained={contained} weight={weight} />
+      <LayerSurface
+        closable={closable}
+        closeStyles={styles.close}
+        content={content}
+        contentHeight={contentHeight}
+        label={label}
+        layer={layer}
+        maxHeight={maxHeight}
+        onClose={onClose}
+        positioner={positioner}
+        positionerStyles={styles.positioner}
+        rootStyles={styles.root}
+        width={width}
+      >
+        {children}
+      </LayerSurface>
+    </Portal>
+  );
+  return <LayerRootSurface isOpen={isOpen} layer={layer} surface={surface} weight={weight} />;
+}
 
+/**
+ * A raiz da camada, no componente que o peso pede. O `Drawer` so existe com
+ * `placement` — por isso a raiz e escolhida aqui, e nao a do `Dialog`.
+ */
+function LayerRootSurface(props: LayerRootSurfaceProps): ReactElement {
+  const { isOpen, layer, surface, weight } = props;
+  if (weight === 'drawer') {
+    return (
+      <ChakraDrawer.Root
+        closeOnEscape
+        closeOnInteractOutside={layer.closeOnOutside}
+        modal={layer.isModalLayer}
+        onOpenChange={layer.openChange}
+        open={isOpen}
+        placement="end"
+      >
+        {surface}
+      </ChakraDrawer.Root>
+    );
+  }
   return (
     <ChakraDialog.Root
       closeOnEscape
@@ -53,29 +100,87 @@ export function LayerRoot(props: LayerRootProps): ReactElement {
       onOpenChange={layer.openChange}
       open={isOpen}
     >
-      <Portal disabled={contained}>
-        <Overlay contained={contained} />
-        <ChakraDialog.Positioner
-          css={styles.positioner}
-          height={layer.size}
-          inset={layer.inset}
-          position={layer.position}
-          width={layer.size}
-        >
-          <LayerContent
-            closable={closable}
-            height={height}
-            onClose={onClose}
-            label={label}
-            maxHeight={maxHeight}
-            styles={styles.root}
-            width={width}
-          >
-            {children}
-          </LayerContent>
-        </ChakraDialog.Positioner>
-      </Portal>
+      {surface}
     </ChakraDialog.Root>
+  );
+}
+
+type LayerRootSurfaceProps = {
+  isOpen: boolean;
+  layer: LayerDescription;
+  surface: ReactElement;
+  weight: LayerWeight;
+};
+
+/**
+ * As pecas da camada no namespace do peso: o `Dialog` e o `Drawer` sao o mesmo
+ * componente Ark UI, mas cada um carrega a sua receita de slots, e misturar os
+ * dois namespaces quebra o contexto de estilos.
+ */
+function resolvePositioner(weight: LayerWeight): ElementType {
+  return weight === 'drawer' ? ChakraDrawer.Positioner : ChakraDialog.Positioner;
+}
+
+function resolveContent(weight: LayerWeight): ElementType {
+  return weight === 'drawer' ? ChakraDrawer.Content : ChakraDialog.Content;
+}
+
+type LayerSurfaceProps = {
+  children: ReactNode;
+  closable: boolean;
+  closeStyles: SystemStyleObject;
+  content: ElementType;
+  contentHeight: string | undefined;
+  label: string | undefined;
+  layer: LayerDescription;
+  maxHeight: string;
+  onClose: () => void;
+  positioner: ElementType;
+  positionerStyles: SystemStyleObject;
+  rootStyles: SystemStyleObject;
+  width: string | undefined;
+};
+
+function LayerSurface(props: LayerSurfaceProps): ReactElement {
+  const {
+    children,
+    closable,
+    closeStyles,
+    content,
+    contentHeight,
+    label,
+    layer,
+    maxHeight,
+    onClose,
+    positioner,
+    positionerStyles,
+    rootStyles,
+    width,
+  } = props;
+  const Positioner = positioner;
+  const Content = content;
+  return (
+    <Positioner
+      css={positionerStyles}
+      height={layer.size}
+      inset={layer.inset}
+      position={layer.position}
+      width={layer.size}
+    >
+      <LayerContent
+        closable={closable}
+        closeStyles={closeStyles}
+        content={Content}
+        height={contentHeight}
+        label={label}
+        maxHeight={maxHeight}
+        onClose={onClose}
+        styles={rootStyles}
+        width={width}
+      >
+        {children}
+      </LayerContent>
+    </Positioner>
   );
 }
 
@@ -103,9 +208,30 @@ function describeLayer(
   };
 }
 
+/**
+ * A altura maxima da camada. A lateral e encostada na borda e toma a tela
+ * inteira; as demais sobram a folga do positioner em volta.
+ */
+function computeMaxHeight(contained: boolean, weight: LayerWeight): string {
+  if (contained) {
+    return '100%';
+  }
+  return weight === 'drawer' ? '100dvh' : 'calc(100dvh - 64px)';
+}
+
+/**
+ * A lateral e sempre da altura da tela: a altura dela vem da receita, nao do
+ * `height` de quem chama. O `height` do modal continua valendo.
+ */
+function computeContentHeight(weight: LayerWeight, height: string | undefined): string | undefined {
+  return weight === 'drawer' ? undefined : height;
+}
+
 type LayerContentProps = {
   children: ReactNode;
   closable: boolean;
+  closeStyles: SystemStyleObject;
+  content: ElementType;
   height: string | undefined;
   label: string | undefined;
   maxHeight: string;
@@ -115,16 +241,24 @@ type LayerContentProps = {
 };
 
 function LayerContent(props: LayerContentProps): ReactElement {
-  const { children, closable, height, label, maxHeight, onClose, styles, width } = props;
-  const closeButton = closable ? <LayerCloseButton onClose={onClose} /> : null;
+  const {
+    children,
+    closable,
+    closeStyles,
+    content,
+    height,
+    label,
+    maxHeight,
+    onClose,
+    styles,
+    width,
+  } = props;
+  const Content = content;
+  const closeButton = closable ? (
+    <LayerCloseButton closeStyles={closeStyles} onClose={onClose} />
+  ) : null;
   return (
-    <ChakraDialog.Content
-      aria-label={label}
-      css={styles}
-      height={height}
-      maxHeight={maxHeight}
-      width={width}
-    >
+    <Content aria-label={label} css={styles} height={height} maxHeight={maxHeight} width={width}>
       <Box
         borderRadius="inherit"
         display="flex"
@@ -136,14 +270,17 @@ function LayerContent(props: LayerContentProps): ReactElement {
         {children}
       </Box>
       {closeButton}
-    </ChakraDialog.Content>
+    </Content>
   );
 }
 
-function LayerCloseButton(props: { onClose: () => void }): ReactElement {
-  const { onClose } = props;
+function LayerCloseButton(props: {
+  closeStyles: SystemStyleObject;
+  onClose: () => void;
+}): ReactElement {
+  const { closeStyles, onClose } = props;
   return (
-    <Box position="absolute" right={CLOSE_OFFSET} top={CLOSE_OFFSET}>
+    <Box css={closeStyles}>
       <IconButton label="Fechar" onClick={onClose} radius="full" size={CLOSE_SIZE} tone="neutral">
         <IconClose size={CLOSE_ICON_SIZE} />
       </IconButton>

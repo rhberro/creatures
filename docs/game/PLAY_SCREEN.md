@@ -66,14 +66,18 @@ Depois do divisor vertical ficam os botões de acesso às funcionalidades do jog
 
 Uma área alinhada à direita. Antes dos botões ficam os totais das duas moedas do treinador, cada um em seu próprio retângulo: os **gold coins**, gastos e ganhos na [loja](STORE.md), e os **diamantes**, gastos em serviços como a conta paga, conforme as [moedas](TRAINER.md#moedas). Depois vêm os botões de acesso: o último, na extrema direita, é o de **Configurações**, o menu principal do jogo, com as configurações do jogo e outras opções. Os demais botões são placeholders para funcionalidades que ainda serão definidas.
 
-> Dentro do menu Configurações ficam a opção "Trocar treinador", que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), e a opção "Sair", que encerra a sessão conforme descrito na [sessão](AUTHENTICATION.md#sessão), e é a mesma ação do botão "Sair da conta" da tela de lista de treinadores. O comportamento da desconexão está em [conexão e atividade idle](#conexão-e-atividade-idle).
+> O botão da extrema direita é o de **Configurações**, e ele abre um menu com duas ações: **"Trocar treinador"**, que desconecta o treinador do serviço e leva o jogador de volta para a [tela de lista de treinadores](AUTHENTICATION.md#tela-de-lista-de-treinadores), e **"Sair da conta"**, que encerra a sessão conforme descrito na [sessão](AUTHENTICATION.md#sessão), e é a mesma ação do botão "Sair da conta" da tela de lista de treinadores. O comportamento da desconexão está em [conexão e atividade idle](#conexão-e-atividade-idle).
+
+> "Trocar treinador" não encerra a sessão: a conta continua autenticada, e o jogador volta apenas para a lista de treinadores. Quem quer encerrar a sessão usa "Sair da conta".
 
 ## Linguetas do Time
 
 Logo abaixo da toolbar e sobre o canvas, as linguetas ficam centralizadas na tela, em uma linha, com no máximo 5 criaturas, conforme as regras do [time](TRAINER.md#time).
 
-- **Slot preenchido:** lingueta maior, que exibe o avatar, o nome e o nível da criatura.
+- **Slot preenchido:** lingueta maior, que exibe o retrato da criatura, com o nível dentro dele, e o nome da espécie abaixo.
 - **Slot vazio:** lingueta menor, sem informações, indicando que ainda há espaço no time.
+
+> A lingueta não mostra o elemento da criatura nem o seu apelido. O elemento está no slot da habilidade, na [barra de habilidades](SKILL_BAR.md), e o apelido de uma criatura recém-capturada é o nome do treinador — o nome da espécie é o que identifica a criatura.
 
 > A lingueta da criatura ativa é destacada. Se o treinador estiver em uma batalha, é a criatura que está em campo. Se estiver na cidade, por exemplo, é a criatura que será chamada assim que uma batalha começar.
 

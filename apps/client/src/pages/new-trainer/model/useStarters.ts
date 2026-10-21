@@ -1,4 +1,4 @@
-import type { Starter } from '@creatures/contracts/trainer';
+import type { StarterSpecies } from '@creatures/contracts/species';
 import { useEffect, useRef, useState } from 'react';
 
 import { createApiDeps, requestStarterList } from '~/shared/api';
@@ -10,7 +10,7 @@ const AUTHENTICATED_STATUS = 'AUTHENTICATED';
 export type StartersSnapshot = {
   error: TrainerClientErrorCode | null;
   isLoading: boolean;
-  starters: Starter[];
+  starters: StarterSpecies[];
 };
 
 export type StartersController = {

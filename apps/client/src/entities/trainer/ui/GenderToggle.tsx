@@ -1,9 +1,6 @@
-import { Box } from '@chakra-ui/react';
+import { SegmentGroup, visuallyHiddenStyle } from '@chakra-ui/react';
 import type { Gender } from '@creatures/contracts/trainer';
-import { type KeyboardEvent, type ReactElement, type RefObject, useRef } from 'react';
-
-import { NativeButton } from '~/shared/ui/button';
-import { Text } from '~/shared/ui/text';
+import type { ReactElement } from 'react';
 
 import { GENDER_LABELS, GENDERS } from './genderToggle.constants';
 
@@ -12,125 +9,80 @@ type GenderToggleProps = {
   value: Gender;
 };
 
-type GenderButtons = Record<string, HTMLDivElement | null>;
+const GENDER_LABEL = 'Gênero';
 
+const ITEM_STYLE = {
+  '& input': {
+    ...visuallyHiddenStyle,
+  },
+  '&::before': {
+    content: 'none',
+    display: 'none',
+  },
+};
+
+function renderItem(gender: Gender): ReactElement {
+  return <GenderItem key={gender} gender={gender} />;
+}
+
+/**
+ * A seleção de gênero.
+ *
+ * O `SegmentGroup` do Chakra cuida da parte difícil: o papel de radio, a
+ * navegação pelas setas e o estado marcado. O que é do projeto — o fundo
+ * afundado, o item selecionado em cima, a tipografia de rótulo e o alvo de
+ * toque de 44px — continua aqui, no mesmo desenho do toggle anterior.
+ */
 export function GenderToggle(props: GenderToggleProps): ReactElement {
   const { onChange, value } = props;
-  const buttonsRef = useRef<GenderButtons>({});
-  const options = GENDERS.map(renderOption(value, onChange, buttonsRef));
 
-  function handleKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
-    const step = readStep(event.key);
-    if (step === null) {
-      return;
-    }
-    event.preventDefault();
-    const index = GENDERS.indexOf(value);
-    const next = GENDERS[(index + step + GENDERS.length) % GENDERS.length];
-    onChange(next);
-    buttonsRef.current[next]?.focus();
+  function handleValueChange(details: SegmentGroup.ValueChangeDetails): void {
+    onChange(details.value as Gender);
   }
 
+  const items = GENDERS.map(renderItem);
+
   return (
-    <Box
+    <SegmentGroup.Root
       alignSelf="center"
-      aria-label="Gênero"
+      aria-label={GENDER_LABEL}
       bg="bg.sunken"
       borderRadius="sm"
       boxShadow="recessed"
-      display="flex"
       gap="1"
       marginInline="auto"
       padding="1"
-      role="radiogroup"
+      size="lg"
+      value={value}
       width="fit-content"
-      onKeyDown={handleKeyDown}
+      onValueChange={handleValueChange}
     >
-      {options}
-    </Box>
+      <SegmentGroup.Indicator bg="bg.raised" borderRadius="xs" boxShadow="sm" />
+      {items}
+    </SegmentGroup.Root>
   );
 }
 
-function readStep(key: string): number | null {
-  if (key === 'ArrowRight' || key === 'ArrowDown') {
-    return 1;
-  }
-  if (key === 'ArrowLeft' || key === 'ArrowUp') {
-    return -1;
-  }
-  return null;
-}
-
-function renderOption(
-  value: Gender,
-  onChange: (gender: Gender) => void,
-  buttonsRef: RefObject<GenderButtons>,
-): (gender: Gender) => ReactElement {
-  return function render(gender: Gender): ReactElement {
-    const onRef = buildRefSetter(buttonsRef, gender);
-    const isSelected = gender === value;
-    return (
-      <GenderButton
-        key={gender}
-        gender={gender}
-        selected={isSelected}
-        onChange={onChange}
-        onRef={onRef}
-      />
-    );
-  };
-}
-
-function buildRefSetter(
-  buttonsRef: RefObject<GenderButtons>,
-  gender: Gender,
-): (node: HTMLDivElement | null) => void {
-  return function setRef(node: HTMLDivElement | null): void {
-    buttonsRef.current[gender] = node;
-  };
-}
-
-type GenderButtonProps = {
+type GenderItemProps = {
   gender: Gender;
-  onChange: (gender: Gender) => void;
-  onRef: (node: HTMLDivElement | null) => void;
-  selected: boolean;
 };
 
-function GenderButton(props: GenderButtonProps): ReactElement {
-  const { gender, onChange, onRef, selected } = props;
+function GenderItem(props: GenderItemProps): ReactElement {
+  const { gender } = props;
   const label = GENDER_LABELS[gender];
-  const background = selected ? 'bg.raised' : 'transparent';
-  const boxShadow = selected ? 'sm' : 'none';
-  const color = selected ? 'fg' : 'fg.muted';
-  const tabIndex = selected ? 0 : -1;
-
-  function handleClick(): void {
-    onChange(gender);
-  }
 
   return (
-    <NativeButton
-      aria-checked={selected}
-      bg={background}
+    <SegmentGroup.Item
       borderRadius="xs"
-      boxShadow={boxShadow}
-      color={color}
-      cursor="pointer"
+      css={ITEM_STYLE}
       paddingBlock="2"
       paddingInline="5"
-      ref={onRef}
-      role="radio"
-      tabIndex={tabIndex}
-      textAlign="center"
-      transitionProperty="background-color, color"
-      transitionDuration="150ms"
-      transitionTimingFunction="ease-out"
-      onClick={handleClick}
+      value={gender}
     >
-      <Text paddingInlineEnd="0.1em" variant="label">
+      <SegmentGroup.ItemText color="inherit" textStyle="label">
         {label}
-      </Text>
-    </NativeButton>
+      </SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
   );
 }

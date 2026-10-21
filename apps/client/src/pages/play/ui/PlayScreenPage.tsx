@@ -1,159 +1,216 @@
 import { Box } from '@chakra-ui/react';
-import { type ReactElement, useState } from 'react';
+import type { PlayerState } from '@creatures/contracts/player';
+import type { SkillSlot } from '@creatures/contracts/skill';
+import type { ReactElement, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
+import type { NavigateFunction } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { BackpackModal } from '~/features/backpack';
-import { StorageModal } from '~/features/storage';
-import { StoreModal } from '~/features/store';
-import { usePlayOverlays } from '~/pages/play/model/usePlayOverlays';
+import { HuntAreaFlow } from '~/features/hunt-area';
+import type { SkillPanelView } from '~/features/skill-panel';
+import { buildTeamSlots, resolveActiveId } from '~/pages/play/model/teamSlots';
+import { useGameSession } from '~/pages/play/model/useGameSession';
+import type { HuntOverlayView } from '~/pages/play/model/useGameSession';
+import type { PlayerStateLoadResult, PlayerStateStatus } from '~/pages/play/model/usePlayerState';
 import { useAuth } from '~/shared/auth';
-import type { AlertInput } from '~/shared/ui/alert';
 import { useAlerts } from '~/shared/ui/alert';
-import { IconBadge } from '~/shared/ui/badge';
-import { Text } from '~/shared/ui/text';
-import {
-  ACTIVE_CREATURE_ID,
-  PlayButton,
-  ShopButton,
-  SkillBar,
-  TEAM_SLOTS,
-  TeamStrip,
-  Toolbar,
-} from '~/widgets/game-hud';
+import type { CreatureSlot } from '~/widgets/game-hud';
 
 import { CanvasPlaceholder } from './CanvasPlaceholder';
+import { GameHud } from './GameHud';
+import { GameModals } from './GameModals';
+import { GameToolbar } from './GameToolbar';
+import { PlayLoadingState } from './PlayLoadingState';
+import { PlayReconnectState } from './PlayReconnectState';
+import { SkillPanelHost } from './SkillPanelHost';
 
-const ALERT_DURATION = 4000;
-const DEMO_ICON = 'i';
-const SIGNIN_PATH = '/signin';
-const TRAINER_LEVEL = 1;
-const TRAINER_NAME = 'Jogador';
-const GOLD_AMOUNT = 1500;
-const DIAMOND_AMOUNT = 1829201;
+const TRAINERS_PATH = '/trainers';
 
 export function PlayScreenPage(): ReactElement {
   return <PlayScreenBody />;
 }
 
 function PlayScreenBody(): ReactElement {
-  const { show } = useAlerts();
   const auth = useAuth();
   const navigate = useNavigate();
-  const [activeCreatureId, setActiveCreatureId] = useState<string>(ACTIVE_CREATURE_ID);
-  const overlays = usePlayOverlays();
+  const { show } = useAlerts();
+  const game = useGameSession({ navigate, show, signOut: auth.signOut });
+  const [selectedCreatureId, setSelectedCreatureId] = useState<string | null>(null);
 
-  function handleSelectCreature(id: string): void {
-    setActiveCreatureId(id);
+  useEffect(loadInitialState(game.load, navigate), [game.load, navigate]);
+
+  if (game.state === null) {
+    return renderPendingState(game.status, game.error, game.onReconnect);
   }
 
-  const toolbarHandlers = buildToolbarHandlers(
-    show,
-    overlays.onOpenBackpack,
-    auth.signOut,
-    navigate,
+  if (game.connectionLost) {
+    return <PlayReconnectState detail={game.error} onRetry={game.onReconnect} />;
+  }
+
+  const state = game.state;
+  const slots = buildTeamSlots(state.team);
+  // The server says which creature is in the field. The local selection only
+  // takes over while the server has not answered yet.
+  const activeId = resolveActiveId(slots, state.activeCreatureId ?? selectedCreatureId);
+
+  const handleSelectCreature = buildCreatureSelector(
+    setSelectedCreatureId,
+    game.swap.swapCreature,
+    activeId,
   );
-  const overlayHandlers = buildOverlayHandlers(show);
 
   return (
+    <GameScreen
+      actions={game.actions}
+      activeId={activeId}
+      cooldownRemainingMs={game.swap.cooldownRemainingMs}
+      cooldownTotalMs={game.swap.cooldownTotalMs}
+      panel={game.skillPanel}
+      slots={slots}
+      state={state}
+      onOpenSlot={game.skillPanel.openPanel}
+      onSelectCreature={handleSelectCreature}
+      onSignOut={game.session.onSignOut}
+      onSwitchTrainer={game.session.onSwitchTrainer}
+      openSlot={game.skillPanel.openSlot}
+    >
+      <HuntAreas hunt={game.hunt} staminaMinutes={state.staminaMinutes} />
+      <GameModals modals={game.modals} />
+    </GameScreen>
+  );
+}
+
+/**
+ * The hunt areas: the modal of the list and the drawer of the details.
+ */
+function HuntAreas(props: { hunt: HuntOverlayView; staminaMinutes: number }): ReactElement {
+  const { hunt, staminaMinutes } = props;
+  return (
+    <HuntAreaFlow isOpen={hunt.isOpen} onClose={hunt.onClose} staminaMinutes={staminaMinutes} />
+  );
+}
+
+/**
+ * The screen waits for the state of the player: it loads, or it tells that
+ * the connection is gone.
+ */
+function renderPendingState(
+  status: PlayerStateStatus,
+  error: string | null,
+  onReconnect: () => void,
+): ReactElement {
+  if (status === 'error') {
+    return <PlayReconnectState detail={error} onRetry={onReconnect} />;
+  }
+  return <PlayLoadingState />;
+}
+
+type GameScreenProps = {
+  actions: GameActions;
+  activeId: string | null;
+  children?: ReactNode;
+  /** The time left of the cooldown of the manual swap. */
+  cooldownRemainingMs: number;
+  /** The whole time of the cooldown of the manual swap. */
+  cooldownTotalMs: number;
+  /** The panel of selection that is open, over the bar. */
+  panel: SkillPanelView;
+  onOpenSlot: (slot: SkillSlot) => void;
+  onSelectCreature: (id: string) => void;
+  onSignOut: () => void;
+  onSwitchTrainer: () => void;
+  openSlot: SkillSlot | null;
+  slots: CreatureSlot[];
+  state: PlayerState;
+};
+
+type GameActions = {
+  onOpenBackpack: () => void;
+  onOpenStore: () => void;
+  onOpenStorage: () => void;
+  onStartHunt: () => void;
+};
+
+function GameScreen(props: GameScreenProps): ReactElement {
+  const {
+    actions,
+    activeId,
+    children,
+    cooldownRemainingMs,
+    cooldownTotalMs,
+    onOpenSlot,
+    onSelectCreature,
+    onSignOut,
+    onSwitchTrainer,
+    openSlot,
+    panel,
+    slots,
+    state,
+  } = props;
+  return (
     <Box display="flex" flexDirection="column" h="100dvh" w="full">
-      <Toolbar
-        diamonds={DIAMOND_AMOUNT}
-        gold={GOLD_AMOUNT}
-        trainerLevel={TRAINER_LEVEL}
-        trainerName={TRAINER_NAME}
-        onOpenBackpack={toolbarHandlers.onOpenBackpack}
-        onOpenStorage={overlays.onOpenStorage}
-        onSignOut={toolbarHandlers.onSignOut}
+      <GameToolbar
+        onOpenBackpack={actions.onOpenBackpack}
+        onOpenStorage={actions.onOpenStorage}
+        onSignOut={onSignOut}
+        onSwitchTrainer={onSwitchTrainer}
+        state={state}
       />
       <Box display="flex" flex="1" position="relative">
         <CanvasPlaceholder />
-        <TeamStrip activeId={activeCreatureId} slots={TEAM_SLOTS} onSelect={handleSelectCreature} />
-        <PlayButton onClick={overlayHandlers.onStartHunt} />
-        <ShopButton onClick={overlays.onOpenStore} />
-        <SkillBar />
+        <GameHud
+          activeId={activeId}
+          cooldownRemainingMs={cooldownRemainingMs}
+          cooldownTotalMs={cooldownTotalMs}
+          onOpenSlot={onOpenSlot}
+          onOpenStore={actions.onOpenStore}
+          onSelectCreature={onSelectCreature}
+          onStartHunt={actions.onStartHunt}
+          openSlot={openSlot}
+          panel={<SkillPanelHost panel={panel} />}
+          slots={slots}
+          state={state}
+        />
+        {children}
       </Box>
-      <BackpackModal isOpen={overlays.isBackpackOpen} onClose={overlays.onCloseBackpack} />
-      <StorageModal isOpen={overlays.isStorageOpen} onClose={overlays.onCloseStorage} />
-      <StoreModal isOpen={overlays.isStoreOpen} onClose={overlays.onCloseStore} />
     </Box>
   );
 }
 
-function buildToolbarHandlers(
-  show: (input: AlertInput) => string,
-  openBackpack: () => void,
-  signOut: () => Promise<void>,
-  navigate: ReturnType<typeof useNavigate>,
-): ToolbarHandlers {
-  return {
-    onCloseBackpack: noop,
-    onOpenBackpack: openBackpack,
-    onOpenStorage: handleNotify(show, 'Armazenamento em breve.'),
-    onSignOut: handleSignOut(signOut, navigate),
+/**
+ * The click on a team tab.
+ *
+ * The creature that is already in the field is not a swap, so it does nothing.
+ */
+function buildCreatureSelector(
+  setSelectedCreatureId: (id: string | null) => void,
+  swapCreature: (id: string) => void,
+  activeId: string | null,
+): (id: string) => void {
+  return function selectCreature(id: string): void {
+    if (id === activeId) {
+      return;
+    }
+    setSelectedCreatureId(id);
+    swapCreature(id);
   };
 }
 
-function buildOverlayHandlers(show: (input: AlertInput) => string): OverlayHandlers {
-  return {
-    onOpenShop: handleNotify(show, 'Loja em breve.'),
-    onStartHunt: handleNotify(show, 'Caçada em breve.'),
-  };
-}
-
-function handleNotify(show: (input: AlertInput) => string, message: string): () => void {
-  return function notify(): void {
-    show(buildAlert(message));
-  };
-}
-
-function handleSignOut(
-  signOut: () => Promise<void>,
-  navigate: ReturnType<typeof useNavigate>,
+/**
+ * The state of the player comes from the server, over REST.
+ *
+ * The account that has no active trainer cannot play: the screen sends the
+ * player back to the list of trainers, where the trainer is chosen.
+ */
+function loadInitialState(
+  load: () => Promise<PlayerStateLoadResult>,
+  navigate: NavigateFunction,
 ): () => void {
-  return function signOutAndRedirect(): void {
-    signOut().then(redirectToSignin(navigate), noop);
+  return function loadState(): void {
+    load().then(function handleResult(result: PlayerStateLoadResult): void {
+      if (result === 'no-trainer') {
+        navigate(TRAINERS_PATH, { replace: true });
+      }
+    });
   };
 }
-
-function redirectToSignin(navigate: ReturnType<typeof useNavigate>): () => void {
-  return function redirect(): void {
-    navigate(SIGNIN_PATH, { replace: true });
-  };
-}
-
-function noop(): void {
-  void 0;
-}
-
-function buildAlert(message: string): AlertInput {
-  return {
-    content: <DemoAlertMessage message={message} />,
-    duration: ALERT_DURATION,
-    icon: <DemoAlertIcon />,
-  };
-}
-
-function DemoAlertMessage(props: DemoAlertMessageProps): ReactElement {
-  const { message } = props;
-  return <Text color="fg">{message}</Text>;
-}
-
-function DemoAlertIcon(): ReactElement {
-  return <IconBadge>{DEMO_ICON}</IconBadge>;
-}
-
-type ToolbarHandlers = {
-  onCloseBackpack: () => void;
-  onOpenBackpack: () => void;
-  onOpenStorage: () => void;
-  onSignOut: () => void;
-};
-
-type OverlayHandlers = {
-  onOpenShop: () => void;
-  onStartHunt: () => void;
-};
-
-type DemoAlertMessageProps = {
-  message: string;
-};

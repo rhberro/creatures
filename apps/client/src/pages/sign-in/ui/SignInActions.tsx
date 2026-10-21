@@ -1,8 +1,10 @@
+import { HStack, Separator } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
 import { Button } from '~/shared/ui/button';
-import { FormActions, FormDivider } from '~/shared/ui/form';
+import { FormActions } from '~/shared/ui/form';
 import { Link } from '~/shared/ui/link';
+import { Text } from '~/shared/ui/text';
 
 const SIGNUP_PATH = '/signup';
 
@@ -16,7 +18,11 @@ export function SignInActions(props: SignInActionsProps): ReactElement {
       <Link disabled={isBusy} to={SIGNUP_PATH} tone="secondary">
         Criar Conta
       </Link>
-      <FormDivider />
+      <HStack>
+        <Separator flex="1" />
+        <Text flexShrink="0">ou</Text>
+        <Separator flex="1" />
+      </HStack>
       <Button tone="secondary" disabled={isBusy} loading={isOAuthPending} onClick={onGoogleClick}>
         Entrar com Google
       </Button>

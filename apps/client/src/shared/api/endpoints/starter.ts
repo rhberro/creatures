@@ -1,4 +1,4 @@
-import type { Starter } from '@creatures/contracts/trainer';
+import type { StarterSpecies } from '@creatures/contracts/species';
 
 import type { ApiDeps } from '~/shared/api/client';
 import { buildHeaders, isSuccessStatus, resolveErrorCode } from '~/shared/api/http';
@@ -8,7 +8,7 @@ const STARTERS_PATH = '/api/starters';
 const UNAUTHENTICATED: TrainerClientErrorCode = 'unauthenticated';
 
 export type StarterListResult =
-  | { ok: true; starters: Starter[] }
+  | { ok: true; starters: StarterSpecies[] }
   | { ok: false; code: TrainerClientErrorCode };
 
 export function requestStarterList(deps: ApiDeps): Promise<StarterListResult> {
@@ -59,20 +59,28 @@ function readStarterListNetworkFailure(): StarterListResult {
   return { code: 'unknown', ok: false };
 }
 
-function readStarters(body: unknown): Starter[] {
+function readStarters(body: unknown): StarterSpecies[] {
   if (typeof body !== 'object' || body === null) {
     return [];
   }
   const starters = (body as { starters?: unknown }).starters;
-  return Array.isArray(starters) ? starters.filter(isStarter) : [];
+  return Array.isArray(starters) ? starters.filter(isStarterSpecies) : [];
 }
 
-function isStarter(value: unknown): value is Starter {
+/**
+ * A starter is a species marked as initial.
+ *
+ * The identity of the species is what the screen needs: the name to show and
+ * the id to send when the trainer is created.
+ */
+function isStarterSpecies(value: unknown): value is StarterSpecies {
   if (typeof value !== 'object' || value === null) {
     return false;
   }
-  const starter = value as Partial<Starter>;
-  return typeof starter.id === 'string' && typeof starter.name === 'string';
+  const starter = value as Partial<StarterSpecies>;
+  return (
+    typeof starter.id === 'string' && typeof starter.name === 'string' && starter.isStarter === true
+  );
 }
 
 function buildStartersUrl(baseUrl: string): string {

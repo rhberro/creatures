@@ -22,7 +22,7 @@ O modal é acessado pelo NPC da loja e pelo [botão da loja](PLAY_SCREEN.md#bot�
 
 > O mockup é ilustrativo e mostra a disposição geral, não o design final. Ele serve para conferir a estrutura da tela, não cores, tipografia ou espaçamento.
 
-O primeiro mockup mostra a aba de compra, com a aba Comprar ativa, as seções Consumíveis e Dispositivos, e o rodapé com o campo de quantidade, os botões de soma, o total em gold coins e o botão Comprar. O segundo mostra a aba de venda, com a grade de itens da mochila, itens selecionados em destaque, e o rodapé com o total em gold coins e o botão Vender Selecionado.
+O primeiro mockup mostra a aba de compra, com a aba Comprar ativa, as seções Consumíveis e Dispositivos, e o rodapé com o campo de quantidade, os botões de soma, o total em gold coins e o botão Comprar. O segundo mostra a aba de venda, com a grade de itens da mochila, itens selecionados em destaque, e o rodapé com o campo de quantidade, os botões de soma, o total em gold coins e o botão Vender Selecionado.
 
 ## Preços
 
@@ -40,7 +40,7 @@ A grade é a mesma da [mochila](BACKPACK.md#slots-de-itens), com as mesmas regra
 
 ### Seleção e Quantidade
 
-Para comprar, o jogador clica em um item, que entra no estado **selecionado**, destacado na grade. Sem item selecionado, o campo de quantidade do rodapé fica desabilitado. Ao selecionar um item, o campo é habilitado já com o valor 1.
+Para comprar, o jogador clica em um item, que entra no estado **selecionado**, destacado na grade. A seleção é a marca da escolha: ela fica no slot clicado, não some quando o cursor sai e troca quando o jogador clica em outro item. Sem item selecionado, o campo de quantidade do rodapé fica desabilitado. Ao selecionar um item, o campo é habilitado já com o valor 1.
 
 A quantidade nunca pode ser 0 nem vazia: se o jogador apagar o campo, digitar um valor negativo ou deixá-lo em branco, ao tirar o foco do campo o valor volta a ser 1.
 
@@ -62,7 +62,7 @@ A compra não tem confirmação: o clique executa a compra. Os itens vão direto
 
 A aba de venda lista todos os itens da [mochila](BACKPACK.md) do treinador — dispositivos, poções e itens de criaturas, ou seja, tudo o que a loja vende mais o drop. Itens iguais ficam em um slot só, com a quantidade na label: 300 poções de cura ocupam um slot com 300, e não 300 slots.
 
-Ao passar o cursor sobre um item, o [popup](INTERFACE.md#popup) exibe o nome do item e o seu valor de venda em gold coins.
+Ao passar o cursor sobre um item, o [popup](INTERFACE.md#popup) exibe o nome do item e o seu valor de venda em gold coins — o valor **unitário** do item, o de uma unidade.
 
 As duas abas usam a mesma grade, com as mesmas regras de preenchimento de espaços vazios.
 
@@ -70,11 +70,17 @@ As duas abas usam a mesma grade, com as mesmas regras de preenchimento de espaç
 
 ### Venda
 
-Para vender, o jogador clica em um item, que entra no estado **selecionado**, e clicar de novo o tira da seleção. No rodapé aparece apenas o botão **Vender Selecionado**, com o total de gold coins do que está selecionado do lado esquerdo, atualizando em tempo real conforme a seleção muda.
+Para vender, o jogador clica em um item, que entra no estado **selecionado**, destacado na grade. A seleção é a marca da escolha: ela fica no slot clicado, não some quando o cursor sai e troca quando o jogador clica em outro item.
 
-No alfa e no beta a venda é sempre total: o jogador não escolhe quantidade, então 300 poções de cura selecionadas significam 300 vendidas, e não 100, 50 ou 58.
+O rodapé da aba de venda é o mesmo da aba de compra: à esquerda ficam o campo de quantidade e os botões de soma, e à direita o total em gold coins e o botão **Vender Selecionado**. Sem item selecionado, o campo de quantidade fica desabilitado e o botão também.
 
-A venda não tem confirmação: o clique executa. Os itens selecionados deixam de existir — saem da mochila e não voltam —, o gold coin é somado, o total volta a 0, e o jogador precisa selecionar de novo para vender mais. O que já foi vendido não aparece mais na aba, porque já não está na mochila.
+A quantidade tem as mesmas regras da compra: nunca é 0 nem vazia — se o jogador apagar o campo, digitar um valor negativo ou deixá-lo em branco, ao tirar o foco o valor volta a ser 1 —, o máximo é **999999**, e os botões **+10**, **+100** e **+1000** somam ao valor atual e travam nesse limite.
+
+O **preço do item é o preço unitário**: é o que o [popup](INTERFACE.md#popup) mostra, ao lado do nome do item, e é com ele que o jogador multiplica. O **total** que fica do lado do botão é o valor da quantidade escolhida — o valor unitário vezes a quantidade — e não o valor de tudo o que está selecionado. Um item de 90 gold coins com quantidade 3 mostra 270 no total.
+
+A venda não tem confirmação: o clique executa. Os itens vendidos saem da mochila, o gold coin é somado, o total do rodapé passa a ser o total que o servidor devolveu, e a seleção continua no item enquanto ele estiver na mochila: o jogador pode vender mais dele sem selecionar de novo. O item que sai da mochila por inteiro leva a seleção com ele, porque o slot dele não existe mais.
+
+Vender mais do que o treinador tem na mochila é recusado pelo servidor, e a aba mostra o motivo da recusa, sem perder os itens que ainda estão na mochila.
 
 ## Comportamento
 
@@ -93,5 +99,4 @@ Fechar o modal ou trocar de aba reseta todo o estado: a seleção é desfeita, a
 Os pontos abaixo ainda estão em aberto ou são provisórios nesta fase e devem ser revistos conforme o jogo evolui:
 
 - A loja vende apenas o básico: consumíveis e dispositivos.
-- A venda é sempre total, sem escolha de quantidade.
 - Compra e venda não têm confirmação: o clique executa a ação.

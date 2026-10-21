@@ -94,6 +94,7 @@ function TopBar(props: TopBarProps): ReactElement {
           onOpenBackpack={noop}
           onOpenStorage={noop}
           onSignOut={noop}
+          onSwitchTrainer={noop}
         />
       </Box>
     </Box>

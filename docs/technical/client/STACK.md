@@ -154,6 +154,8 @@ O estado da conta e da sessão fica em um store separado do estado do jogo.
 
 > Separar os dois evita que a troca de tela recrie o estado do treinador, que foi carregado uma vez ao entrar no jogo.
 
+**A lista de treinadores da conta também é um store compartilhado.** A tela que lista e a tela que cria treinador mostram a mesma lista: elas leem o mesmo store, e um pedido em andamento é aguardado em vez de duplicado. O store é zerado quando a sessão deixa de existir. A regra continua no controller, e o store publica o retrato.
+
 ## Supabase Auth
 
 A autenticação é feita pelo Supabase Auth, usado diretamente no cliente. Ele responde por login, cadastro, login via Google, recuperação de senha e pelo controle da sessão.
@@ -180,7 +182,7 @@ O canal é aberto uma vez, quando o jogador entra no jogo, e fica aberto até a 
 
 O token é enviado uma vez, na abertura do canal, e não a cada mensagem.
 
-> O access token do Supabase tem validade curta, muito menor que a sessão do usuário descrita em [Autenticação](../../game/AUTHENTICATION.md). Como o canal fica aberto durante a partida inteira, o cliente acompanha a validade do token e renova a sessão antes de ele expirar, reenviando o token novo pelo mesmo canal.
+> O access token do Supabase tem validade curta, muito menor que a sessão do usuário descrita em [Autenticação](../../game/AUTHENTICATION.md). Como o canal fica aberto durante a partida inteira, o cliente acompanha a validade do token e renova a sessão antes de ele expirar. **O token novo não viaja pelo canal**: o protocolo não tem essa mensagem, e o servidor valida o token só na abertura. A renovação é do lado do cliente, com o Supabase; o servidor continua com o token que recebeu na abertura.
 
 > O cliente acompanha a validade do token porque é ele quem o recebe do Supabase Auth. O que o servidor faz com esse token está em [Stack do Servidor](../server/STACK.md).
 

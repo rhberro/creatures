@@ -15,6 +15,12 @@
     "lint:fix": "oxlint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
+    "test": "bun test apps/client apps/server",
+    "test:integration": "bun run --filter @creatures/server test:integration",
+    "db:link": "supabase link --project-ref xgrgubceyawigdnvfhou",
+    "db:push": "supabase db push --linked",
+    "db:seed": "supabase db query --linked --file supabase/seed.sql",
+    "db:reset": "supabase db reset --local",
     "prepare": "husky"
   },
   "dependencies": {},

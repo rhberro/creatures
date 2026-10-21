@@ -21,7 +21,7 @@ export const newTrainerSchema = z.object({
     .max(15, NAME_LENGTH_MESSAGE)
     .regex(NAME_PATTERN, NAME_CHARS_MESSAGE)
     .refine(hasNoConsecutiveSpaces, NAME_CHARS_MESSAGE),
-  starterCreatureId: z.uuid(STARTER_REQUIRED_MESSAGE),
+  starterSpeciesId: z.uuid(STARTER_REQUIRED_MESSAGE),
 }) satisfies z.ZodType<NewTrainerInput>;
 
 export type NewTrainerValidation = z.infer<typeof newTrainerSchema>;
@@ -37,7 +37,7 @@ function readValidationCode(error: ZodError): TrainerClientErrorCode {
   if (field === 'gender') {
     return 'invalid_gender';
   }
-  if (field === 'starterCreatureId') {
+  if (field === 'starterSpeciesId') {
     return 'invalid_starter';
   }
   return 'invalid_name';

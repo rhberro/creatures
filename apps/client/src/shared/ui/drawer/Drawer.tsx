@@ -9,8 +9,10 @@ const DRAWER_WIDTH = '320px';
 /**
  * O drawer: a lateral.
  *
- * Encostada na borda direita, com botao de fechar no canto. Fecha pelo ESC e
- * pelo clique no fundo.
+ * Encostada na borda direita e da altura da tela inteira, com cabecalho e
+ * rodape fixos e o corpo rolando. O botao de fechar mora dentro da lateral,
+ * porque ela nao tem folga em volta como o modal. Fecha pelo ESC e pelo
+ * clique no fundo.
  */
 export function Drawer(props: DrawerProps): ReactElement {
   const {

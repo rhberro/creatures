@@ -1,3 +1,4 @@
+export { SAMPLE_STORE_CATALOG } from './model/storeSamples';
+export type { StoreTab, StoreView } from './model/store.types';
 export { StoreModal } from './ui/StoreModal';
-export { StoreSection } from './ui/StoreSection';
-export type { StoreItem } from './ui/StoreSection';
+export type { StoreModalProps } from './ui/StoreModal';

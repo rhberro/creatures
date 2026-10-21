@@ -4,12 +4,14 @@ import type {
   OAuthResponse,
   Session,
   SupabaseClient,
+  User,
 } from '@supabase/supabase-js';
 
 import { mapAuthError } from './errors';
 import type {
   AuthAdapter,
   AuthAdapterResult,
+  AuthErrorCode,
   AuthEvent,
   AuthEventHandler,
   AuthSession,
@@ -17,6 +19,7 @@ import type {
   OAuthInput,
   PasswordResetInput,
   PasswordUpdateInput,
+  SignUpInput,
 } from './types';
 
 type AuthErrorResult = {
@@ -39,12 +42,19 @@ export class SupabaseAuthAdapter implements AuthAdapter {
     return this.client.auth.signInWithPassword(input).then(handleErrorResult);
   }
 
-  public signUp(input: CredentialsInput): Promise<AuthAdapterResult> {
-    return this.client.auth.signUp(input).then(handleSignUpResult);
+  public signUp(input: SignUpInput): Promise<AuthAdapterResult> {
+    const credentials = {
+      email: input.email,
+      options: { emailRedirectTo: buildRedirectUrl(input.path) },
+      password: input.password,
+    };
+    return this.client.auth.signUp(credentials).then(handleSignUpResult);
   }
 
   public signInWithOAuth(input: OAuthInput): Promise<AuthAdapterResult> {
-    const options = { redirectTo: buildRedirectUrl(input.path) };
+    // The page owns the navigation: without `skipBrowserRedirect` the SDK
+    // navigates on its own and the page navigates too.
+    const options = { redirectTo: buildRedirectUrl(input.path), skipBrowserRedirect: true };
     return this.client.auth
       .signInWithOAuth({ options, provider: input.provider })
       .then(handleOAuthResult);
@@ -96,8 +106,29 @@ function mapSession(session: Session | null): AuthSession | null {
   }
   return {
     access_token: session.access_token,
-    user: { email: session.user.email ?? null, id: session.user.id },
+    user: {
+      email: session.user.email ?? null,
+      id: session.user.id,
+      provider: readProvider(session.user),
+    },
   };
+}
+
+/**
+ * The provider of the identity that owns the session.
+ *
+ * Supabase records it in the application metadata of the user: `email` for an
+ * account with a password, `google` for an account that entered through
+ * Google. The client needs it to know whether a session may merge with a
+ * password account.
+ */
+function readProvider(user: User): string | null {
+  const metadata: unknown = user.app_metadata;
+  if (typeof metadata !== 'object' || metadata === null) {
+    return null;
+  }
+  const provider = (metadata as { provider?: unknown }).provider;
+  return typeof provider === 'string' ? provider : null;
 }
 
 function handleErrorResult(result: AuthErrorResult): AuthAdapterResult {
@@ -111,10 +142,28 @@ function handleSignUpResult(result: AuthResponse): AuthAdapterResult {
   if (result.error !== null) {
     return { code: mapAuthError(result.error), ok: false };
   }
+  // No session means the account exists but the e-mail still has to be
+  // confirmed: the project may have the automatic confirmation turned off.
+  // That is a legitimate outcome of the signup, not a failure.
   if (result.data.session === null) {
-    return { code: 'unknown', ok: false };
+    return { code: readPendingConfirmationCode(result.data.user), ok: false };
   }
   return { ok: true };
+}
+
+/**
+ * The code of a signup that came back without a session.
+ *
+ * The server hides whether an account exists: for an e-mail that is already
+ * registered it answers with a user without identities, and for a new account
+ * it answers with the user and no session, waiting for the confirmation of
+ * the e-mail.
+ */
+function readPendingConfirmationCode(user: User | null): AuthErrorCode {
+  if (user !== null && Array.isArray(user.identities) && user.identities.length === 0) {
+    return 'email_already_exists';
+  }
+  return 'email_confirmation_required';
 }
 
 function handleOAuthResult(result: OAuthResponse): AuthAdapterResult {

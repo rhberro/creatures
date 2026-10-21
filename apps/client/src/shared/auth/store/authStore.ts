@@ -14,11 +14,22 @@ import type {
   OAuthInput,
   PasswordResetInput,
   PasswordUpdateInput,
+  SignUpInput,
 } from './types';
 import { PASSWORD_MAX, PASSWORD_MIN } from './types';
 
 const INITIAL_STATUS: AuthStatus = 'INITIALIZING';
-const OAUTH_PATH = '/trainers';
+/**
+ * The route an external authentication lands on.
+ *
+ * It is the same for the OAuth return and for the confirmation e-mail link:
+ * both come back as a full page load, and both carry the session in the URL
+ * (PKCE). The route only decides where the player goes next: an account
+ * without a trainer lands on the screen that creates one, and an account with
+ * trainers lands on the list. A link that could not be exchanged falls back to
+ * the sign in screen instead of a blank page.
+ */
+export const POST_AUTH_PATH = '/post-auth';
 const RECOVERY_PATH = '/reset-password';
 
 export type FormActions = {
@@ -155,13 +166,18 @@ function buildSignUp(adapter: AuthAdapter): (input: CredentialsInput) => Promise
     if (!isValidPassword(input.password)) {
       return Promise.resolve(failure('weak_password'));
     }
-    return adapter.signUp(input);
+    const signUpInput: SignUpInput = {
+      email: input.email,
+      password: input.password,
+      path: POST_AUTH_PATH,
+    };
+    return adapter.signUp(signUpInput);
   };
 }
 
 function buildSignInWithGoogle(adapter: AuthAdapter): () => Promise<AuthResult> {
   return function signInWithGoogle(): Promise<AuthResult> {
-    const input: OAuthInput = { path: OAUTH_PATH, provider: 'google' };
+    const input: OAuthInput = { path: POST_AUTH_PATH, provider: 'google' };
     return adapter.signInWithOAuth(input);
   };
 }

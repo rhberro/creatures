@@ -65,7 +65,7 @@ function SlotsBlock(): ReactElement {
           <Box bg="ember.500" height="100%" opacity="0.85" width="100%" />
         </Slot>
         <Slot equipped>
-          <Box bg="frost.500" height="100%" opacity="0.85" width="100%" />
+          <Box bg="verdant.500" height="100%" opacity="0.85" width="100%" />
         </Slot>
         <Slot empty />
       </Box>

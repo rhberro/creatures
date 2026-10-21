@@ -1,75 +1,24 @@
-import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { CONSUMABLES } from '~/pages/design-system/model/skillPanelData';
-import { Frame } from '~/shared/ui/frame';
-import { Text } from '~/shared/ui/text';
+import { ConsumableSelectionPanel as ConsumableSelectionPanelView } from '~/features/skill-panel';
 
-import { AbilityCard } from './AbilityCard';
-import { PanelHeader } from './PanelHeader';
+import { SAMPLE_CONSUMABLES } from './skillPanelSamples';
+
+const SAMPLE_SLOT = 4;
+const SAMPLE_TRIGGER = 30;
 
 export function ConsumableSelectionPanel(): ReactElement {
-  const cards = CONSUMABLES.map(renderConsumable);
   return (
-    <Box width="300px">
-      <Frame tone="overlay">
-        <PanelHeader subtitle="Escolha o consumível do slot 5." title="Consumíveis" />
-        <Box padding="3">
-          <TriggerControl />
-          <Box display="flex" flexDirection="column" gap="2" marginBlockStart="3">
-            {cards}
-          </Box>
-        </Box>
-      </Frame>
-    </Box>
+    <ConsumableSelectionPanelView
+      entries={SAMPLE_CONSUMABLES}
+      onSelect={noop}
+      onTriggerChange={noop}
+      slot={SAMPLE_SLOT}
+      triggerHpPercent={SAMPLE_TRIGGER}
+    />
   );
 }
 
-function TriggerControl(): ReactElement {
-  return (
-    <Box bg="bg.sunken" borderRadius="sm" boxShadow="recessed" padding="2">
-      <Text color="fg.muted" variant="meta">
-        Usar quando a vida for menor que
-      </Text>
-      <Box alignItems="center" display="flex" gap="2" marginBlockStart="1">
-        <TriggerButton label="−" />
-        <Text color="fg" minW="42px" textAlign="center" variant="numeric">
-          30%
-        </Text>
-        <TriggerButton label="+" />
-        <Box bg="border" flex="1" height="4px">
-          <Box bg="arcane.400" height="100%" width="30%" />
-        </Box>
-      </Box>
-    </Box>
-  );
-}
-
-type TriggerButtonProps = {
-  label: string;
-};
-
-function TriggerButton(props: TriggerButtonProps): ReactElement {
-  const { label } = props;
-  return (
-    <Box
-      alignItems="center"
-      bg="bg.raised"
-      borderColor="border"
-      borderRadius="sm"
-      borderWidth="1px"
-      color="fg.muted"
-      cursor="pointer"
-      display="flex"
-      height="26px"
-      justifyContent="center"
-      width="26px"
-    >
-      <Text variant="numeric">{label}</Text>
-    </Box>
-  );
-}
-
-function renderConsumable(consumable: (typeof CONSUMABLES)[number]): ReactElement {
-  return <AbilityCard ability={consumable} key={consumable.name} />;
+function noop(): void {
+  void 0;
 }

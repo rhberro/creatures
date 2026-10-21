@@ -9,6 +9,10 @@
       "chrome-devtools": {
         "type": "local",
         "command": ["bunx", "-y", "chrome-devtools-mcp@1.11.0"]
+      },
+      "supabase": {
+        "type": "remote",
+        "url": "https://mcp.supabase.com/mcp?project_ref=xgrgubceyawigdnvfhou&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching"
       }
     }
   }

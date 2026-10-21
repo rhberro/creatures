@@ -31,6 +31,7 @@ O Creatures é composto por duas aplicações independentes que se comunicam ent
 | --- | --- | --- | --- |
 | Cliente | Arquitetura da aplicação cliente: estrutura interna, stack e responsabilidades de cada módulo. | Quando for criar ou alterar código do cliente, ou dúvida sobre onde uma responsabilidade pertence. | `docs/technical/client/CLIENT.md` |
 | Servidor | Arquitetura da aplicação servidora: estrutura interna, stack, persistência e simulação. | Quando for criar ou alterar código do servidor, ou dúvida sobre como uma ação é processada. | `docs/technical/server/SERVER.md` |
+| Deploy | Como subir o projeto: variáveis de ambiente, banco de dados, scripts e o que verificar depois. | Quando for preparar uma publicação ou um ambiente de produção. | `docs/technical/DEPLOY.md` |
 
 ## Documentos Relacionados
 

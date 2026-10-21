@@ -8,13 +8,17 @@ import { EmptyCreatureTab } from './EmptyCreatureTab';
 
 type TeamStripProps = {
   activeId: string | null;
+  /** The time left of the cooldown of the manual swap. */
+  cooldownRemainingMs?: number;
+  /** The whole time of the cooldown of the manual swap. */
+  cooldownTotalMs?: number;
   onSelect: (id: string) => void;
   slots: CreatureSlot[];
 };
 
 export function TeamStrip(props: TeamStripProps): ReactElement {
-  const { activeId, onSelect, slots } = props;
-  const tabs = slots.map(renderTab(activeId, onSelect));
+  const { activeId, cooldownRemainingMs = 0, cooldownTotalMs = 0, onSelect, slots } = props;
+  const tabs = slots.map(renderTab(activeId, cooldownRemainingMs, cooldownTotalMs, onSelect));
   return (
     <Box
       display="flex"
@@ -32,6 +36,8 @@ export function TeamStrip(props: TeamStripProps): ReactElement {
 
 function renderTab(
   activeId: string | null,
+  cooldownRemainingMs: number,
+  cooldownTotalMs: number,
   onSelect: (id: string) => void,
 ): (slot: CreatureSlot, index: number) => ReactElement {
   return function render(slot: CreatureSlot, index: number): ReactElement {
@@ -40,6 +46,15 @@ function renderTab(
       return <EmptyCreatureTab key={emptyKey} />;
     }
     const isActive = slot.id === activeId;
-    return <CreatureTab key={slot.id} creature={slot} isActive={isActive} onSelect={onSelect} />;
+    return (
+      <CreatureTab
+        cooldownRemainingMs={cooldownRemainingMs}
+        cooldownTotalMs={cooldownTotalMs}
+        creature={slot}
+        isActive={isActive}
+        key={slot.id}
+        onSelect={onSelect}
+      />
+    );
   };
 }

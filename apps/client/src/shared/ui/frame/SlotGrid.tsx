@@ -3,15 +3,19 @@ import {
   isValidElement,
   type ReactElement,
   type ReactNode,
+  type RefObject,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
 
+import { PopupGroup } from '~/shared/ui/popup';
+
 import { Slot } from './Slot';
+import { computeEmptySlotCount, computeSlotColumns, resolveSlotColumns } from './slotGridLayout';
 
 const SLOT_SIZE = 56;
-const SLOT_GAP = 4;
 const EMPTY_DEPS: ReadonlyArray<unknown> = [];
 
 type SlotGridProps = {
@@ -21,13 +25,19 @@ type SlotGridProps = {
 /**
  * A grade de slots.
  *
- * A grade **preenche o painel**: as colunas se ajustam a largura e a ultima
- * linha e completada com slots vazios. Uma grade com numero fixo de colunas
- * deixa o resto do painel vazio — e o painel vazio e o que faz a interface
- * parecer quebrada.
+ * A grade **preenche a largura do painel**: as colunas se ajustam a largura e a
+ * ultima linha e completada com slots vazios. Uma grade com numero fixo de
+ * colunas deixa o resto do painel vazio — e o painel vazio e o que faz a
+ * interface parecer quebrada.
  *
  * A grade **nao cria linha nova**: tres itens fazem uma linha, nao tres
  * linhas de onze. O scroll so aparece quando o conteudo realmente nao cabe.
+ *
+ * A grade **sem nenhum item** mostra uma linha inteira de slots vazios: o
+ * jogador ve que os slots existem, em vez de uma area sem nada.
+ *
+ * A grade e o **grupo dos popups** dela: so um popup aberto por vez, e clicar
+ * em um slot fecha o popup do outro e abre o seu.
  *
  * O slot e a unica forma de mostrar item, criatura ou habilidade: nada de
  * circulo, nada de quadrado solto.
@@ -35,13 +45,38 @@ type SlotGridProps = {
 export function SlotGrid(props: SlotGridProps): ReactElement {
   const { children } = props;
   const gridRef = useRef<HTMLDivElement | null>(null);
-  const [columns, setColumns] = useState<number>(0);
+  const columns = useSlotColumns(gridRef);
+  const filled = countChildren(children);
+  const empty = buildEmptySlots(resolveSlotColumns(columns, filled), filled);
   const template = buildTemplate();
-  const empty = buildEmptySlots(columns, countChildren(children));
 
-  useEffect(observeColumns, EMPTY_DEPS);
+  return (
+    <Box display="grid" gap="1" gridTemplateColumns={template} justifyContent="start" ref={gridRef}>
+      <PopupGroup>
+        {children}
+        {empty}
+      </PopupGroup>
+    </Box>
+  );
+}
 
-  function observeColumns(): () => void {
+/**
+ * As colunas da grade, pela largura que ela tem.
+ *
+ * A largura e lida no layout, antes do primeiro desenho: a grade nunca mostra
+ * uma fileira sem os slots vazios que a completam e so depois cresce.
+ */
+function useSlotColumns(gridRef: RefObject<HTMLDivElement | null>): number {
+  const [columns, setColumns] = useState<number>(0);
+
+  useLayoutEffect(measure, EMPTY_DEPS);
+  useEffect(observe, EMPTY_DEPS);
+
+  function measure(): void {
+    setColumns(readColumns(gridRef.current));
+  }
+
+  function observe(): () => void {
     const element = gridRef.current;
     if (!element || typeof ResizeObserver === 'undefined') {
       return noop;
@@ -59,33 +94,46 @@ export function SlotGrid(props: SlotGridProps): ReactElement {
       return;
     }
     // A largura do conteudo: e a mesma que o auto-fill usa para as colunas.
-    setColumns(computeColumns(entry.contentRect.width));
+    setColumns(computeSlotColumns(entry.contentRect.width));
   }
 
-  return (
-    <Box display="grid" gap="1" gridTemplateColumns={template} justifyContent="start" ref={gridRef}>
-      {children}
-      {empty}
-    </Box>
-  );
+  return columns;
+}
+
+function readColumns(element: HTMLDivElement | null): number {
+  if (!element) {
+    return 0;
+  }
+  return computeSlotColumns(element.getBoundingClientRect().width);
 }
 
 function buildTemplate(): string {
   return `repeat(auto-fill, ${SLOT_SIZE}px)`;
 }
 
-function computeColumns(width: number): number {
-  return Math.max(1, Math.floor((width + SLOT_GAP) / (SLOT_SIZE + SLOT_GAP)));
-}
-
+/**
+ * Quantos slots a grade tem.
+ *
+ * Os slots vazios que a area preenche tambem contam: a grade conta o que ela
+ * mostra, e nao o que ela recebeu.
+ */
 function countChildren(children: ReactNode): number {
   if (Array.isArray(children)) {
-    return children.length;
+    return countAll(children);
   }
   if (isValidElement(children)) {
     return 1;
   }
   return 0;
+}
+
+function countAll(children: ReactNode[]): number {
+  let total = 0;
+  for (let index = 0; index < children.length; index += 1) {
+    const child = children[index];
+    total += countChildren(child);
+  }
+  return total;
 }
 
 /**
@@ -94,11 +142,8 @@ function countChildren(children: ReactNode): number {
  * Nao ha linha nova: se o conteudo cabe em uma linha, a grade tem uma linha.
  */
 function buildEmptySlots(columns: number, filled: number): ReactElement[] {
-  if (columns === 0) {
-    return [];
-  }
+  const total = computeEmptySlotCount(columns, filled);
   const slots: ReactElement[] = [];
-  const total = (columns - (filled % columns)) % columns;
   for (let index = 0; index < total; index += 1) {
     slots.push(buildEmptySlot(index));
   }

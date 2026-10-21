@@ -272,7 +272,7 @@ function assertTwoTrainers(snapshot: TrainersSnapshot): void {
   expect(snapshot.isLoading).toBe(false);
 }
 function buildInput(name: string): NewTrainerInput {
-  return { gender: 'male', name, starterCreatureId: STARTER_ID };
+  return { gender: 'male', name, starterSpeciesId: STARTER_ID };
 }
 function buildTrainer(name: string, id: string): Trainer {
   return {
@@ -281,7 +281,7 @@ function buildTrainer(name: string, id: string): Trainer {
     id,
     level: 1,
     name,
-    starterCreatureId: STARTER_ID,
+    starterSpeciesId: STARTER_ID,
   };
 }
 

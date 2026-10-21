@@ -25,17 +25,6 @@ export type SignInForm = {
   isSubmitting: boolean;
 };
 
-/**
- * O formulario de entrada.
- *
- * O `useZodForm` devolve o formulario ja validado pelo schema, e o RHF cuida
- * do estado de envio: o `isSubmitting` fica verdadeiro desde o clique ate a
- * resposta do servidor. O botao de entrar mostra o carregamento nesse
- * intervalo, e nada mais aceita clique.
- *
- * O erro do formulario — "e-mail ou senha invalidos" — nao pertence a um
- * campo, entao ele mora na raiz do formulario. O erro de campo e o do campo.
- */
 export function useSignInForm(): SignInForm {
   const auth = useAuth();
   const navigate = useNavigate();

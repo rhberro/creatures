@@ -84,6 +84,17 @@ Os atributos atuais são calculados no momento de usar e não são armazenados e
 Atributo = floor( Base × (1 − d + 2d × PV/100) × (1 + (Nível − 1) × k) )
 ```
 
+As duas constantes estão definidas:
+
+| Constante | Valor | O que é |
+| --- | --- | --- |
+| `d` | 0.3 | O quanto o potencial pesa: a diferença entre o pior e o melhor potencial, 30% do valor base. Com PV 0% o atributo é 0.7× a base; com PV 100% é 1.3×. |
+| `k` | 0.05 | O crescimento por nível: 5% do valor base a cada nível acima do 1. No nível 10 a criatura tem 1.45× o valor base. |
+
+> Uma criatura com todos os PVs em 50% — que é como a criatura inicial nasce — fica com o atributo exatamente igual ao valor base, em qualquer nível. É a propriedade que a fórmula precisa ter: o potencial é o desvio em torno da base, não um multiplicador dela.
+
+A **vida máxima** de uma criatura é o seu atributo de Vitalidade calculado assim. A **vida restante** é o que sobrou dela, e é guardada — a parte que ainda não muda sozinha é o dano, que é do gameplay.
+
 ### Potencial Máximo (MP)
 
 O potencial máximo é a média dos PVs: a soma dos cinco PVs dividida por cinco. Uma criatura com todos os PVs em 100% tem potencial máximo de 100%, e é uma criatura que vai atingir o teto da espécie.
@@ -126,10 +137,8 @@ As opções vêm do banco de dados: são as espécies marcadas como iniciais, en
 
 Os pontos abaixo ainda não foram decididos:
 
-- As fórmulas de nível, de experiência e dos atributos atuais, incluindo as constantes d e k.
+- As fórmulas de nível e de experiência.
 - A tabela de efetividade entre elementos — o exemplo fogo contra planta, com 1,5×, é o único definido.
 - Se o dispositivo de captura é consumido em toda tentativa ou só na captura bem-sucedida.
 - A mecânica no serviço que segura a entrega do drop até saber se a captura aconteceu.
-- As espécies iniciais exatas, que são cadastradas no banco de dados.
-- O catálogo de habilidades — quais existem, elementos, cooldowns e dano.
-- As curvas de nível e de experiência, e os números de chance de drop de cada espécie.
+- O catálogo completo de espécies e de habilidades. O que existe hoje está no banco de dados — 5 espécies, 3 delas iniciais, e 5 habilidades — e é o catálogo inicial, não a lista final.

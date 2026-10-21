@@ -1,12 +1,13 @@
 import { replace } from 'react-router-dom';
 
-import { getAuthStore, selectStatus } from '~/shared/auth';
+import { createPostAuthDeps, resolvePostAuth } from '~/features/authentication';
+import type { PostAuthResolution } from '~/features/authentication';
+import { getAuthStore, POST_AUTH_PATH, selectStatus, selectUser } from '~/shared/auth';
 import type { AuthStatus, AuthStore } from '~/shared/auth';
 
 const INITIALIZING: AuthStatus = 'INITIALIZING';
 const RESET_PASSWORD_PATH = '/reset-password';
 const SIGNIN_PATH = '/signin';
-const TRAINERS_PATH = '/trainers';
 
 // Supabase emite o primeiro INITIAL_SESSION de forma assíncrona, então um loader
 // que decide com o status ainda em INITIALIZING redirecionaria deep links válidos
@@ -27,13 +28,28 @@ export function redirectIfAuthenticatedOrRecoveringLoader(): Promise<null> {
   return awaitSettledStatus(getAuthStore()).then(redirectIfAuthenticatedOrRecovering);
 }
 
+/**
+ * Where the player lands after an authentication that came from outside.
+ *
+ * The OAuth return and the confirmation e-mail link both come back as a full
+ * page load, and both carry the session in the URL. This route waits for the
+ * session to settle, merges a Google session with the account that has the
+ * same e-mail, and then asks the server where the player belongs: an account
+ * without a trainer goes to the screen that creates one, an account with
+ * trainers goes to the list.
+ */
+export function postAuthLoader(): Promise<null> {
+  const store = getAuthStore();
+  return awaitSettledStatus(store).then(buildPostAuthGuard(store)).then(redirectToDestination);
+}
+
 export function notFoundLoader(): never {
   throw replace(SIGNIN_PATH);
 }
 
 function redirectIfAuthenticated(status: AuthStatus): null {
   if (status === 'AUTHENTICATED') {
-    throw replace(TRAINERS_PATH);
+    throw replace(POST_AUTH_PATH);
   }
   return null;
 }
@@ -85,4 +101,24 @@ function buildResetGuard(): (status: AuthStatus) => null {
     }
     throw replace(SIGNIN_PATH);
   };
+}
+
+function buildPostAuthGuard(store: AuthStore): (status: AuthStatus) => Promise<string> {
+  return function guard(status): Promise<string> {
+    if (status !== 'AUTHENTICATED') {
+      throw replace(SIGNIN_PATH);
+    }
+    const user = selectUser(store.getState());
+    return resolvePostAuth(user, createPostAuthDeps()).then(readResolvedDestination);
+  };
+}
+
+function readResolvedDestination(resolution: PostAuthResolution): string {
+  // O resultado do merge é descartado de propósito: a sessão já é válida e um
+  // merge que falhou não pode trancar a pessoa fora do jogo.
+  return resolution.destination;
+}
+
+function redirectToDestination(destination: string): never {
+  throw replace(destination);
 }

@@ -12,6 +12,8 @@ Este documento lista as tecnologias escolhidas para o servidor, o motivo de cada
 | TypeScript | Tipagem do código, no cliente e no servidor |
 | pino | Logs estruturados |
 | Supabase | Autenticação, banco de dados e validação de token |
+| Zod | Validação dos corpos das requisições |
+| Contratos compartilhados | Tipos de input e output usados pelo cliente e pelo servidor |
 | WebSocket | Comunicação com o cliente durante o jogo |
 
 ## Bun
@@ -46,7 +48,7 @@ O servidor usa o Supabase para três coisas: validar o token do jogador, ler e e
 
 ### Validação de Token
 
-O servidor trabalha com o **access token do próprio Supabase**. Não existe token emitido pelo servidor, e o servidor não assina nada.
+O servidor trabalha com o **access token do próprio Supabase**. Não existe token emitido pelo servidor, e o servidor não renova nada.
 
 > O token chega do cliente e é validado aqui. Isso mantém uma única fonte de verdade sobre quem é o jogador: o Supabase Auth.
 
@@ -54,22 +56,28 @@ O `@supabase/supabase-js` roda no servidor e é ele que faz a validação, usand
 
 > Usar o SDK do Supabase para falar com o servidor da aplicação própria não funciona, e essa confusão é fácil de ter. O SDK conversa com os serviços do Supabase — banco, autenticação, storage, realtime. Ele não é um mecanismo de autenticar requisições em uma aplicação própria.
 
-**A validação tem duas formas, e o servidor usa as duas em momentos diferentes.**
+**A validação tem duas formas, e o servidor usa as duas em lugares diferentes.**
 
+- **Nas chamadas REST**, o servidor valida localmente com `getClaims()`, que confere assinatura e expiração sem nenhuma chamada de rede.
 - **Na abertura do canal**, o servidor chama `getUser()`, que consulta o Auth server e devolve o registro canônico do usuário.
-- **Nas mensagens seguintes**, o servidor valida localmente com `getClaims()`, que confere assinatura e expiração sem nenhuma chamada de rede.
 
 > A distinção importa porque o token continua válido mesmo depois que a sessão por trás dele é encerrada. O fluxo de [Autenticação](../../game/AUTHENTICATION.md) exige que encerrar sessão em um lugar invalide o acesso em todos os outros — o merge da conta Google e a redefinição de senha fazem isso. Só o `getUser()` detecta a revogação, e é por isso que ele é chamado na abertura do canal. Uma validação só no início é o suficiente: enquanto a partida dura, nenhuma regra do jogo encerra a sessão do jogador.
 
-Quando o token deixa de ser válido durante a partida, o servidor encerra o canal.
+**O token é conferido uma vez.** Na API REST, a cada requisição. No canal, só na abertura: as mensagens seguintes são atendidas com o `userId` registrado na conexão, sem uma nova validação.
 
-> A renovação é responsabilidade do cliente, que acompanha a validade do token e reenvia o novo pelo mesmo canal. O servidor não renova nada: apenas recusa o token velho e fecha a conexão, e o cliente reage com a tela de [conexão perdida](../../game/PLAY_SCREEN.md#estados-da-tela).
+> A revalidação por mensagem e o encerramento do canal quando o token deixa de valer ainda não foram implementados. O desenho é que o servidor recuse o token velho e feche a conexão, e o cliente reaja com a tela de [conexão perdida](../../game/PLAY_SCREEN.md#estados-da-tela). A renovação é responsabilidade do cliente, que acompanha a validade do token; o servidor não renova nada.
 
 ### Banco de Dados
 
 O estado do jogo é lido e escrito no Postgres do Supabase, pelo mesmo SDK.
 
 > O servidor usa a chave de serviço, que tem permissão total, e nunca a expõe ao cliente. O cliente só fala com o Supabase Auth.
+
+**O que existe no banco hoje.** O schema está aplicado no Supabase hospedado, com as migrations versionadas em `supabase/migrations/` e o catálogo inicial em `supabase/seed.sql`. Todas as tabelas são **deny-by-default**: RLS ligado, `anon` e `authenticated` sem grant e sem policy, e só o `service_role` — que ignora RLS — enxerga os dados. O servidor é o único caminho de escrita.
+
+O que está persistido é a **conta e o treinador**: espécies, habilidades, itens, treinadores, criaturas, o inventário do treinador, a carga da barra de habilidades (os slots de habilidade de cada criatura e os slots de consumível e de dispositivo do treinador), a vida restante das criaturas e o catálogo de áreas de caça. A criação de treinador é uma RPC transacional, que grava o treinador e a criatura inicial na mesma transação — o motivo está em [API de Treinadores](TRAINERS.md#a-rpc-de-criação). As operações de time também são transações no Postgres, porque trocar a ordem do time toca em mais de uma linha de uma vez — o motivo está em [API de Treinadores](TRAINERS.md#as-funções-de-time).
+
+> **O estado de jogo ainda não existe.** Não há simulação, nem ciclo de avanço de tempo, nem o que seria persistido por esse ciclo. A pergunta "como o estado em memória é persistido, e com que frequência" tem a seguinte resposta honesta: hoje não há estado de jogo em memória para persistir, e o que o Postgres guarda é a conta e o treinador, escritos em tempo real, a cada requisição que altera algo. A resposta definitiva depende do desenho do ciclo de simulação, que ainda não foi feito.
 
 Uma conta pode ter um treinador conectado por vez. Quando uma segunda conexão chega para o mesmo jogador, a anterior é derrubada.
 
@@ -81,9 +89,13 @@ O servidor atende WebSocket com a API nativa do Bun, sem biblioteca intermediár
 
 > Escolhido porque o Bun já traz servidor WebSocket embutido, com upgrade de conexão e envio e recebimento de mensagens no mesmo `Bun.serve` que serve o HTTP. Adicionar uma biblioteca seria trocar algo que já existe por algo que ainda precisaria ser configurado.
 
-O canal é aberto uma vez, quando o jogador entra no jogo, e fica aberto até a saída. O servidor empurra as atualizações de estado e recebe apenas comandos.
+O canal é aberto uma vez, quando o jogador entra no jogo, e fica aberto até a saída. O desenho é que o servidor empurra as atualizações de estado e receba apenas comandos.
 
 > A WebSocket foi escolhida porque o servidor precisa iniciar a comunicação: ele avisa que uma criatura desmaiou, que um cooldown terminou ou que um treino terminou, e nada disso acontece em resposta a uma pergunta do cliente.
+
+**O canal já existe.** Ele é aberto em `/ws`, com o token do jogador na query string, e a validação do token, a regra de uma conexão por conta e as mensagens trocadas estão descritas em [API de Treinadores](TRAINERS.md#websocket).
+
+> O token viaja na query string porque o upgrade do Bun não recebe headers. Por isso ele não pode ser logado: o servidor registra a abertura do canal pelo `userId`, nunca pelo token, e o log de requisição HTTP registra apenas o `pathname`, sem a query.
 
 O estado de um jogador fica no processo que atendeu a conexão dele.
 
@@ -93,9 +105,13 @@ O servidor distingue o que é comando, que vem do cliente, do que é atualizaç�
 
 > Comandos nunca alteram o estado diretamente: são validados e aplicados pelas mesmas regras que avançam a simulação. É isso que garante que o cliente não consiga sair do que as [regras do jogo](../../game/GAME.md) permitem.
 
+**O que o canal ainda não faz.** Não existe simulação de jogo: o canal abre a sessão do treinador e entrega o retrato inicial do estado, e nada mais. Os comandos de jogo, o ciclo de simulação e o empurrão de atualizações são o marco do gameplay, e ainda não foram escritos.
+
 ## Simulação
 
 A simulação é executada por um ciclo do servidor, que avança o estado do jogo com o passar do tempo.
+
+> **A simulação ainda não existe.** Esta seção descreve o desenho que a stack pressupõe; o código da simulação é o marco do gameplay e ainda não foi escrito. Hoje o servidor persiste a conta e o treinador no Postgres, e o estado que entrega ao cliente é lido do banco a cada requisição.
 
 > O servidor é a única fonte de verdade porque é o único que sabe o tempo do jogo. O cliente não tem relógio próprio para nada que afete o estado, e nenhum temporizador do cliente tem autoridade sobre nada.
 
@@ -103,7 +119,7 @@ Quando o jogador fecha o jogo, a simulação do treinador continua, se a ativida
 
 > Essa é a razão do servidor manter o estado em memória e persistir no banco: uma atividade que pode continuar sem o jogador precisa continuar rodando sem conexão nenhuma. O que isso exige do ciclo de simulação ainda não foi definido.
 
-Os tipos das mensagens trocadas entre cliente e servidor são compartilhados pelos dois lados.
+Os tipos das mensagens trocadas entre cliente e servidor são compartilhados pelos dois lados, em `apps/shared/contracts/game.ts`.
 
 > Os tipos do protocolo são a documentação do contrato entre as aplicações e ficam num lugar acessível por ambas. O que cada mensagem significa para o jogo está em [Game Design](../../game/GAME.md).
 
@@ -113,16 +129,19 @@ O servidor usa o runner de testes do Bun, o mesmo do cliente.
 
 > As regras do jogo são funções puras, sem estado global e sem dependência de rede, o que as torna testáveis sem subir servidor nem banco. Essa é a razão de a simulação ser descrita assim, e não como uma consequência que convenha depois.
 
+O que já roda contra o Postgres de verdade é a suíte de integração, em `apps/server/src/__tests__/integration/`: ela cria usuários de teste no Supabase Auth, escreve no banco e limpa tudo no fim. A suíte só roda com a variável `CREATURES_TEST_DB=1`, porque ela mexe no banco real.
+
+> `CREATURES_TEST_DB=1 bun run test:integration`
+
 ## Pendências
 
 Os pontos abaixo dizem respeito à stack e ainda estão em aberto:
 
-- `@supabase/supabase-js` está escolhido mas ainda não instalado.
+- **O estado de jogo não existe.** O que o servidor persiste hoje é a conta e o treinador, no Postgres, em tempo real. O que o ciclo de simulação vai persistir — e com que frequência — depende do desenho do ciclo, que ainda não foi feito.
+- **O rate limit é por processo.** O contador das tentativas falhas mora na memória do processo, como a sessão do treinador e o registro das conexões. Com mais de uma instância, cada uma conta só as tentativas que ela viu, e o limite enfraquece na proporção do número de instâncias. A regra está em [Rate Limit](TRAINERS.md#rate-limit).
 
 Decisões que afetam a estrutura do servidor e ainda não foram tomadas:
 
-- Como o estado em memória é persistido, e com que frequência.
-- Como o servidor se comporta com mais de uma instância, já que o estado de um jogador fica no processo dele.
+- Como o servidor se comporta com mais de uma instância, já que o estado de um jogador fica no processo dele. Hoje o registro do treinador ativo, o registro das conexões e o contador do rate limit são mapas na memória do processo: não sobrevivem a um reinício e não são compartilhados. Enquanto a decisão não sai, o servidor sobe em instância única, como manda o [runbook](../DEPLOY.md#o-que-ainda-não-está-pronto-para-o-público).
 - Como a cidade agrupa os jogadores em instâncias, e como a presença de outros jogadores aparece para quem está em outro processo.
 - Qual a frequência do ciclo de simulação.
-- O formato do protocolo de mensagens, que ainda não foi escrito.

@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { Text } from '~/shared/ui/text';
+import { LoadingIndicator } from './LoadingIndicator';
 
 const TITLE = 'Creatures';
 const MESSAGE = 'Carregando';
@@ -10,7 +10,7 @@ const DEFAULT_MIN_HEIGHT = '100dvh';
 /**
  * A tela de carregamento.
  *
- * A marca do jogo e o anel que gira. A tela aparece enquanto o modulo da rota
+ * A marca do jogo e o carregamento. A tela aparece enquanto o modulo da rota
  * entra: quem entra para jogar nao ve uma pagina em branco, e sim o jogo
  * carregando.
  */
@@ -26,22 +26,12 @@ export function LoadingScreen(props: LoadingScreenProps): ReactElement {
       minH={minHeight}
       width="100%"
     >
-      <Text color="fg" variant="title">
-        {TITLE}
-      </Text>
-      <Box
-        borderColor="accent.arcane"
-        borderRadius="full"
-        borderStyle="solid"
-        borderTopColor="transparent"
-        borderWidth="2px"
-        height="28px"
-        marginBlockStart="6"
-        width="28px"
+      <LoadingIndicator
+        message={MESSAGE}
+        messageVariant="meta"
+        title={TITLE}
+        titleVariant="title"
       />
-      <Text color="fg.subtle" marginBlockStart="4" variant="meta">
-        {MESSAGE}
-      </Text>
     </Box>
   );
 }

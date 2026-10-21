@@ -4,6 +4,7 @@ export type ToolbarProps = {
   onOpenBackpack: () => void;
   onOpenStorage: () => void;
   onSignOut: () => void;
+  onSwitchTrainer: () => void;
   trainerLevel: number;
   trainerName: string;
 };

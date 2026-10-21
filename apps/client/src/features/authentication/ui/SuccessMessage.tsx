@@ -1,9 +1,8 @@
 import type { ReactElement } from 'react';
 
+import { RESET_MESSAGES } from '~/features/authentication/model/auth.messages';
 import { Text } from '~/shared/ui/text';
 
-const SUCCESS_MESSAGE = 'Senha redefinida com sucesso. Faça login para continuar.';
-
 export function SuccessMessage(): ReactElement {
-  return <Text color="fg">{SUCCESS_MESSAGE}</Text>;
+  return <Text color="fg">{RESET_MESSAGES.successMessage}</Text>;
 }

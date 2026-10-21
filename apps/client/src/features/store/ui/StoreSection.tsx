@@ -1,63 +1,72 @@
 import { Box } from '@chakra-ui/react';
+import type { StoreItem } from '@creatures/contracts/store';
 import type { ReactElement } from 'react';
 
-import { Slot, SlotGrid } from '~/shared/ui/frame';
+import { StoreSlot } from '~/features/store/ui/StoreSlot';
+import { SlotGrid } from '~/shared/ui/frame';
 import { Text } from '~/shared/ui/text';
 
-export type StoreItem = {
-  glyph: string;
-  name: string;
-  price: number;
-  tone: string;
-};
-
-type StoreSectionProps = {
+export type StoreSectionProps = {
+  isSelected: (itemId: string) => boolean;
   items: StoreItem[];
+  onSelect: (itemId: string) => void;
   title: string;
 };
 
+/**
+ * A section of the catalog of the store.
+ *
+ * The grid is the grid of the backpack: the rows are whole and the empty
+ * spaces are filled with empty slots.
+ */
 export function StoreSection(props: StoreSectionProps): ReactElement {
-  const { items, title } = props;
-  const cells = items.map(renderStoreItem);
+  const { isSelected, items, onSelect, title } = props;
+  const cells = items.map(function renderItem(item: StoreItem): ReactElement {
+    return <StoreSlotCell isSelected={isSelected} item={item} key={item.id} onSelect={onSelect} />;
+  });
+  const heading = (
+    <Text color="fg.muted" marginBlockEnd="2" variant="label">
+      {title}
+    </Text>
+  );
   return (
     <Box marginBlockEnd="4">
-      <Text color="fg.muted" marginBlockEnd="2" variant="label">
-        {title}
-      </Text>
+      {heading}
       <SlotGrid>{cells}</SlotGrid>
     </Box>
   );
 }
 
-function renderStoreItem(item: StoreItem): ReactElement {
+type StoreSlotCellProps = {
+  isSelected: (itemId: string) => boolean;
+  item: StoreItem;
+  onSelect: (itemId: string) => void;
+};
+
+/**
+ * The slot of one item of the catalog.
+ */
+function StoreSlotCell(props: StoreSlotCellProps): ReactElement {
+  const { isSelected, item, onSelect } = props;
+  const selected = isSelected(item.id);
+  const onSelectItem = buildSelect(onSelect, item.id);
   return (
-    <Box key={item.name}>
-      <Slot>
-        <StoreGlyph glyph={item.glyph} tone={item.tone} />
-      </Slot>
-    </Box>
+    <StoreSlot
+      category={item.category}
+      isSelected={selected}
+      name={item.name}
+      value={item.price}
+      valueLabel="Valor de compra por unidade"
+      onSelect={onSelectItem}
+    />
   );
 }
 
-type StoreGlyphProps = {
-  glyph: string;
-  tone: string;
-};
-
-function StoreGlyph(props: StoreGlyphProps): ReactElement {
-  const { glyph, tone } = props;
-  return (
-    <Box
-      alignItems="center"
-      bg={tone}
-      color="base.950"
-      display="flex"
-      fontSize="lg"
-      height="100%"
-      justifyContent="center"
-      width="100%"
-    >
-      {glyph}
-    </Box>
-  );
+/**
+ * The click on the slot of an item of the catalog.
+ */
+function buildSelect(onSelect: (itemId: string) => void, itemId: string): () => void {
+  return function selectItem(): void {
+    onSelect(itemId);
+  };
 }

@@ -16,6 +16,8 @@ Todo o conteúdo da barra é da criatura ativa, com uma exceção: o slot de dis
 
 Abaixo dos slots ficam duas barras: a vida da criatura ativa e a [stamina](TRAINER.md#stamina) do treinador. A vida representada é a da criatura em campo, a mesma que as habilidades representam — trocou de criatura, a barra passa a mostrar a vida da criatura nova.
 
+A barra da stamina mostra o percentual restante de forma visual, e o rótulo da barra mostra o tempo que ainda resta, em horas e minutos. São duas formas de dizer a mesma coisa, e por isso o rótulo não repete a porcentagem: o tempo é o que o jogador planeja, e a porcentagem já está na barra.
+
 Os slots são clicáveis. Clicar em um slot abre o painel de seleção daquele grupo, por cima da barra, e é assim que o jogador equipa ou troca o que está no slot.
 
 > A barra é o painel de controle da caçada: o jogador monta a criatura antes e durante a caçada, e a criatura executa sozinha o que está equipado.

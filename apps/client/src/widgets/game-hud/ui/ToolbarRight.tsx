@@ -1,19 +1,18 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { IconButton } from '~/shared/ui/button';
-import { IconLogout } from '~/shared/ui/icon';
-
 import { CurrencyBadge } from './CurrencyBadge';
+import { SettingsMenu } from './SettingsMenu';
 
 type ToolbarRightProps = {
   diamonds: number;
   gold: number;
   onSignOut: () => void;
+  onSwitchTrainer: () => void;
 };
 
 export function ToolbarRight(props: ToolbarRightProps): ReactElement {
-  const { diamonds, gold, onSignOut } = props;
+  const { diamonds, gold, onSignOut, onSwitchTrainer } = props;
   return (
     <Box alignItems="center" display="flex" gap="3">
       <Box alignItems="center" display="flex" gap="2">
@@ -21,9 +20,7 @@ export function ToolbarRight(props: ToolbarRightProps): ReactElement {
         <CurrencyBadge amount={gold} label="gold" />
       </Box>
       <Box alignItems="center" display="flex" gap="1">
-        <IconButton label="Sair" onClick={onSignOut} tone="danger">
-          <IconLogout size="20px" />
-        </IconButton>
+        <SettingsMenu onSignOut={onSignOut} onSwitchTrainer={onSwitchTrainer} />
       </Box>
     </Box>
   );

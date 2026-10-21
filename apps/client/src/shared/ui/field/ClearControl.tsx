@@ -5,8 +5,16 @@ import { IconClose } from '~/shared/ui/icon';
 
 const CLEAR_SIZE = '14px';
 const CLEAR_TARGET = '24px';
+const CLEAR_OFFSET = '7px';
 
 type ClearControlProps = {
+  /**
+   * A distância do X até a borda direita do campo.
+   *
+   * O campo de senha usa um valor maior, porque o botão de visibilidade
+   * ocupa a ponta direita.
+   */
+  offset?: string;
   onClick: () => void;
 };
 
@@ -17,7 +25,7 @@ type ClearControlProps = {
  * a Espaco, nao some do foco e o leitor de tela anuncia uma div.
  */
 export function ClearControl(props: ClearControlProps): ReactElement {
-  const { onClick } = props;
+  const { offset = CLEAR_OFFSET, onClick } = props;
   return (
     <NativeButton
       alignItems="center"
@@ -28,7 +36,7 @@ export function ClearControl(props: ClearControlProps): ReactElement {
       height={CLEAR_TARGET}
       justifyContent="center"
       position="absolute"
-      right="7px"
+      right={offset}
       top="7px"
       transitionProperty="color"
       transitionDuration="150ms"

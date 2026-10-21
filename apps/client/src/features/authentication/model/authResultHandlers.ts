@@ -1,19 +1,29 @@
-import { createElement, type ReactElement } from 'react';
+import { createElement } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
+import { EmailConfirmationIcon } from '~/features/authentication/ui/EmailConfirmationIcon';
+import { EmailConfirmationMessage } from '~/features/authentication/ui/EmailConfirmationMessage';
 import { ForgotAlertIcon } from '~/features/authentication/ui/ForgotAlertIcon';
 import { ForgotAlertMessage } from '~/features/authentication/ui/ForgotAlertMessage';
 import { SuccessIcon } from '~/features/authentication/ui/SuccessIcon';
 import { SuccessMessage } from '~/features/authentication/ui/SuccessMessage';
-import type { AuthErrorCode, AuthResult } from '~/shared/auth';
+import type { AuthResult } from '~/shared/auth';
+import type { AlertInput } from '~/shared/ui/alert';
 
-import { FORGOT_MESSAGES, RESET_MESSAGES, SIGNIN_MESSAGES, SIGNUP_MESSAGES } from './auth.messages';
+import {
+  FORGOT_ERROR_MESSAGES,
+  RESET_ERROR_MESSAGES,
+  SIGNIN_ERROR_MESSAGES,
+  SIGNUP_ERROR_MESSAGES,
+} from './auth.messages';
 import { decideDestinationAfterAuth } from './postAuthRedirect';
 
 const ALERT_DURATION_MS = 6000;
 const SIGNIN_PATH = '/signin';
 
 type SetFormError = (message: string) => void;
+type ShowAlert = (input: AlertInput) => string;
+type ReadEmail = () => string;
 
 export function buildSignInResultHandler(
   navigate: NavigateFunction,
@@ -24,7 +34,7 @@ export function buildSignInResultHandler(
       redirectAfterAuth(navigate);
       return;
     }
-    setError(messageForFormErrorMessage(result.code));
+    setError(SIGNIN_ERROR_MESSAGES[result.code]);
   };
 }
 
@@ -36,13 +46,23 @@ export function buildOAuthResultHandler(setError: SetFormError): (result: AuthRe
       }
       return;
     }
-    setError(messageForFormErrorMessage(result.code));
+    setError(SIGNIN_ERROR_MESSAGES[result.code]);
   };
 }
 
+/**
+ * The answer of the signup.
+ *
+ * The account may be created without a session: the project can have the
+ * automatic confirmation of the e-mail turned off. In that case the player
+ * has to confirm the e-mail before entering, and the screen says so instead
+ * of showing an error.
+ */
 export function buildSignUpResultHandler(
   navigate: NavigateFunction,
   setError: SetFormError,
+  show: ShowAlert,
+  readEmail: ReadEmail,
 ): (result: AuthResult) => void {
   return function handle(result: AuthResult): void {
     if (result.ok) {
@@ -53,13 +73,17 @@ export function buildSignUpResultHandler(
       redirectAfterAuth(navigate);
       return;
     }
-    setError(messageForSignUpError(result.code));
+    if (result.code === 'email_confirmation_required') {
+      showEmailConfirmationRequired(show, readEmail());
+      return;
+    }
+    setError(SIGNUP_ERROR_MESSAGES[result.code]);
   };
 }
 
 export function buildResetResultHandler(
   navigate: NavigateFunction,
-  show: (input: { content: ReactElement; duration: number; icon: ReactElement }) => string,
+  show: ShowAlert,
   setError: SetFormError,
   signOut: () => Promise<void>,
 ): (result: AuthResult) => void {
@@ -73,12 +97,12 @@ export function buildResetResultHandler(
       signOut().then(redirectToSignin(navigate), noop);
       return;
     }
-    setError(messageForResetError(result.code));
+    setError(RESET_ERROR_MESSAGES[result.code]);
   };
 }
 
 export function buildForgotResultHandler(
-  show: (input: { content: ReactElement; duration: number; icon: ReactElement }) => string,
+  show: ShowAlert,
   setError: SetFormError,
 ): (result: AuthResult) => void {
   return function handle(result: AuthResult): void {
@@ -88,7 +112,7 @@ export function buildForgotResultHandler(
       icon: createElement(ForgotAlertIcon),
     });
     if (!result.ok) {
-      setError(messageForForgotError(result.code));
+      setError(FORGOT_ERROR_MESSAGES[result.code]);
     }
   };
 }
@@ -102,58 +126,12 @@ export function buildAuthFailureHandler(
   };
 }
 
-function messageForFormErrorMessage(code: AuthErrorCode): string {
-  switch (code) {
-    case 'invalid_credentials':
-      return SIGNIN_MESSAGES.genericError;
-    case 'rate_limited':
-      return SIGNIN_MESSAGES.rateLimitedError;
-    case 'network':
-      return SIGNIN_MESSAGES.networkError;
-    default:
-      return SIGNIN_MESSAGES.genericError;
-  }
-}
-
-function messageForSignUpError(code: AuthErrorCode): string {
-  switch (code) {
-    case 'email_already_exists':
-      return SIGNUP_MESSAGES.emailTakenError;
-    case 'weak_password':
-      return SIGNUP_MESSAGES.weakPasswordError;
-    case 'network':
-      return SIGNUP_MESSAGES.networkError;
-    case 'rate_limited':
-      return SIGNUP_MESSAGES.rateLimitedError;
-    default:
-      return SIGNUP_MESSAGES.genericError;
-  }
-}
-
-function messageForResetError(code: AuthErrorCode): string {
-  switch (code) {
-    case 'weak_password':
-      return RESET_MESSAGES.weakPasswordError;
-    case 'same_password':
-      return RESET_MESSAGES.samePasswordError;
-    case 'network':
-      return RESET_MESSAGES.networkError;
-    case 'rate_limited':
-      return RESET_MESSAGES.rateLimitedError;
-    default:
-      return RESET_MESSAGES.genericError;
-  }
-}
-
-function messageForForgotError(code: AuthErrorCode): string {
-  switch (code) {
-    case 'network':
-      return FORGOT_MESSAGES.networkError;
-    case 'rate_limited':
-      return FORGOT_MESSAGES.rateLimitedError;
-    default:
-      return FORGOT_MESSAGES.genericError;
-  }
+function showEmailConfirmationRequired(show: ShowAlert, email: string): void {
+  show({
+    content: createElement(EmailConfirmationMessage, { email }),
+    duration: ALERT_DURATION_MS,
+    icon: createElement(EmailConfirmationIcon),
+  });
 }
 
 function redirectToSignin(navigate: NavigateFunction): () => void {

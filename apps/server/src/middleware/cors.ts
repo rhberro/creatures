@@ -2,7 +2,7 @@ import type { Middleware, RequestContext } from '~/router';
 
 const DEV_ORIGIN = 'http://localhost:5173';
 const ALLOWED_HEADERS = 'Authorization, Content-Type';
-const ALLOWED_METHODS = 'DELETE, GET, PATCH, POST, OPTIONS';
+const ALLOWED_METHODS = 'DELETE, GET, PATCH, POST, PUT, OPTIONS';
 const NO_CONTENT = 204;
 
 export function createCorsMiddleware(clientOrigin?: string): Middleware {

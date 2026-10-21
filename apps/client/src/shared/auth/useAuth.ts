@@ -18,7 +18,8 @@ export type AuthSnapshot = {
 };
 
 export function useAuth(): AuthSnapshot {
-  const state = useStore(getAuthStore());
+  const store = getAuthStore();
+  const state = useStore(store);
   return {
     isAuthenticated: state.status === 'AUTHENTICATED',
     isLoading: state.status === 'INITIALIZING',

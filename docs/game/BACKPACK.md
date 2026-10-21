@@ -51,13 +51,13 @@ No topo do conteúdo do modal, acima dos slots de itens, ficam os filtros rápid
 
 Abaixo dos filtros ficam os slots de itens, em uma grade que ocupa o corpo do modal. A grade não tem número máximo de slots e não existe limite de itens: ela cresce com a quantidade de itens do treinador, dentro do [tamanho fixo](INTERFACE.md#tamanho-fixo) do modal.
 
-A grade sempre exibe fileiras completas: a última fileira é completada com slots vazios, então um jogador com itens para uma fileira e meia vê a segunda fileira completa, com a metade vazia. Quando as fileiras dos itens não preenchem a área visível, fileiras vazias completam o espaço, e um treinador sem item nenhum vê a área inteira coberta de slots vazios.
+A grade sempre exibe fileiras completas: a última fileira é completada com slots vazios, então um jogador com itens para uma fileira e meia vê a segunda fileira completa, com a metade vazia. A grade **não cria fileira nova**: o que sobra da área visível é o fundo do painel, e não mais fileiras de slots. Um treinador sem item nenhum vê uma fileira inteira de slots vazios.
 
-O número de colunas não é regra: ele depende do tamanho do modal e será validado no design da interface. O que a grade garante é a forma — fileira completa, espaço vazio preenchido —, e não uma quantidade fixa de colunas.
+O número de colunas não é regra: ele depende do tamanho do modal e será validado no design da interface. O que a grade garante é a forma — fileira completa, última fileira preenchida —, e não uma quantidade fixa de colunas.
 
 > A regra das fileiras completas existe para o jogador entender que ali existe um slot, e não um espaço sobrando. Com ela, nenhum quadrado branco solto aparece na tela.
 
-> As fileiras vazias que completam a área visível mantêm o layout estável: a lista não muda de tamanho com a quantidade de itens, e o rodapé com a busca continua no mesmo lugar.
+> A grade não inventa fileira: uma criatura guardada mostra uma fileira, e não a área inteira coberta de slots vazios. A lista cresce com a quantidade de itens, e o rodapé com a busca continua no mesmo lugar.
 
 Uma barra de rolagem fica fixa na lateral direita da área da grade, sempre visível, mesmo quando o conteúdo cabe na tela.
 

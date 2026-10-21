@@ -1,8 +1,6 @@
-export type Creature = {
-  id: string;
-  level: number;
-  name: string;
-};
+import type { Creature } from '@creatures/contracts/creature';
+
+export type { Creature };
 
 export type CreatureSlot = Creature | null;
 

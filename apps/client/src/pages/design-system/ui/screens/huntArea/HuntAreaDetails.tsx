@@ -1,40 +1,19 @@
-import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { AREAS } from '~/pages/design-system/model/huntAreaData';
-import { Button } from '~/shared/ui/button';
-import { Drawer, DrawerBody, DrawerFooter } from '~/shared/ui/drawer';
+import { HuntAreaDetailsDrawer } from '~/features/hunt-area';
+import { SAMPLE_HUNT_AREA_DETAIL } from '~/pages/design-system/model/huntAreaData';
 
-import { AreaHeader } from './AreaHeader';
-import { CreatureGallery } from './CreatureGallery';
-
-const DRAWER_WIDTH = '380px';
-const DRAWER_HEIGHT = '720px';
+const SAMPLE_STAMINA_MINUTES = 240;
 
 export function HuntAreaDetails(): ReactElement {
-  const area = AREAS[1];
   return (
-    <Drawer
+    <HuntAreaDetailsDrawer
+      area={SAMPLE_HUNT_AREA_DETAIL}
       contained
-      height={DRAWER_HEIGHT}
       isOpen
-      label={area.name}
+      staminaMinutes={SAMPLE_STAMINA_MINUTES}
       onClose={noop}
-      width={DRAWER_WIDTH}
-    >
-      <AreaHeader area={area} />
-      <DrawerBody>
-        <Box display="flex" flexDirection="column" gap="5">
-          <CreatureGallery entries={area.creatures} title="Criaturas" />
-          <CreatureGallery entries={area.items} item title="Itens" />
-        </Box>
-      </DrawerBody>
-      <DrawerFooter>
-        <Button tone="primary" width="full">
-          Iniciar Caçada
-        </Button>
-      </DrawerFooter>
-    </Drawer>
+    />
   );
 }
 

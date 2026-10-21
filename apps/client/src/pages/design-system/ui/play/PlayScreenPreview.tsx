@@ -1,12 +1,16 @@
 import { Box } from '@chakra-ui/react';
 import type { ReactElement } from 'react';
 
-import { StoreModal } from '~/features/store';
+import { SAMPLE_STORE_CATALOG, StoreModal } from '~/features/store';
 import { SCREEN_ANCHORS } from '~/pages/design-system/ui/rail';
 import { ScreenEntry } from '~/pages/design-system/ui/sections/ScreenEntry';
 import {
   ACTIVE_CREATURE_ID,
   PlayButton,
+  SAMPLE_EQUIPPED_ABILITIES,
+  SAMPLE_EQUIPPED_CONSUMABLES,
+  SAMPLE_EQUIPPED_DEVICE,
+  SAMPLE_VITALS,
   ShopButton,
   SkillBar,
   TEAM_SLOTS,
@@ -34,7 +38,7 @@ export function PlayScreenPreview(): ReactElement {
           id={SCREEN_ANCHORS.loja}
           title="Loja"
         >
-          <StoreModal contained isOpen onClose={noop} />
+          <StoreModal contained isOpen onClose={noop} snapshot={SAMPLE_STORE_CATALOG} />
         </ScreenEntry>
       </Box>
     </Box>
@@ -61,13 +65,19 @@ function PlayScreenFrame(): ReactElement {
         onOpenBackpack={noop}
         onOpenStorage={noop}
         onSignOut={noop}
+        onSwitchTrainer={noop}
       />
       <Box display="flex" flex="1" position="relative">
         <CanvasArea />
         <TeamStrip activeId={ACTIVE_CREATURE_ID} slots={TEAM_SLOTS} onSelect={noop} />
         <PlayButton onClick={noop} />
         <ShopButton onClick={noop} />
-        <SkillBar />
+        <SkillBar
+          equippedAbilities={SAMPLE_EQUIPPED_ABILITIES}
+          equippedConsumables={SAMPLE_EQUIPPED_CONSUMABLES}
+          equippedDevice={SAMPLE_EQUIPPED_DEVICE}
+          vitals={SAMPLE_VITALS}
+        />
       </Box>
     </Box>
   );

@@ -169,6 +169,7 @@ export const gameTokens = {
     fire: { value: '{colors.ember.400}' },
     neutral: { value: '{colors.base.300}' },
     plant: { value: '{colors.verdant.400}' },
+    water: { value: '{colors.frost.400}' },
   },
   hp: {
     DEFAULT: { value: '{colors.blood.400}' },

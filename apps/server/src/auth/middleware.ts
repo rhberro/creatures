@@ -1,10 +1,10 @@
 import type { Middleware, RequestContext } from '~/router';
 import { errorResponse } from '~/router';
-import type { ClaimsReader } from '~/supabase';
+import type { AuthClaims, ClaimsReader } from '~/supabase';
 
 const BEARER_PREFIX = 'Bearer ';
-const UNAUTHENTICATED_ERROR = 'unauthenticated';
-const UNAUTHENTICATED_MESSAGE = 'Token inválido ou ausente.';
+const UNAUTHORIZED_ERROR = 'unauthenticated';
+const UNAUTHORIZED_MESSAGE = 'Token inválido ou ausente.';
 
 export function createAuthMiddleware(claims: ClaimsReader): Middleware {
   return function authenticate(req, ctx): Promise<Response | null> {
@@ -12,16 +12,19 @@ export function createAuthMiddleware(claims: ClaimsReader): Middleware {
     if (token === null) {
       return Promise.resolve(unauthenticatedResponse());
     }
-    return claims.readUserId(token).then(buildUserAttachment(ctx));
+    return claims.readClaims(token).then(buildIdentityAttachment(ctx));
   };
 }
 
-function buildUserAttachment(ctx: RequestContext): (userId: string | null) => Response | null {
-  return function attachUser(userId: string | null): Response | null {
-    if (userId === null) {
+function buildIdentityAttachment(
+  ctx: RequestContext,
+): (claims: AuthClaims | null) => Response | null {
+  return function attachIdentity(claims: AuthClaims | null): Response | null {
+    if (claims === null) {
       return unauthenticatedResponse();
     }
-    ctx.userId = userId;
+    ctx.userId = claims.userId;
+    ctx.email = claims.email;
     return null;
   };
 }
@@ -36,5 +39,5 @@ function readBearerToken(req: Request): string | null {
 }
 
 function unauthenticatedResponse(): Response {
-  return errorResponse(401, UNAUTHENTICATED_ERROR, UNAUTHENTICATED_MESSAGE);
+  return errorResponse(401, UNAUTHORIZED_ERROR, UNAUTHORIZED_MESSAGE);
 }

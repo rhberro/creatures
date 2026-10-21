@@ -1,12 +1,18 @@
 import type { Trainer } from '@creatures/contracts/trainer';
 import type { ReactElement } from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 import { TrainersPanel, useTrainers } from '~/entities/trainer';
 import { TrainerDeleteDialog } from '~/features/delete-trainer';
-import type { DeleteTrainerResult, TrainerClientErrorCode } from '~/shared/api';
+import { requestEnterTrainer } from '~/pages/trainers/model/enterTrainer';
+import { findTrainerName as resolveTrainerName } from '~/pages/trainers/model/trainerSelection';
+import type {
+  DeleteTrainerResult,
+  SessionTrainerResult,
+  TrainerClientErrorCode,
+} from '~/shared/api';
 import { useAuth } from '~/shared/auth';
 import { BrandLayout } from '~/shared/ui/brand';
 
@@ -23,11 +29,16 @@ export function TrainersPage(): ReactElement {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [enterError, setEnterError] = useState<TrainerClientErrorCode | null>(null);
+  const isEntering = useRef(false);
   const handlers = buildPageHandlers({
+    enterTrainer: requestEnterTrainer,
+    isEntering,
     navigate,
     pendingDeleteId,
     remove,
     selectedId,
+    setEnterError,
     setIsDeleting,
     setPendingDeleteId,
     setSelectedId,
@@ -38,6 +49,7 @@ export function TrainersPage(): ReactElement {
   return (
     <BrandLayout>
       <TrainersCard
+        enterError={enterError}
         error={error}
         handlers={handlers}
         isDeleting={isDeleting}
@@ -53,6 +65,7 @@ export function TrainersPage(): ReactElement {
 
 function TrainersCard(props: TrainersCardProps): ReactElement {
   const {
+    enterError,
     error,
     handlers,
     isDeleting,
@@ -64,7 +77,7 @@ function TrainersCard(props: TrainersCardProps): ReactElement {
   } = props;
   const pendingTrainerName = findTrainerName(trainers, pendingDeleteId);
 
-  const errorMessage = error === null ? null : <PageError code={error} />;
+  const errorMessage = buildErrorMessage(error, enterError);
 
   return (
     <>
@@ -112,6 +125,7 @@ function TrainerDeleteSection(props: TrainerDeleteSectionProps): ReactElement {
 }
 
 type TrainersCardProps = {
+  enterError: TrainerClientErrorCode | null;
   error: TrainerClientErrorCode | null;
   handlers: PageHandlers;
   isDeleting: boolean;
@@ -133,10 +147,13 @@ type PageHandlers = {
 };
 
 type PageHandlerDeps = {
+  enterTrainer: (trainerId: string) => Promise<SessionTrainerResult>;
+  isEntering: { current: boolean };
   navigate: NavigateFunction;
   pendingDeleteId: string | null;
   remove: (id: string) => Promise<DeleteTrainerResult>;
   selectedId: string | null;
+  setEnterError: (code: TrainerClientErrorCode | null) => void;
   setPendingDeleteId: (id: string | null) => void;
   setSelectedId: (updater: (current: string | null) => string | null) => void;
   setIsDeleting: (value: boolean) => void;
@@ -148,10 +165,9 @@ function buildPageHandlers(deps: PageHandlerDeps): PageHandlers {
     handleCancelDelete: buildCancelDeleteHandler(deps.setPendingDeleteId),
     handleConfirmDelete: buildConfirmDeleteHandler(deps),
     handleCreate: buildNavigateHandler(deps.navigate, NEW_TRAINER_PATH),
-    // Enter only navigates; the active-trainer session over WebSocket lands in a follow-up PR.
-    handleEnter: buildNavigateHandler(deps.navigate, GAME_PATH),
+    handleEnter: buildEnterHandler(deps),
     handleRequestDelete: buildRequestDeleteHandler(deps.setPendingDeleteId),
-    handleSelect: buildSelectHandler(deps.setSelectedId),
+    handleSelect: buildSelectHandler(deps.setSelectedId, deps.setEnterError),
     handleSignOut: buildSignOutHandler(deps.navigate, deps.signOut),
   };
 }
@@ -159,6 +175,33 @@ function buildPageHandlers(deps: PageHandlerDeps): PageHandlers {
 function buildNavigateHandler(navigate: NavigateFunction, path: string): () => void {
   return function handleNavigate(): void {
     navigate(path);
+  };
+}
+
+/**
+ * Entering is the moment the server learns which trainer the account is
+ * playing with. The screen of the game only opens when the server accepts it.
+ */
+function buildEnterHandler(deps: PageHandlerDeps): () => void {
+  return function handleEnter(): void {
+    const trainerId = deps.selectedId;
+    if (trainerId === null || deps.isEntering.current) {
+      return;
+    }
+    deps.isEntering.current = true;
+    deps.setEnterError(null);
+    deps.enterTrainer(trainerId).then(buildEnterSettler(deps), buildEnterSettler(deps));
+  };
+}
+
+function buildEnterSettler(deps: PageHandlerDeps): (result: SessionTrainerResult) => void {
+  return function settleEnter(result: SessionTrainerResult): void {
+    deps.isEntering.current = false;
+    if (result.ok) {
+      deps.navigate(GAME_PATH);
+      return;
+    }
+    deps.setEnterError(result.code);
   };
 }
 
@@ -196,8 +239,10 @@ function buildDeleteSettler(deps: PageHandlerDeps): (result: DeleteTrainerResult
 
 function buildSelectHandler(
   setSelectedId: (updater: (current: string | null) => string | null) => void,
+  setEnterError: (code: TrainerClientErrorCode | null) => void,
 ): (id: string) => void {
   return function handleSelect(id: string): void {
+    setEnterError(null);
     setSelectedId(buildSelectionToggler(id));
   };
 }
@@ -230,16 +275,19 @@ function noop(): void {
   void 0;
 }
 
-function findTrainerName(trainers: Trainer[], pendingDeleteId: string | null): string {
-  if (pendingDeleteId === null) {
-    return '';
+function buildErrorMessage(
+  listError: TrainerClientErrorCode | null,
+  enterError: TrainerClientErrorCode | null,
+): ReactElement | null {
+  if (enterError !== null) {
+    return <PageError code={enterError} context="enter" />;
   }
-  const trainer = trainers.find(matchesId(pendingDeleteId));
-  return trainer?.name ?? '';
+  if (listError === null) {
+    return null;
+  }
+  return <PageError code={listError} />;
 }
 
-function matchesId(id: string): (trainer: Trainer) => boolean {
-  return function matches(trainer: Trainer): boolean {
-    return trainer.id === id;
-  };
+function findTrainerName(trainers: Trainer[], pendingDeleteId: string | null): string {
+  return resolveTrainerName(trainers, pendingDeleteId);
 }

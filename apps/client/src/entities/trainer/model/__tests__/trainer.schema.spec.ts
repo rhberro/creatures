@@ -13,11 +13,11 @@ function checkMissingStarter(): void {
   const result = newTrainerSchema.safeParse({
     gender: 'male',
     name: VALID_NAME,
-    starterCreatureId: '',
+    starterSpeciesId: '',
   });
   expect(result.success).toBe(false);
   const [issue] = result.error?.issues ?? [];
-  expect(issue?.path).toEqual(['starterCreatureId']);
+  expect(issue?.path).toEqual(['starterSpeciesId']);
   expect(issue?.message).toBe('Escolha uma criatura inicial.');
 }
 
@@ -25,7 +25,7 @@ function checkTrimmedName(): void {
   const result = newTrainerSchema.safeParse({
     gender: 'female',
     name: `  ${VALID_NAME}  `,
-    starterCreatureId: STARTER_ID,
+    starterSpeciesId: STARTER_ID,
   });
   expect(result.success).toBe(true);
   expect(result.data?.name).toBe(VALID_NAME);
@@ -35,7 +35,7 @@ function checkShortName(): void {
   const result = newTrainerSchema.safeParse({
     gender: 'male',
     name: 'ab',
-    starterCreatureId: STARTER_ID,
+    starterSpeciesId: STARTER_ID,
   });
   expect(result.success).toBe(false);
   expect(result.error?.issues[0]?.message).toBe('O nome deve ter entre 3 e 15 caracteres.');

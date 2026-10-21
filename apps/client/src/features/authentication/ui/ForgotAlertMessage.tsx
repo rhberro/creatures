@@ -1,10 +1,8 @@
 import type { ReactElement } from 'react';
 
+import { FORGOT_MESSAGES } from '~/features/authentication/model/auth.messages';
 import { Text } from '~/shared/ui/text';
 
-const FORGOT_ALERT_MESSAGE =
-  'Se o e-mail existir em nossa base de dados, enviamos um link de recuperação.';
-
 export function ForgotAlertMessage(): ReactElement {
-  return <Text color="fg">{FORGOT_ALERT_MESSAGE}</Text>;
+  return <Text color="fg">{FORGOT_MESSAGES.alertMessage}</Text>;
 }

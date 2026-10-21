@@ -15,11 +15,18 @@ const ALERT_DURATION_MS = 6000;
 const DEFAULT_GENDER: Gender = 'male';
 
 const CREATE_ERROR_MESSAGES: Record<TrainerClientErrorCode, string> = {
+  creature_not_found: 'Criatura não encontrada.',
   invalid_gender: 'Gênero inválido.',
   invalid_name: 'Nome inválido.',
   invalid_starter: 'A criatura inicial informada é inválida.',
+  invalid_team_command: 'Comando de time inválido.',
+  invalid_trainer: 'Identificador de treinador inválido.',
   max_trainers_reached: 'Você atingiu o limite de 5 treinadores.',
   name_taken: 'Nome indisponível.',
+  rate_limited: 'Muitas tentativas. Tente novamente em alguns minutos.',
+  starter_unavailable: 'A criatura inicial escolhida não está mais disponível.',
+  swap_cooldown: 'A troca está em recarga. Aguarde alguns segundos.',
+  team_full: 'O time está cheio.',
   trainer_not_found: 'Treinador não encontrado.',
   unauthenticated: 'Sessão expirada. Entre novamente.',
   unknown: 'Não foi possível criar o treinador.',
@@ -58,19 +65,19 @@ export function useNewTrainerForm(
   const form = useZodForm(newTrainerSchema, {
     gender: DEFAULT_GENDER,
     name: '',
-    starterCreatureId: '',
+    starterSpeciesId: '',
   });
   const createHandlers = buildCreateHandlers(navigate, show);
   const gender = useWatch({ control: form.control, name: 'gender' });
-  const starterId = useWatch({ control: form.control, name: 'starterCreatureId' });
+  const starterId = useWatch({ control: form.control, name: 'starterSpeciesId' });
 
   function handleGenderChange(next: Gender): void {
     form.setValue('gender', next, { shouldDirty: true });
   }
 
   function handleStarterSelect(id: string): void {
-    form.setValue('starterCreatureId', id, { shouldDirty: true });
-    form.clearErrors('starterCreatureId');
+    form.setValue('starterSpeciesId', id, { shouldDirty: true });
+    form.clearErrors('starterSpeciesId');
   }
 
   function handleBack(): void {
@@ -89,7 +96,7 @@ export function useNewTrainerForm(
     handleStarterSelect,
     handleSubmit: form.handleSubmit(onSubmit),
     isSubmitting: form.formState.isSubmitting,
-    starterError: form.formState.errors.starterCreatureId?.message ?? null,
+    starterError: form.formState.errors.starterSpeciesId?.message ?? null,
     starterId: starterId === '' ? null : starterId,
   };
 }

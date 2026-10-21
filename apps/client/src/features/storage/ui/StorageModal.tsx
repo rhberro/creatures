@@ -1,112 +1,138 @@
 import { Box } from '@chakra-ui/react';
+import type { Creature } from '@creatures/contracts/creature';
+import type { TeamSlot } from '@creatures/contracts/player';
 import type { ReactElement } from 'react';
 
-import { TextField } from '~/shared/ui/field';
-import { Slot, SlotGrid } from '~/shared/ui/frame';
+import { MAX_TEAM_SIZE, useTeam } from '~/entities/team';
+import { useStorage } from '~/features/storage/model/useStorage';
+import { StorageCreaturesSection } from '~/features/storage/ui/StorageCreaturesSection';
+import { StorageFooter } from '~/features/storage/ui/StorageFooter';
+import {
+  FULL_REASON,
+  HUNT_REASON,
+  STORAGE_HEIGHT,
+  STORAGE_WIDTH,
+  TITLE,
+} from '~/features/storage/ui/storageModal.constants';
+import { StorageTeamSection } from '~/features/storage/ui/StorageTeamSection';
 import { Modal, ModalBody, ModalFooter, ModalHeader } from '~/shared/ui/modal';
-import { ScrollArea } from '~/shared/ui/scroll';
-import { Text } from '~/shared/ui/text';
+import { PopupGroup } from '~/shared/ui/popup';
 
-const TITLE = 'Armazenamento';
-const TEAM_LABEL = 'Time';
-const CREATURES_LABEL = 'Criaturas';
-const SEARCH_PLACEHOLDER = 'Buscar criaturas';
-const STORE_WIDTH = '720px';
-const STORE_HEIGHT = '620px';
-const SEARCH_WIDTH = '240px';
+import type { StorageModalProps } from './storageModal.types';
 
-type StorageCreature = {
-  empty?: boolean;
-  level: string;
-  name: string;
-  tone: string;
-};
-
-const TEAM: StorageCreature[] = [
-  { level: '9', name: 'Cinzarra', tone: 'ember.400' },
-  { level: '7', name: 'Brotus', tone: 'verdant.400' },
-  { level: '5', name: 'Pedrino', tone: 'base.300' },
-  { empty: true, level: '', name: '', tone: '' },
-  { empty: true, level: '', name: '', tone: '' },
-];
-
-const CAPTURED: StorageCreature[] = [
-  { level: '3', name: 'Brasal', tone: 'ember.400' },
-  { level: '2', name: 'Mossim', tone: 'verdant.400' },
-  { level: '1', name: 'Cascalho', tone: 'base.300' },
-  { level: '4', name: 'Fagulha', tone: 'ember.400' },
-  { level: '6', name: 'Galho', tone: 'verdant.400' },
-  { level: '2', name: 'Seixo', tone: 'base.300' },
-];
-
-type StorageModalProps = {
-  contained?: boolean;
-  isOpen: boolean;
-  onClose: () => void;
-};
-
+/**
+ * The storage: the team on top and the captured creatures below.
+ *
+ * The reading works from anywhere, hunting or not. The commands that change
+ * the team are closed during the hunt, and the order of the team is the order
+ * of the entry: the creature in the field is the one in the first slot.
+ */
 export function StorageModal(props: StorageModalProps): ReactElement {
-  const { contained = false, isOpen, onClose } = props;
-  const teamCells = TEAM.map(renderCreatureCell);
-  const capturedCells = CAPTURED.map(renderCreatureCell);
+  const { contained = false, isHunting = false, isOpen, onClose, snapshot } = props;
+  const fallback = useTeam(undefined, isOpen && snapshot === undefined);
+  const team = snapshot ?? fallback;
+  const { captured, handleSearchChange, isSearching, search, select, selectedId } = useStorage(
+    team.storage,
+  );
+  const isFull = team.team.length >= MAX_TEAM_SIZE;
+  const reason = isHunting ? HUNT_REASON : isFull ? FULL_REASON : null;
+
+  function handleAdd(creatureId: string): void {
+    void team.addToTeam(creatureId);
+  }
+
+  function handleRemove(creatureId: string): void {
+    void team.removeFromTeam(creatureId);
+  }
+
   return (
     <Modal
       contained={contained}
+      height={STORAGE_HEIGHT}
       isOpen={isOpen}
-      height={STORE_HEIGHT}
       onClose={onClose}
-      width={STORE_WIDTH}
+      width={STORAGE_WIDTH}
     >
       <ModalHeader>{TITLE}</ModalHeader>
       <ModalBody>
-        <Text color="fg.muted" marginBlockEnd="2" variant="label">
-          {TEAM_LABEL}
-        </Text>
-        <Box marginBlockEnd="5">
-          <SlotGrid>{teamCells}</SlotGrid>
-        </Box>
-        <Text color="fg.muted" marginBlockEnd="2" variant="label">
-          {CREATURES_LABEL}
-        </Text>
-        <ScrollArea maxH="320px">
-          <SlotGrid>{capturedCells}</SlotGrid>
-        </ScrollArea>
+        <StorageBody
+          activeCreatureId={team.activeCreatureId}
+          captured={captured}
+          isHunting={isHunting}
+          isLoading={team.isLoading}
+          isSearching={isSearching}
+          onAdd={handleAdd}
+          onRemove={handleRemove}
+          onSelect={select}
+          reason={reason}
+          selectedId={selectedId}
+          slots={team.team}
+        />
       </ModalBody>
       <ModalFooter>
-        <Box display="flex" justifyContent="flex-end" width="full">
-          <Box maxW={SEARCH_WIDTH} width="full">
-            <TextField
-              aria-label={SEARCH_PLACEHOLDER}
-              clearable
-              name="buscar-armazenamento"
-              placeholder={SEARCH_PLACEHOLDER}
-            />
-          </Box>
-        </Box>
+        <StorageFooter error={team.error} onSearchChange={handleSearchChange} search={search} />
       </ModalFooter>
     </Modal>
   );
 }
 
-function renderCreatureCell(item: StorageCreature, index: number): ReactElement {
-  const cellKey = item.name || `vazio-${index}`;
-  const content = <CreatureGlyph tone={item.tone} />;
-  return (
-    <Box key={cellKey}>
-      <Slot>{content}</Slot>
-    </Box>
-  );
-}
-
-type CreatureGlyphProps = {
-  tone: string;
+type StorageBodyProps = {
+  activeCreatureId: string | null;
+  captured: Creature[];
+  isHunting: boolean;
+  isLoading: boolean;
+  isSearching: boolean;
+  onAdd(creatureId: string): void;
+  onRemove(creatureId: string): void;
+  /** The click on a slot of the grid, that marks the creature as chosen. */
+  onSelect(creatureId: string): void;
+  reason: string | null;
+  /** The creature the player clicked, the one whose slot is marked. */
+  selectedId: string | null;
+  slots: TeamSlot[];
 };
 
-function CreatureGlyph(props: CreatureGlyphProps): ReactElement {
-  const { tone } = props;
+/**
+ * The body of the storage: the team on top and the captured creatures below.
+ *
+ * The body is the **group of the popups** do modal: o popup do time e o da
+ * grade são o mesmo grupo, então só um fica aberto por vez — clicar numa
+ * criatura da grade fecha o popup do time, e vice-versa.
+ */
+function StorageBody(props: StorageBodyProps): ReactElement {
+  const {
+    activeCreatureId,
+    captured,
+    isHunting,
+    isLoading,
+    isSearching,
+    onAdd,
+    onRemove,
+    onSelect,
+    reason,
+    selectedId,
+    slots,
+  } = props;
   return (
-    <Box alignItems="center" display="flex" height="100%" justifyContent="center" width="100%">
-      <Box bg={tone} borderRadius="sm" height="100%" width="100%" />
+    <Box display="flex" flexDirection="column" gap="4" height="full">
+      <PopupGroup>
+        <StorageTeamSection
+          activeCreatureId={activeCreatureId}
+          isLocked={isHunting}
+          onRemove={onRemove}
+          reason={reason}
+          slots={slots}
+        />
+        <StorageCreaturesSection
+          captured={captured}
+          isLocked={isHunting}
+          isLoading={isLoading}
+          isSearching={isSearching}
+          onAdd={onAdd}
+          onSelect={onSelect}
+          selectedId={selectedId}
+        />
+      </PopupGroup>
     </Box>
   );
 }

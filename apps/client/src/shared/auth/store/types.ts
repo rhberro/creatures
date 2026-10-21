@@ -14,6 +14,7 @@ export type {
   OAuthInput,
   PasswordResetInput,
   PasswordUpdateInput,
+  SignUpInput,
 } from '@creatures/contracts/auth';
 export { PASSWORD_MAX, PASSWORD_MIN } from '@creatures/contracts/auth';
 

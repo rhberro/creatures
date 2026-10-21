@@ -1,26 +1,35 @@
 import { afterEach, beforeEach, expect, test } from 'bun:test';
 
 import { createAuthStore, selectStatus, selectUser, type AuthStore } from './authStore';
-import { MockAuthAdapter, type MockAuthAdapterConfig, type MockAuthBehavior } from './mockAdapter';
+import {
+  AuthTestDoubleAdapter,
+  type AuthTestDoubleBehavior,
+  type AuthTestDoubleConfig,
+} from './authTestDouble';
 import type { AuthErrorCode, AuthResult, AuthSession, AuthUser, CredentialsInput } from './types';
 
-const TEST_USER: AuthUser = { email: 'test@example.com', id: 'user-1' };
+const TEST_USER: AuthUser = { email: 'test@example.com', id: 'user-1', provider: 'email' };
+const GOOGLE_USER: AuthUser = { email: 'test@example.com', id: 'user-2', provider: 'google' };
 const CREDENTIALS: CredentialsInput = { email: 'test@example.com', password: 'password-1' };
-const NO_SESSION_CONFIG: MockAuthAdapterConfig = { initialSession: null };
-const INVALID_CREDENTIALS_CONFIG: MockAuthAdapterConfig = {
+const NO_SESSION_CONFIG: AuthTestDoubleConfig = { initialSession: null };
+const INVALID_CREDENTIALS_CONFIG: AuthTestDoubleConfig = {
   initialSession: null,
   signInWithPassword: alwaysFails('invalid_credentials'),
 };
-const NETWORK_FAILURE_CONFIG: MockAuthAdapterConfig = {
+const NETWORK_FAILURE_CONFIG: AuthTestDoubleConfig = {
   initialSession: null,
   signInWithPassword: alwaysFails('network'),
+};
+const CONFIRMATION_REQUIRED_CONFIG: AuthTestDoubleConfig = {
+  initialSession: null,
+  signUp: alwaysFails('email_confirmation_required'),
 };
 const SIGN_IN_ATTEMPTS = 5;
 const NO_ATTEMPTS_LEFT = 0;
 const EXPECTED_CHANGES = 1;
 const NO_CHANGES = 0;
 
-let adapter: MockAuthAdapter;
+let adapter: AuthTestDoubleAdapter;
 let store: AuthStore;
 
 beforeEach(setupFixture);
@@ -37,7 +46,7 @@ function teardownFixture(): void {
 }
 
 type Fixture = {
-  adapter: MockAuthAdapter;
+  adapter: AuthTestDoubleAdapter;
   store: AuthStore;
 };
 
@@ -46,17 +55,17 @@ type StoreProbe = {
   stop(): void;
 };
 
-function buildFixture(config: MockAuthAdapterConfig): Fixture {
-  const mockAdapter = new MockAuthAdapter(config);
-  const authStore = createAuthStore(mockAdapter);
-  return { adapter: mockAdapter, store: authStore };
+function buildFixture(config: AuthTestDoubleConfig): Fixture {
+  const testDouble = new AuthTestDoubleAdapter(config);
+  const authStore = createAuthStore(testDouble);
+  return { adapter: testDouble, store: authStore };
 }
 
 function buildSession(user: AuthUser): AuthSession {
   return { access_token: 'test-token', user };
 }
 
-function alwaysFails(code: AuthErrorCode): MockAuthBehavior {
+function alwaysFails(code: AuthErrorCode): AuthTestDoubleBehavior {
   return function fail(): Promise<AuthResult> {
     return Promise.resolve({ code, ok: false });
   };
@@ -120,6 +129,15 @@ function signInWithNetworkFailure(): Promise<void> {
     .then(buildFailureAsserter(fixture.store, 'network'));
 }
 
+function signUpWithoutConfirmationKeepsStatusUnchanged(): Promise<void> {
+  const fixture = buildFixture(CONFIRMATION_REQUIRED_CONFIG);
+  fixture.adapter.emitAuthEvent('INITIAL_SESSION', null);
+  return fixture.store
+    .getState()
+    .signUp(CREDENTIALS)
+    .then(buildFailureAsserter(fixture.store, 'email_confirmation_required'));
+}
+
 function buildFailureAsserter(
   target: AuthStore,
   code: AuthErrorCode,
@@ -155,6 +173,13 @@ function passwordRecoveryMovesToRecovering(): void {
   adapter.emitAuthEvent('PASSWORD_RECOVERY', buildSession(TEST_USER));
   expect(selectStatus(store.getState())).toBe('RECOVERING');
   expect(selectUser(store.getState())).toEqual(TEST_USER);
+}
+
+function googleSessionKeepsTheProvider(): void {
+  adapter.emitAuthEvent('INITIAL_SESSION', buildSession(GOOGLE_USER));
+  expect(selectStatus(store.getState())).toBe('AUTHENTICATED');
+  expect(selectUser(store.getState())).toEqual(GOOGLE_USER);
+  expect(selectUser(store.getState())?.provider).toBe('google');
 }
 
 function signInThrottlesSubscriber(): Promise<void> {
@@ -196,8 +221,13 @@ test('initial session with user moves to AUTHENTICATED', initialSessionWithUser)
 test('signin success moves to AUTHENTICATED', signInSucceeds);
 test('signin with invalid credentials keeps status unchanged', signInWithInvalidCredentials);
 test('signin with network failure keeps status unchanged', signInWithNetworkFailure);
+test(
+  'signup waiting for e-mail confirmation keeps status unchanged',
+  signUpWithoutConfirmationKeepsStatusUnchanged,
+);
 test('signout moves to UNAUTHENTICATED', signOutMovesToUnauthenticated);
 test('token refresh keeps identity without extra update', tokenRefreshedKeepsIdentity);
 test('password recovery moves to RECOVERING', passwordRecoveryMovesToRecovering);
+test('the google session keeps its provider in the state', googleSessionKeepsTheProvider);
 test('signin throttle limits observable changes', signInThrottlesSubscriber);
 test('dispose removes the adapter listener', disposeRemovesListener);

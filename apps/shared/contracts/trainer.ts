@@ -3,7 +3,7 @@ export type Gender = 'male' | 'female';
 export type NewTrainerInput = {
   name: string;
   gender: Gender;
-  starterCreatureId: string;
+  starterSpeciesId: string;
 };
 
 export type Trainer = {
@@ -11,21 +11,25 @@ export type Trainer = {
   name: string;
   gender: Gender;
   level: number;
-  starterCreatureId: string;
+  starterSpeciesId: string;
   createdAt: string;
-};
-
-export type Starter = {
-  description: string;
-  id: string;
-  name: string;
+  /** Wallet and stamina are persisted with the trainer but stay optional while the API still serves the legacy shape. */
+  gold?: number;
+  diamonds?: number;
+  staminaMinutes?: number;
 };
 
 export type TrainerErrorCode =
   | 'invalid_name'
   | 'invalid_gender'
   | 'invalid_starter'
+  | 'invalid_trainer'
+  | 'starter_unavailable'
   | 'name_taken'
   | 'max_trainers_reached'
   | 'trainer_not_found'
+  | 'creature_not_found'
+  | 'team_full'
+  | 'invalid_team_command'
+  | 'swap_cooldown'
   | 'unauthenticated';
